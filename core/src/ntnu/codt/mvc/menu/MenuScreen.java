@@ -1,14 +1,14 @@
-package ntnu.codt.screens;
+package ntnu.codt.mvc.menu;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import ntnu.codt.CoDT;
+import ntnu.codt.mvc.Controller;
 
-public class MenuScreen extends ScreenAdapter {
+public class MenuScreen extends Controller {
   private final int VIEWPORT_WIDTH = 1280;
   private final int VIEWPORT_HEIGHT = 720;
   private final CoDT game;
