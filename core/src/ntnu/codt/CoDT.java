@@ -31,7 +31,7 @@ public class CoDT extends Game {
 
 	@Override
   public void render() {
-	  Gdx.gl.glClearColor(1.0f, 0.0f, 1.0f, 0.0f);
+	  Gdx.gl.glClearColor(0.8f, 0.5f, 0.5f, 0.0f);
 	  Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 	  super.render();
