@@ -6,6 +6,10 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+import ntnu.codt.components.HealthComponent;
+import ntnu.codt.components.IdentificationComponent;
+import ntnu.codt.components.PlayerComponent;
 import ntnu.codt.components.PositionComponent;
 import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.TransformComponent;
@@ -31,6 +35,25 @@ public class EntityFactory {
     entity.add(trm);
     entity.add(pm);
 
+    engine.addEntity(entity);
+
+    return entity;
+  }
+
+  public Entity createCharacterEntity(int id, int health, int funds){
+    Entity entity = engine.createEntity();
+
+    PlayerComponent pc = engine.createComponent(PlayerComponent.class);
+    HealthComponent hc = engine.createComponent(HealthComponent.class);
+    IdentificationComponent ic = engine.createComponent(IdentificationComponent.class);
+
+    hc.health = health;
+    pc.funds = funds;
+    ic.UNIQUE_ID = id;
+
+    entity.add(hc);
+    entity.add(pc);
+    entity.add(ic);
     engine.addEntity(entity);
 
     return entity;
