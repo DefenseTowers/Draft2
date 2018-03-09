@@ -1,7 +1,6 @@
 package ntnu.codt.mvc.game;
 
 
-import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import ntnu.codt.CoDT;
@@ -12,9 +11,9 @@ public class GameView implements View {
   private final int VIEWPORT_WIDTH = 1280;
   private final int VIEWPORT_HEIGHT = 720;
   private final CoDT game;
-  private final PooledEngine engine;
+  private final GameModel gameModel;
   private Vector3 randomDataVector;
-  private OrthographicCamera camera;
+  private final OrthographicCamera camera;
 
   public final Observer<Vector3> touch = new Observer<Vector3>() {
     @Override
@@ -23,12 +22,11 @@ public class GameView implements View {
     }
   };
 
-  public GameView(CoDT game, PooledEngine engine) {
+  public GameView(CoDT game, GameModel gameModel) {
     this.game = game;
-    this.engine = engine;
+    this.gameModel = gameModel;
+    this.camera = gameModel.camera;
     randomDataVector = new Vector3();
-    camera = new OrthographicCamera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
-    camera.position.set(VIEWPORT_WIDTH / 2, VIEWPORT_HEIGHT / 2, 0);
   }
 
   public void update(float deltaTime) {

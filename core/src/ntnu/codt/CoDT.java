@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import ntnu.codt.assets.Assets;
-import ntnu.codt.mvc.game.GameController;
+import ntnu.codt.mvc.game.GameScreen;
 
 public class CoDT extends Game {
 	public SpriteBatch batch;
@@ -25,7 +25,7 @@ public class CoDT extends Game {
 		shape = new ShapeRenderer();
 		assets = new Assets(new AssetManager());
 
-		setScreen(new GameController(this));
+		setScreen(new GameScreen(this));
 	}
 
 	@Override
