@@ -7,8 +7,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
+
+import java.util.Map;
+
 import ntnu.codt.CoDT;
 import ntnu.codt.EntityFactory;
+import ntnu.codt.MapFactory;
 import ntnu.codt.components.PositionComponent;
 import ntnu.codt.systems.AnimationSystem;
 import ntnu.codt.systems.RenderSystem;
@@ -23,6 +27,8 @@ public class GameScreen extends ScreenAdapter {
   private OrthographicCamera camera;
   private EntityFactory factory;
   private Entity testEntity;
+  private Entity tileEntity;
+  private MapFactory mapFactory;
 
   public GameScreen(CoDT game) {
     this.game = game;
@@ -37,10 +43,11 @@ public class GameScreen extends ScreenAdapter {
     engine.addSystem(new AnimationSystem());
 
     factory = new EntityFactory(engine);
+    mapFactory = new MapFactory();
 
     testEntity = factory.createTestEntity();
-
-  }
+    mapFactory.generateMap(factory);
+   }
 
   public void update(float deltaTime) {
 

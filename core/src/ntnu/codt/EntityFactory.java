@@ -1,12 +1,12 @@
 package ntnu.codt;
 
 
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector3;
 
 import ntnu.codt.components.HealthComponent;
 import ntnu.codt.components.IdentificationComponent;
@@ -40,6 +40,25 @@ public class EntityFactory {
 
     return entity;
   }
+
+  public Entity createTileEntity(int x, int y, String texture) {
+
+    Entity entity = engine.createEntity();
+    TextureComponent til = engine.createComponent(TextureComponent.class);
+    TransformComponent trm = engine.createComponent(TransformComponent.class);
+    PositionComponent pm = engine.createComponent(PositionComponent.class);
+    til.region = new TextureRegion(new Texture(Gdx.files.internal(texture)));
+    pm.pos = new Vector3(x,y,0);
+
+    entity.add(til);
+    entity.add(pm);
+    entity.add(trm);
+
+    engine.addEntity(entity);
+    return entity;
+  }
+
+
 
   public Entity createCharacterEntity(int id, int health, int funds){
     Entity entity = engine.createEntity();
