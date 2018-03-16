@@ -18,7 +18,7 @@ public class TowerSystem extends IteratingSystem {
     am = ComponentMapper.getFor(AttackComponent.class);
     pm = ComponentMapper.getFor(PositionComponent.class);
   }
-
+/*TEST*/
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
 
