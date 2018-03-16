@@ -19,7 +19,7 @@ public class Subject<I> {
   /**
    * Command pattern :)
    */
-  protected void publish(I input) {
+  public void publish(I input) {
     for (Observer<I> obs : observers) {
       obs.call(input);
     }

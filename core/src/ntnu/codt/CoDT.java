@@ -8,8 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import ntnu.codt.assets.Assets;
-import ntnu.codt.screens.GameScreen;
-import ntnu.codt.screens.MenuScreen;
+import ntnu.codt.mvc.game.GameScreen;
 
 public class CoDT extends Game {
 	public SpriteBatch batch;
