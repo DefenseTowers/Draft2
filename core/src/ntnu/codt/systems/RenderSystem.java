@@ -7,6 +7,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -60,13 +61,17 @@ public class RenderSystem extends IteratingSystem {
     for (Entity entity : queue) {
 
       TextureRegion tex = tem.get(entity).region;
-      TransformComponent t = trm.get(entity);
       Vector3 pos = pm.get(entity).pos;
+
+      TransformComponent t = trm.get(entity);
+
 
       final float width = tex.getRegionWidth();
       final float height = tex.getRegionHeight();
       final float originX = width * 0.5f;
       final float originY = height * 0.5f;
+
+      System.out.println("rendersystem: " + pos.x + " " + pos.y);
 
       batch.draw(
           tex,

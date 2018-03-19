@@ -2,6 +2,7 @@ package ntnu.codt.mvc.game;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -13,8 +14,8 @@ public class GameScreen extends BaseScreen {
   private final GameModel gameModel;
   private final GameController gameController;
   private final GameView gameView;
-  private TiledMap map;
-  private OrthogonalTiledMapRenderer renderer;
+
+
 
   public GameScreen(CoDT game) {
     super(game);
@@ -33,11 +34,16 @@ public class GameScreen extends BaseScreen {
     gameController.update(deltaTime);
     gameModel.update(deltaTime);
     gameView.render(deltaTime);
+
   }
 
+  @Override
   public void show(){
-    map = new TmxMapLoader().load("tiledmap.tmx");
-    renderer = new OrthogonalTiledMapRenderer(map);
+
   }
 
+  @Override
+  public void dispose() {
+    super.dispose();
+  }
 }

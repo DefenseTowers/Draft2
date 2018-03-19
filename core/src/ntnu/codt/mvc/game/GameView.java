@@ -2,6 +2,7 @@ package ntnu.codt.mvc.game;
 
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import ntnu.codt.CoDT;
 import ntnu.codt.core.observer.Observer;
@@ -15,6 +16,7 @@ public class GameView implements View {
   private Vector3 randomDataVector;
   private final OrthographicCamera camera;
 
+
   public final Observer<Vector3> touch = new Observer<Vector3>() {
     @Override
     public void call(Vector3 input) {
@@ -26,14 +28,17 @@ public class GameView implements View {
     this.game = game;
     this.gameModel = gameModel;
     this.camera = gameModel.camera;
+
     randomDataVector = new Vector3();
   }
 
   public void update(float deltaTime) {
-
+    gameModel.update(deltaTime);
   }
 
   public void drawUI() {
+
+
     camera.update();
 
     game.batch.setProjectionMatrix(camera.combined);
@@ -43,12 +48,16 @@ public class GameView implements View {
     game.assets.fonts.fontMedium.draw(game.batch, Float.toString(randomDataVector.y), VIEWPORT_WIDTH / 2, VIEWPORT_HEIGHT / 2 - 50.0f);
     game.batch.setShader(null);
     game.batch.end();
+
   }
 
   public void render(float deltaTime) {
+    gameModel.renderer.render();
     update(deltaTime);
     drawUI();
-
   }
+
+
+
 
 }

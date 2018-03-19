@@ -14,6 +14,7 @@ public abstract class BaseScreen extends ScreenAdapter {
   @Override
   public abstract void render(float deltaTime);
 
+  @Override
   public abstract void show();
 
 }
