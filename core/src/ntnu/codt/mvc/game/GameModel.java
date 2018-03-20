@@ -34,11 +34,9 @@ public class GameModel {
     touchPoint = new Vector3();
     camera = new OrthographicCamera(1280, 720);
     camera.position.set(1280 / 2, 720 / 2, 0);
-
-    map = new TmxMapLoader().load("tiledmap.tmx");
-    layer = (TiledMapTileLayer)map.getLayers().get(0);
+    map = game.assets.getMap();
+    layer = (TiledMapTileLayer)map.getLayers().get(1);
     renderer = new OrthogonalTiledMapRenderer(map);
-
 
     engine = new PooledEngine();
 
@@ -49,11 +47,7 @@ public class GameModel {
 
     entityFactory = new EntityFactory(engine);
 
-    //entityFactory.createTestEntity();
     entityFactory.createCreep();
-
-    System.out.println("bumber of entities in engine: " +  engine.getEntities().size());
-
 
   }
 
@@ -61,8 +55,6 @@ public class GameModel {
     camera.update();
     engine.update(deltaTime);
     renderer.setView(camera);
-
-
   }
 
 }
