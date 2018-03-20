@@ -47,36 +47,44 @@ public class CreepSystem extends IteratingSystem {
 
     float tileHeight = layer.getTileHeight(), tileWidth = layer.getTileWidth();
 
-    for (Entity entity : queue){
+    for (Entity entity : queue) {
       PositionComponent pc = pm.get(entity);
       VelocityComponent vc = sm.get(entity);
-      System.out.println(pc.pos.x + " " + pc.pos.y);
-      System.out.println(layer.getCell((int)Math.floor(pc.pos.x/tileWidth), (int)Math.floor(pc.pos.y/tileHeight)));
-      TiledMapTile tile = layer.getCell((int)Math.floor(pc.pos.x/tileWidth), (int)Math.floor(pc.pos.y/tileHeight)).getTile();
+      //System.out.println(pc.pos.x + " " + pc.pos.y);
+      //System.out.println(layer.getCell((int)Math.floor(pc.pos.x/tileWidth), (int)Math.floor(pc.pos.y/tileHeight)));
+      if (pc.pos.y < 720) {
 
-      if (tile.getId()==17) {
-        vc.velocity.x = 10;
-        vc.velocity.y = 0;
-        System.out.println("going forward");
-      } else if (tile.getId()==42) {
-        vc.velocity.x = 0;
-        vc.velocity.y = 10;
-        System.out.println("going upward");
-      } else if (tile.getId()==67){
-        vc.velocity.x = -10;
-        vc.velocity.y = 0;
-        System.out.println("going backward");
-      } else if (tile.getId()==92) {
-        vc.velocity.x = 0;
-        vc.velocity.y = -10;
 
-        System.out.println("going downward");
-      }
+        TiledMapTile tile = layer.getCell((int) Math.floor(pc.pos.x / tileWidth), (int) Math.floor(pc.pos.y / tileHeight)).getTile();
+
+
+        if (tile.getId() == 17) {
+          vc.velocity.x = 40;
+          vc.velocity.y = 0;
+          //System.out.println("going forward");
+        } else if (tile.getId() == 42) {
+          vc.velocity.x = 0;
+          vc.velocity.y = 40;
+          //System.out.println("going upward");
+        } else if (tile.getId() == 67) {
+          vc.velocity.x = -40;
+          vc.velocity.y = 0;
+        //  System.out.println("going backward");
+        } else if (tile.getId() == 92) {
+          vc.velocity.x = 0;
+          vc.velocity.y = -40;
+
+          //System.out.println("going downward");
+        }
         pc.pos.x += vc.velocity.x * deltaTime;
         pc.pos.y += vc.velocity.y * deltaTime;
+      }
+      else{
+        entity.removeAll();
+      }
     }
 
-    queue.clear();
+      queue.clear();
   }
 
 

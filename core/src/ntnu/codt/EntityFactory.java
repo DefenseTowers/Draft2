@@ -6,8 +6,17 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
+import ntnu.codt.components.AttackComponent;
+import ntnu.codt.components.BoundsComponent;
 import ntnu.codt.components.HealthComponent;
 import ntnu.codt.components.IdentificationComponent;
 import ntnu.codt.components.PlayerComponent;
@@ -19,9 +28,11 @@ import ntnu.codt.components.TransformComponent;
 public class EntityFactory {
 
   private final PooledEngine engine;
+  private TiledMapTileLayer layer;
 
-  public EntityFactory(PooledEngine engine) {
+  public EntityFactory(PooledEngine engine,TiledMapTileLayer layer) {
     this.engine = engine;
+    this.layer = layer;
   }
 
   public Entity createTestEntity() {
@@ -52,7 +63,7 @@ public class EntityFactory {
     VelocityComponent vm = engine.createComponent(VelocityComponent.class);
 
     tem.region = new TextureRegion(new Texture(Gdx.files.internal("badlogic.jpg")));
-    pm.pos = new Vector3(20*29, 20*35, 0);
+    pm.pos = new Vector3(20*30, 0, 0);
     vm.velocity = new Vector3(0, 10, 0);
 
     System.out.println("created creep at pos: " + pm.pos.x + " " + pm.pos.y);
@@ -87,7 +98,31 @@ public class EntityFactory {
     return entity;
   }
 
-  public Entity createTower() {
-    return engine.createEntity();
+
+  public Entity createTower(float x, float y) {
+
+
+    Entity entity = engine.createEntity();
+
+    TransformComponent trm = engine.createComponent(TransformComponent.class);
+    TextureComponent tem = engine.createComponent(TextureComponent.class);
+    PositionComponent pm = engine.createComponent(PositionComponent.class);
+    AttackComponent at = engine.createComponent(AttackComponent.class);
+    BoundsComponent bc = engine.createComponent(BoundsComponent.class);
+
+    pm.pos = new Vector3(x, y, 0);
+    bc.bounds = new Rectangle(x-15,y-30,30,60);
+    tem.region = new TextureRegion(new Texture(Gdx.files.internal("tower.png")));
+
+
+    entity.add(trm);
+    entity.add(tem);
+    entity.add(pm);
+    entity.add(at);
+    entity.add(bc);
+
+    engine.addEntity(entity);
+    return entity;
+
   }
 }

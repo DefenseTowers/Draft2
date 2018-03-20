@@ -21,12 +21,13 @@ import ntnu.codt.systems.RenderSystem;
 import ntnu.codt.systems.TowerSystem;
 
 public class GameModel {
-  private final EntityFactory entityFactory;
+  public final EntityFactory entityFactory;
   public final OrthographicCamera camera;
   public final PooledEngine engine;
   public final Vector3 touchPoint;
   public TiledMap map;
   public TiledMapTileLayer layer;
+  public TiledMapTileLayer layer2;
   public OrthogonalTiledMapRenderer renderer;
 
 
@@ -36,7 +37,8 @@ public class GameModel {
     camera.position.set(1280 / 2, 720 / 2, 0);
 
     map = new TmxMapLoader().load("tiledmap.tmx");
-    layer = (TiledMapTileLayer)map.getLayers().get(0);
+    layer = (TiledMapTileLayer)map.getLayers().get(1);
+    layer2 = (TiledMapTileLayer)map.getLayers().get(0);
     renderer = new OrthogonalTiledMapRenderer(map);
 
 
@@ -47,10 +49,9 @@ public class GameModel {
     engine.addSystem(new AnimationSystem());
     engine.addSystem(new CreepSystem(layer));
 
-    entityFactory = new EntityFactory(engine);
+    entityFactory = new EntityFactory(engine,layer);
 
     //entityFactory.createTestEntity();
-    entityFactory.createCreep();
 
     System.out.println("bumber of entities in engine: " +  engine.getEntities().size());
 

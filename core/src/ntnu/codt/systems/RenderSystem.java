@@ -71,7 +71,7 @@ public class RenderSystem extends IteratingSystem {
       final float originX = width * 0.5f;
       final float originY = height * 0.5f;
 
-      System.out.println("rendersystem: " + pos.x + " " + pos.y);
+     // System.out.println("rendersystem: " + pos.x + " " + pos.y);
 
       batch.draw(
           tex,
