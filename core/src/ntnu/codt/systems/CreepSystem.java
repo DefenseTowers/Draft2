@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ntnu.codt.components.AttackComponent;
+import ntnu.codt.components.CreepComponent;
 import ntnu.codt.components.DefenseComponent;
 import ntnu.codt.components.HealthComponent;
+import ntnu.codt.components.ObserverComponent;
 import ntnu.codt.components.PositionComponent;
 import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.TransformComponent;
@@ -30,18 +32,20 @@ public class CreepSystem extends IteratingSystem{
   private ComponentMapper<PositionComponent> pm;
   private ComponentMapper<TextureComponent> tm;
   private ComponentMapper<TransformComponent> trm;
+  private ComponentMapper<CreepComponent> cm;
 
   private TiledMapTileLayer layer;
   private Array<Entity> queue;
   private List<Entity> observers = new ArrayList<Entity>();
 
   public CreepSystem(TiledMapTileLayer layer) {
-    super(Family.all(VelocityComponent.class, PositionComponent.class, TextureComponent.class, TransformComponent.class).get());
+    super(Family.all(VelocityComponent.class, PositionComponent.class, TextureComponent.class, TransformComponent.class, CreepComponent.class).get());
 
     sm = ComponentMapper.getFor(VelocityComponent.class);
     pm = ComponentMapper.getFor(PositionComponent.class);
     tm = ComponentMapper.getFor(TextureComponent.class);
     trm = ComponentMapper.getFor(TransformComponent.class);
+    cm = ComponentMapper.getFor(CreepComponent.class);
 
     observers = new ArrayList<Entity>();
     queue = new Array<Entity>();
@@ -49,6 +53,7 @@ public class CreepSystem extends IteratingSystem{
   }
 
   public void addObserver(Entity entity){
+    System.out.println("tower added to observerlist");
     observers.add(entity);
   }
 
@@ -63,16 +68,20 @@ public class CreepSystem extends IteratingSystem{
       VelocityComponent vc = sm.get(entity);
       //System.out.println(pc.pos.x + " " + pc.pos.y);
       //System.out.println(layer.getCell((int)Math.floor(pc.pos.x/tileWidth), (int)Math.floor(pc.pos.y/tileHeight)));
-      if
+
 
       if (pc.pos.y < 720) {
-
-
         TiledMapTile tile = layer.getCell((int) Math.floor(pc.pos.x / tileWidth), (int) Math.floor(pc.pos.y / tileHeight)).getTile();
         for(int i = 0; i < observers.size(); i++){
+
           AttackComponent component = observers.get(i).getComponent(AttackComponent.class);
-          component.
-          if()
+          if(component.attackRadius.contains(pc.pos.x,pc.pos.y)){
+            if (!component.creepsInRange.contains(entity,true)){
+              component.creepsInRange.add(entity);
+              System.out.println("entity in range");
+              continue;
+            }
+          }
         }
 
 
@@ -88,18 +97,22 @@ public class CreepSystem extends IteratingSystem{
         } else if (tile.getId() == 67) {
           vc.velocity.x = -40;
           vc.velocity.y = 0;
-        //  System.out.println("going backward");
+          //System.out.println("going backward");
         } else if (tile.getId() == 92) {
           vc.velocity.x = 0;
           vc.velocity.y = -40;
 
           //System.out.println("going downward");
         }
+
         pc.pos.x += vc.velocity.x * deltaTime;
         pc.pos.y += vc.velocity.y * deltaTime;
       }
       else{
-        entity.removeAll();
+        //TODO remove creeps in proper way
+        System.out.println("removing");
+
+        entity.remove(TextureComponent.class);
       }
     }
 

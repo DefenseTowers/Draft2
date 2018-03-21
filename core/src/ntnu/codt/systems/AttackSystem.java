@@ -22,16 +22,16 @@ public class AttackSystem extends IteratingSystem {
     private ComponentMapper<PositionComponent> pm;
     private ComponentMapper<TransformComponent> trm;
     private ComponentMapper<TextureComponent> tem;
-    private ComponentMapper<AttackComponent> ac;
+    private ComponentMapper<VelocityComponent> vm;
     private Array<Entity> queue;
 
     public AttackSystem() {
-        super(Family.all(AttackComponent.class, PositionComponent.class, TransformComponent.class, AttackComponent.class).get());
+        super(Family.all(AttackComponent.class, PositionComponent.class, VelocityComponent.class).get());
 
         trm = ComponentMapper.getFor(TransformComponent.class);
         am = ComponentMapper.getFor(AttackComponent.class);
         pm = ComponentMapper.getFor(PositionComponent.class);
-        ac = ComponentMapper.getFor(AttackComponent.class);
+        vm = ComponentMapper.getFor(VelocityComponent.class);
         queue = new Array<Entity>();
 
     }
@@ -45,13 +45,20 @@ public class AttackSystem extends IteratingSystem {
 
         for (Entity entity : queue) {
             PositionComponent pc = pm.get(entity);
-            VelocityComponent vc = entity.getComponent(VelocityComponent.class);
-            PositionComponent pm = entity.getComponent(PositionComponent.class);
-
+            VelocityComponent vc = vm.get(entity);
+            AttackComponent pm = am.get(entity);
             //System.out.println(pc.pos.x + " " + pc.pos.y);
             //System.out.println(layer.getCell((int)Math.floor(pc.pos.x/tileWidth), (int)Math.floor(pc.pos.y/tileHeight)));
-            System.out.println("tower is active");
+         if(pc.pos.x < 1280 && pc.pos.x > 0 && pc.pos.y < 720 && pc.pos.y > 0) {
+             pc.pos.x += vc.velocity.x * deltaTime;
+             pc.pos.y += vc.velocity.y * deltaTime;
+         }
+         else {
 
+             System.out.println("removing");
+             entity.removeAll();
+
+         }
         }
 
 

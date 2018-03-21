@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import ntnu.codt.CoDT;
 import ntnu.codt.EntityFactory;
 import ntnu.codt.systems.AnimationSystem;
+import ntnu.codt.systems.AttackSystem;
 import ntnu.codt.systems.CreepSystem;
 import ntnu.codt.systems.RenderSystem;
 import ntnu.codt.systems.TowerSystem;
@@ -45,15 +46,16 @@ public class GameModel {
     engine = new PooledEngine();
 
     engine.addSystem(new RenderSystem(game.batch, game.shape, game.assets));
-    engine.addSystem(new TowerSystem());
+    engine.addSystem(new TowerSystem(engine));
     engine.addSystem(new AnimationSystem());
+    engine.addSystem(new AttackSystem());
     engine.addSystem(new CreepSystem(layer));
 
     entityFactory = new EntityFactory(engine,layer);
 
     //entityFactory.createTestEntity();
 
-    System.out.println("bumber of entities in engine: " +  engine.getEntities().size());
+    System.out.println("number of entities in engine: " +  engine.getEntities().size());
 
 
   }
@@ -64,6 +66,10 @@ public class GameModel {
     renderer.setView(camera);
 
 
+  }
+
+  public EntityFactory getEntityFactory(){
+    return entityFactory;
   }
 
 }
