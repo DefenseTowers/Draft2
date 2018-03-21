@@ -50,10 +50,9 @@ public class CreepSystem extends IteratingSystem {
     for (Entity entity : queue){
       PositionComponent pc = pm.get(entity);
       VelocityComponent vc = sm.get(entity);
-      System.out.println(pc.pos.x + " " + pc.pos.y);
-      System.out.println(layer.getCell((int)Math.floor(pc.pos.x/tileWidth), (int)Math.floor(pc.pos.y/tileHeight)));
-      TiledMapTile tile = layer.getCell((int)Math.floor(pc.pos.x/tileWidth), (int)Math.floor(pc.pos.y/tileHeight)).getTile();
 
+      TiledMapTile tile = layer.getCell((int)Math.floor(pc.pos.x/tileWidth), (int)Math.floor(pc.pos.y/tileHeight)).getTile();
+/*
       if (tile.getId()==17) {
         vc.velocity.x = 10;
         vc.velocity.y = 0;
@@ -69,9 +68,10 @@ public class CreepSystem extends IteratingSystem {
       } else if (tile.getId()==92) {
         vc.velocity.x = 0;
         vc.velocity.y = -10;
-
         System.out.println("going downward");
-      }
+      }*/
+
+
         pc.pos.x += vc.velocity.x * deltaTime;
         pc.pos.y += vc.velocity.y * deltaTime;
     }
@@ -84,6 +84,12 @@ public class CreepSystem extends IteratingSystem {
   protected void processEntity(Entity entity, float deltaTime) {
     queue.add(entity);
   }
+
+
+  public void clockwiseTurn(Entity entity, TiledMapTile tile){
+  }
+
+  public void counterClockwiseTurn(){
+
+  }
 }
-
-

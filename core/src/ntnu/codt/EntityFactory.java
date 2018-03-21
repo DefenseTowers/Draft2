@@ -4,6 +4,8 @@ package ntnu.codt;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
@@ -52,7 +54,9 @@ public class EntityFactory {
     VelocityComponent vm = engine.createComponent(VelocityComponent.class);
 
     tem.region = new TextureRegion(new Texture(Gdx.files.internal("badlogic.jpg")));
-    pm.pos = new Vector3(20*29, 20*35, 0);
+
+
+    pm.pos = new Vector3(20*29, 0, 0);
     vm.velocity = new Vector3(0, 10, 0);
 
     System.out.println("created creep at pos: " + pm.pos.x + " " + pm.pos.y);
