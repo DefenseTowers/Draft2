@@ -10,26 +10,27 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.utils.Array;
 
 import ntnu.codt.components.AttackComponent;
+import ntnu.codt.components.ObserverComponent;
 import ntnu.codt.components.PositionComponent;
 import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.TransformComponent;
 import ntnu.codt.components.VelocityComponent;
 
 public class TowerSystem extends IteratingSystem {
-  private ComponentMapper<AttackComponent> am;
+  private ComponentMapper<AttackComponent> ac;
   private ComponentMapper<PositionComponent> pm;
   private ComponentMapper<TransformComponent> trm;
   private ComponentMapper<TextureComponent> tem;
-  private ComponentMapper<AttackComponent> ac;
+  private ComponentMapper<ObserverComponent> oc;
   private Array<Entity> queue;
 
   public TowerSystem() {
-    super(Family.all(AttackComponent.class, PositionComponent.class, TransformComponent.class, AttackComponent.class).get());
+    super(Family.all(AttackComponent.class, PositionComponent.class, TransformComponent.class, ObserverComponent.class).get());
 
     trm = ComponentMapper.getFor(TransformComponent.class);
-    am = ComponentMapper.getFor(AttackComponent.class);
     pm = ComponentMapper.getFor(PositionComponent.class);
     ac = ComponentMapper.getFor(AttackComponent.class);
+    oc = ComponentMapper.getFor(ObserverComponent.class);
     queue = new Array<Entity>();
 
   }
@@ -48,7 +49,11 @@ public class TowerSystem extends IteratingSystem {
 
       //System.out.println(pc.pos.x + " " + pc.pos.y);
       //System.out.println(layer.getCell((int)Math.floor(pc.pos.x/tileWidth), (int)Math.floor(pc.pos.y/tileHeight)));
-      System.out.println("tower is active");
+
+
+
+
+
 
       }
 

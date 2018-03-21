@@ -7,18 +7,24 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import ntnu.codt.components.AttackComponent;
 import ntnu.codt.components.DefenseComponent;
 import ntnu.codt.components.HealthComponent;
 import ntnu.codt.components.PositionComponent;
 import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.TransformComponent;
 import ntnu.codt.components.VelocityComponent;
+import ntnu.codt.core.observer.Observer;
 
-public class CreepSystem extends IteratingSystem {
+public class CreepSystem extends IteratingSystem{
 
   private ComponentMapper<VelocityComponent> sm;
   private ComponentMapper<PositionComponent> pm;
@@ -27,6 +33,7 @@ public class CreepSystem extends IteratingSystem {
 
   private TiledMapTileLayer layer;
   private Array<Entity> queue;
+  private List<Entity> observers = new ArrayList<Entity>();
 
   public CreepSystem(TiledMapTileLayer layer) {
     super(Family.all(VelocityComponent.class, PositionComponent.class, TextureComponent.class, TransformComponent.class).get());
@@ -36,10 +43,14 @@ public class CreepSystem extends IteratingSystem {
     tm = ComponentMapper.getFor(TextureComponent.class);
     trm = ComponentMapper.getFor(TransformComponent.class);
 
+    observers = new ArrayList<Entity>();
     queue = new Array<Entity>();
     this.layer = layer;
   }
 
+  public void addObserver(Entity entity){
+    observers.add(entity);
+  }
 
   @Override
   public void update(float deltaTime){
@@ -52,10 +63,18 @@ public class CreepSystem extends IteratingSystem {
       VelocityComponent vc = sm.get(entity);
       //System.out.println(pc.pos.x + " " + pc.pos.y);
       //System.out.println(layer.getCell((int)Math.floor(pc.pos.x/tileWidth), (int)Math.floor(pc.pos.y/tileHeight)));
+      if
+
       if (pc.pos.y < 720) {
 
 
         TiledMapTile tile = layer.getCell((int) Math.floor(pc.pos.x / tileWidth), (int) Math.floor(pc.pos.y / tileHeight)).getTile();
+        for(int i = 0; i < observers.size(); i++){
+          AttackComponent component = observers.get(i).getComponent(AttackComponent.class);
+          component.
+          if()
+        }
+
 
 
         if (tile.getId() == 17) {
@@ -92,6 +111,9 @@ public class CreepSystem extends IteratingSystem {
   protected void processEntity(Entity entity, float deltaTime) {
     queue.add(entity);
   }
+
+
+
 }
 
 

@@ -6,24 +6,21 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 
 import ntnu.codt.components.AttackComponent;
 import ntnu.codt.components.BoundsComponent;
 import ntnu.codt.components.HealthComponent;
 import ntnu.codt.components.IdentificationComponent;
+import ntnu.codt.components.ObserverComponent;
 import ntnu.codt.components.PlayerComponent;
 import ntnu.codt.components.PositionComponent;
 import ntnu.codt.components.VelocityComponent;
 import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.TransformComponent;
+import ntnu.codt.systems.CreepSystem;
 
 public class EntityFactory {
 
@@ -109,6 +106,7 @@ public class EntityFactory {
     PositionComponent pm = engine.createComponent(PositionComponent.class);
     AttackComponent at = engine.createComponent(AttackComponent.class);
     BoundsComponent bc = engine.createComponent(BoundsComponent.class);
+    ObserverComponent oc = engine.createComponent(ObserverComponent.class);
 
     pm.pos = new Vector3(x, y, 0);
     bc.bounds = new Rectangle(x-15,y-30,30,60);
@@ -120,9 +118,22 @@ public class EntityFactory {
     entity.add(pm);
     entity.add(at);
     entity.add(bc);
-
+    entity.add(oc);
+    engine.getSystem(CreepSystem.class).addObserver(entity);
     engine.addEntity(entity);
+
     return entity;
 
   }
+/*
+  public Entity createAttack(float x, float y, int radius, int attackDamage){
+    Entity entity = engine.createEntity();
+    AttackComponent at = engine.createComponent(AttackComponent.class);
+    PositionComponent pm = engine.createComponent(PositionComponent.class);
+    TextureComponent tem = engine.createComponent(TextureComponent.class);
+
+    pm.pos = new Vector3(x,y)
+
+  }
+*/
 }
