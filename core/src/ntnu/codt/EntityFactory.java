@@ -6,20 +6,31 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 
+import ntnu.codt.components.AttackComponent;
+import ntnu.codt.components.BoundsComponent;
+import ntnu.codt.components.CreepComponent;
 import ntnu.codt.components.HealthComponent;
 import ntnu.codt.components.IdentificationComponent;
 import ntnu.codt.components.PlayerComponent;
 import ntnu.codt.components.PositionComponent;
+import ntnu.codt.components.VelocityComponent;
 import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.TransformComponent;
+import ntnu.codt.systems.CreepSystem;
 
 public class EntityFactory {
 
   private final PooledEngine engine;
+  private TiledMapTileLayer layer;
 
-  public EntityFactory(PooledEngine engine) {
+  public EntityFactory(PooledEngine engine,TiledMapTileLayer layer) {
     this.engine = engine;
+    this.layer = layer;
   }
 
   public Entity createTestEntity() {
@@ -28,13 +39,41 @@ public class EntityFactory {
     TextureComponent tem = engine.createComponent(TextureComponent.class);
     TransformComponent trm = engine.createComponent(TransformComponent.class);
     PositionComponent pm = engine.createComponent(PositionComponent.class);
+    VelocityComponent vp = engine.createComponent(VelocityComponent.class);
 
     tem.region = new TextureRegion(new Texture(Gdx.files.internal("badlogic.jpg")));
-
+    pm.pos = new Vector3(50,50,50);
     entity.add(tem);
     entity.add(trm);
     entity.add(pm);
 
+    engine.addEntity(entity);
+
+    return entity;
+  }
+
+  public Entity createCreep() {
+    Entity entity = engine.createEntity();
+
+    TransformComponent trm = engine.createComponent(TransformComponent.class);
+    PositionComponent pm = engine.createComponent(PositionComponent.class);
+    TextureComponent tem = engine.createComponent(TextureComponent.class);
+    VelocityComponent vm = engine.createComponent(VelocityComponent.class);
+    CreepComponent cc = engine.createComponent(CreepComponent.class);
+
+    tem.region = new TextureRegion(new Texture(Gdx.files.internal("badlogic.jpg")));
+    pm.pos = new Vector3(20*30, 0, 0);
+    vm.velocity = new Vector3(0, 10, 0);
+
+    System.out.println("created creep at pos: " + pm.pos.x + " " + pm.pos.y);
+
+
+    entity.add(pm);
+    entity.add(tem);
+    entity.add(vm);
+    entity.add(trm);
+    entity.add(cc);
+    System.out.println(entity);
     engine.addEntity(entity);
 
     return entity;
@@ -59,12 +98,42 @@ public class EntityFactory {
     return entity;
   }
 
-  public Entity createTower() {
-    return engine.createEntity();
+
+  public Entity createTower(float x, float y) {
+    Entity entity = engine.createEntity();
+
+    TransformComponent trm = engine.createComponent(TransformComponent.class);
+    TextureComponent tem = engine.createComponent(TextureComponent.class);
+    PositionComponent pm = engine.createComponent(PositionComponent.class);
+    AttackComponent at = engine.createComponent(AttackComponent.class);
+    BoundsComponent bc = engine.createComponent(BoundsComponent.class);
+
+    pm.pos = new Vector3(x, y, 0);
+    bc.bounds = new Rectangle(x-15,y-30,30,60);
+    tem.region = new TextureRegion(new Texture(Gdx.files.internal("tower.png")));
+    at.attackRadius = new Circle(x,y,400);
+    System.out.println("attack radius set to " + at.attackRadius.toString());
+    at.attackDamage = 10;
+    at.lastShot =  System.currentTimeMillis();
+
+
+    entity.add(trm);
+    entity.add(tem);
+    entity.add(pm);
+    entity.add(at);
+    entity.add(bc);
+
+    engine.getSystem(CreepSystem.class).addObserver(entity);
+    engine.addEntity(entity);
+
+    return entity;
+
   }
 
-  public Entity createCreep() {
-    return engine.createEntity();
+
+
+  public PooledEngine getEngine(){
+    return this.engine;
   }
 
 }

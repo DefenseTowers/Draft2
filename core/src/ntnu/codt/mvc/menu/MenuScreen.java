@@ -43,4 +43,8 @@ public class MenuScreen extends BaseScreen {
     draw();
   }
 
+  @Override
+  public void show() {
+
+  }
 }

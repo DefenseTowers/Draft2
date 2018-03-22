@@ -2,6 +2,13 @@ package ntnu.codt.mvc.game;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Rectangle;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import ntnu.codt.CoDT;
 import ntnu.codt.core.observer.Subject;
 import ntnu.codt.mvc.Controller;
@@ -17,11 +24,43 @@ public class GameController extends Controller {
     subjectTouch = new Subject<Void>();
   }
 
+  private boolean legalTowerPlacement(Rectangle bounds){
+    float tileHeight = model.layer2.getTileHeight(), tileWidth = model.layer.getTileWidth();
+    TiledMapTile bottomLeft = model.layer2.getCell((int) Math.floor(bounds.getX() / tileWidth), (int) Math.floor(bounds.getY() / tileHeight)).getTile();
+    TiledMapTile topLeft = model.layer2.getCell((int) Math.floor(bounds.getX() / tileWidth), (int) Math.floor((bounds.getY()+bounds.getHeight()) / tileHeight)).getTile();
+    TiledMapTile topRight = model.layer2.getCell((int) Math.floor((bounds.getX()+bounds.getWidth()) / tileWidth), (int) Math.floor((bounds.getY()+bounds.getHeight()) / tileHeight)).getTile();;
+    TiledMapTile bottomRight = model.layer2.getCell((int) Math.floor((bounds.getX()+bounds.getWidth()) / tileWidth), (int) Math.floor((bounds.getY()+bounds.getHeight()) / tileHeight)).getTile();
+    boolean legal = true;
+
+    List<TiledMapTile> tiles = new ArrayList<TiledMapTile>();
+    tiles.add(bottomLeft);
+    tiles.add(topLeft);
+    tiles.add(topRight);
+    tiles.add(bottomRight);
+
+    for (int i = 0; i < tiles.size(); i++) {
+      if (tiles.get(i).getId() == 178 | tiles.get(i).getId() == 1) {
+        legal = true;
+      } else {
+        return false;
+      }
+    }
+    return legal;
+
+  }
+
   public void update(float deltaTime) {
-    if (Gdx.input.isTouched()) {
+    if (Gdx.input.isKeyJustPressed(20)){
+      model.entityFactory.createCreep();
+    }
+    if (Gdx.input.justTouched()) {
       model.touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);
       model.camera.unproject(model.touchPoint);
       subjectTouch.publish(null);
+      System.out.println("just touched");
+      if (legalTowerPlacement(new Rectangle(model.touchPoint.x - 15, model.touchPoint.y - 30, 30, 60))) {
+        model.entityFactory.createTower(model.touchPoint.x, model.touchPoint.y);
+      }
     }
   }
 
