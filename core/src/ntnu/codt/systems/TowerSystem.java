@@ -103,7 +103,6 @@ public class TowerSystem extends IteratingSystem {
     entity.add(vc);
     entity.add(tc);
 
-    queue.add(entity);
     engine.addEntity(entity);
     System.out.println("attack created");
     return entity;

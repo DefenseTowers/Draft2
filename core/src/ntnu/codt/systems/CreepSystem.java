@@ -8,6 +8,7 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.utils.Array;
@@ -79,8 +80,11 @@ public class CreepSystem extends IteratingSystem{
             if (!component.creepsInRange.contains(entity,true)){
               component.creepsInRange.add(entity);
               System.out.println("entity in range");
-              continue;
+              ;
             }
+          }
+          else if (!component.attackRadius.contains(pc.pos.x, pc.pos.y)) {
+            component.creepsInRange.removeValue(entity, true);
           }
         }
 
@@ -107,16 +111,18 @@ public class CreepSystem extends IteratingSystem{
 
         pc.pos.x += vc.velocity.x * deltaTime;
         pc.pos.y += vc.velocity.y * deltaTime;
-      }
-      else{
-        //TODO remove creeps in proper way
-        System.out.println("removing");
 
-        entity.remove(TextureComponent.class);
+      }
+      if (pc.pos.y >= 720) {
+        for (int i = 0; i < observers.size(); i++) {
+          AttackComponent component = observers.get(i).getComponent(AttackComponent.class);
+          component.creepsInRange.removeValue(entity, true);
+        }
+        entity.removeAll();
       }
     }
 
-      queue.clear();
+    queue.clear();
   }
 
 
