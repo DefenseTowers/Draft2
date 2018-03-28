@@ -14,4 +14,6 @@ public class AttackComponent implements Component {
     public int attackDamage = 0;
     public Array<Entity> creepsInRange = new Array<Entity>();
     public long lastShot;
+    public float targetDistanceX;
+    public float targetDistanceY;
 }

@@ -8,6 +8,7 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector;
@@ -19,6 +20,9 @@ import ntnu.codt.components.PositionComponent;
 import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.TransformComponent;
 import ntnu.codt.components.VelocityComponent;
+
+import static java.lang.Math.abs;
+import static java.lang.Math.atan2;
 
 
 public class TowerSystem extends IteratingSystem {
@@ -51,7 +55,7 @@ public class TowerSystem extends IteratingSystem {
         System.out.println("tower has something in range");
         if (ac.attackRadius.contains(ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.x, ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.y)) {
           System.out.println("trying to create attack");
-          createAttack(pc.pos.x,
+          createAttack(deltaTime,pc.pos.x,
                         pc.pos.y,
                   ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.x,
                   ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.y,
@@ -59,6 +63,7 @@ public class TowerSystem extends IteratingSystem {
                   ac.attackRadius.radius,
                   ac.attackDamage);
                   ac.lastShot = System.currentTimeMillis();
+
 
         }
           else{
@@ -71,7 +76,7 @@ public class TowerSystem extends IteratingSystem {
     }
 
 
-  public Entity createAttack(float x, float y, float creepX, float creepY, Vector3 velocity, float radius, int attackDamage){
+  public Entity createAttack(float deltaTime, float x, float y, float creepX, float creepY, Vector3 velocity, float radius, int attackDamage){
     Entity entity = engine.createEntity();
     AttackComponent at = engine.createComponent(AttackComponent.class);
     PositionComponent pm = engine.createComponent(PositionComponent.class);
@@ -79,23 +84,50 @@ public class TowerSystem extends IteratingSystem {
     VelocityComponent vc = engine.createComponent(VelocityComponent.class);
     TransformComponent tc = engine.createComponent(TransformComponent.class);
 
-    tem.region = new TextureRegion(new Texture(Gdx.files.internal("projectile.png")));
 
     pm.pos = new Vector3(x,y,0);
     at.attackDamage = attackDamage;
     at.attackRadius = new Circle(x,y,radius);
+
     //TODO create accurate shooting vector
-    Vector3 temp = new Vector3((creepX-x), (creepY-y),0);
-    temp = new Vector3((temp.x/temp.len())*200, (temp.y/temp.len())*200,0);
-    if(temp.len() < 60){
-      temp = new Vector3(temp.x+velocity.x,temp.y,0);
-    }
-    else{
-      temp = new Vector3((float) (temp.x+(velocity.x*1.2)), (float) (temp.y+(velocity.y*1.2)),0);
-    }
+
+    // The vector that extends from the missile to the target
+    Vector3 targetOffset = new Vector3(creepX-x, creepY-y,0);
+
+    // The distance from the missile to the target
+    float targetDistance = targetOffset.len();
+
+    // Normalize the offset vector into a direction - same as doing TargetOffset.normalized
+    Vector3 targetDirection = new Vector3(targetOffset.x/targetDistance,targetOffset.y/targetDistance,0);
+
+    // How fast the target and missle are moving relative to one another
+    Vector3 missileVelocity = new Vector3(targetDirection.x*(300),targetDirection.y*(300),0);
+    Vector3 targetVelocity = new Vector3(velocity.x,velocity.y,0);
+    Vector3 relativeVelocity = new Vector3(missileVelocity.x-targetVelocity.x,missileVelocity.y-targetVelocity.y,0);
+
+    // How fast the target is moving away from the missile
+    float relativeSpeed = Vector3.dot(relativeVelocity.x,relativeVelocity.y,0,targetDirection.x,targetDirection.y,0);
+
+    // Estimate of how long it will take our missile to catch up to the target
+    float interceptTime = (targetDistance)/relativeSpeed;
+
+    //Estimate of where the target will be
+    Vector3 interceptLocation = new Vector3(creepX+(targetVelocity.x*(interceptTime)),creepY+(targetVelocity.y*interceptTime),0);
+
+    // Aim the missile towards this location
+    Vector3 aimDirection = new Vector3(interceptLocation.x-x,interceptLocation.y-y,0);
+    at.targetDistanceX = abs(aimDirection.x);
+    at.targetDistanceY = abs(aimDirection.y);
+
+    float aimDirectionLen = aimDirection.len();
+    aimDirection = new Vector3(aimDirection.x/aimDirectionLen,aimDirection.y/aimDirectionLen,0);
+    float rotation = (float)atan2(aimDirection.x,aimDirection.y);
+
+    tem.region = new TextureRegion(new Texture(Gdx.files.internal("projectile.png")));
+
+    vc.velocity = new Vector3(aimDirection.x*300,aimDirection.y*300,0);
 
 
-    vc.velocity = temp;//new Vector3((temp.x/temp.len())*200, (temp.y/temp.len())*200,0);
 
     entity.add(at);
     entity.add(pm);
@@ -104,7 +136,6 @@ public class TowerSystem extends IteratingSystem {
     entity.add(tc);
 
     engine.addEntity(entity);
-    System.out.println("attack created");
     return entity;
 
   }
