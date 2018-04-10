@@ -52,6 +52,7 @@ public class AttackSystem extends IteratingSystem {
             AttackComponent ac = am.get(entity);
          if(ac.targetDistanceX < 0 && ac.targetDistanceY < 0){
              System.out.println("hit");
+
              entity.removeAll();
          }
             //System.out.println(pc.pos.x + " " + pc.pos.y);

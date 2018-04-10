@@ -99,7 +99,7 @@ public class EntityFactory {
   }
 
 
-  public Entity createTower(float x, float y) {
+  public Entity createTower(float x, float y, float width, float height, float radius, float attackVelocity, int damage, long reloadTime) {
     Entity entity = engine.createEntity();
 
     TransformComponent trm = engine.createComponent(TransformComponent.class);
@@ -109,12 +109,13 @@ public class EntityFactory {
     BoundsComponent bc = engine.createComponent(BoundsComponent.class);
 
     pm.pos = new Vector3(x, y, 0);
-    bc.bounds = new Rectangle(x-15,y-30,30,60);
+    bc.bounds = new Rectangle(x-(width/2),y-(height/2),width,height);
     tem.region = new TextureRegion(new Texture(Gdx.files.internal("tower.png")));
-    at.attackRadius = new Circle(x,y,400);
-    System.out.println("attack radius set to " + at.attackRadius.toString());
-    at.attackDamage = 10;
+    at.attackRadius = new Circle(x,y,radius);
+    at.attackDamage = damage;
     at.lastShot =  System.currentTimeMillis();
+    at.attackVelocity = attackVelocity;
+    at.reloadTime = reloadTime;
 
 
     entity.add(trm);

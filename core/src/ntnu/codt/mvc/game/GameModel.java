@@ -37,7 +37,7 @@ public class GameModel {
     camera = new OrthographicCamera(1280, 720);
     camera.position.set(1280 / 2, 720 / 2, 0);
 
-    map = new TmxMapLoader().load("tiledmap.tmx");
+    map = new TmxMapLoader().load("tiledmap2.tmx");
     layer = (TiledMapTileLayer)map.getLayers().get(1);
     layer2 = (TiledMapTileLayer)map.getLayers().get(0);
     renderer = new OrthogonalTiledMapRenderer(map);
