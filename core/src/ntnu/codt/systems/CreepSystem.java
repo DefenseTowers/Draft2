@@ -26,6 +26,7 @@ import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.TransformComponent;
 import ntnu.codt.components.VelocityComponent;
 import ntnu.codt.core.observer.Observer;
+import ntnu.codt.mvc.game.GameModel;
 
 public class CreepSystem extends IteratingSystem{
 
@@ -38,8 +39,9 @@ public class CreepSystem extends IteratingSystem{
   private TiledMapTileLayer layer;
   private Array<Entity> queue;
   private List<Entity> observers = new ArrayList<Entity>();
+  private GameModel model;
 
-  public CreepSystem(TiledMapTileLayer layer) {
+  public CreepSystem(TiledMapTileLayer layer, GameModel model) {
     super(Family.all(VelocityComponent.class, PositionComponent.class, TextureComponent.class, TransformComponent.class, CreepComponent.class).get());
 
     sm = ComponentMapper.getFor(VelocityComponent.class);
@@ -51,6 +53,7 @@ public class CreepSystem extends IteratingSystem{
     observers = new ArrayList<Entity>();
     queue = new Array<Entity>();
     this.layer = layer;
+    this.model = model;
   }
 
   public void addObserver(Entity entity){
