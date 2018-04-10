@@ -16,6 +16,7 @@ import ntnu.codt.components.PositionComponent;
 import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.TransformComponent;
 import ntnu.codt.components.VelocityComponent;
+import ntnu.codt.components.HealthComponent;
 
 import static java.lang.Math.abs;
 
@@ -50,8 +51,15 @@ public class AttackSystem extends IteratingSystem {
             PositionComponent pc = pm.get(entity);
             VelocityComponent vc = vm.get(entity);
             AttackComponent ac = am.get(entity);
-         if(ac.targetDistanceX < 0 && ac.targetDistanceY < 0){
-             System.out.println("hit");
+         if(ac.targetDistanceX < 0 && ac.targetDistanceY < 0 && ac.creepsInRange.size() > 0){
+             System.out.println("hit creep: "+ac.creepsInRange.get(0));
+             try{
+                 ac.creepsInRange.get(0).getComponent(HealthComponent.class).health -= ac.attackDamage;
+                 ac.creepsInRange.remove(0);
+             }
+             catch (Exception e){
+                 System.out.println("llolololol " + e);
+             }
 
              entity.removeAll();
          }
@@ -67,7 +75,9 @@ public class AttackSystem extends IteratingSystem {
          else {
 
              System.out.println("removing");
+             ac.creepsInRange.remove(0);
              entity.removeAll();
+
 
          }
         }

@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import ntnu.codt.components.AttackComponent;
+import ntnu.codt.components.BoundsComponent;
 import ntnu.codt.components.PositionComponent;
 import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.TransformComponent;
@@ -28,17 +29,19 @@ import static java.lang.Math.atan2;
 public class TowerSystem extends IteratingSystem {
   private ComponentMapper<AttackComponent> am;
   private ComponentMapper<PositionComponent> pm;
+  private ComponentMapper<BoundsComponent> bm;
   private ComponentMapper<TransformComponent> trm;
   private ComponentMapper<TextureComponent> tem;
   private Array<Entity> queue;
   private PooledEngine engine;
 
   public TowerSystem(PooledEngine engine) {
-    super(Family.all(AttackComponent.class, PositionComponent.class, TransformComponent.class).get());
+    super(Family.all(AttackComponent.class, PositionComponent.class, TransformComponent.class, BoundsComponent.class).get());
 
     trm = ComponentMapper.getFor(TransformComponent.class);
     pm = ComponentMapper.getFor(PositionComponent.class);
     am = ComponentMapper.getFor(AttackComponent.class);
+    bm = ComponentMapper.getFor(BoundsComponent.class);
 
     queue = new Array<Entity>();
     this.engine = engine;
@@ -47,12 +50,14 @@ public class TowerSystem extends IteratingSystem {
 
   public void update(float deltaTime) {
     super.update(deltaTime);
-
     for (Entity entity : queue) {
       PositionComponent pc = pm.get(entity);
       AttackComponent ac = am.get(entity);
-      if (ac.lastShot -  System.currentTimeMillis() < -ac.reloadTime && ac.creepsInRange.size > 0) {
-        System.out.println("tower has something in range");
+      if (ac.lastShot -  System.currentTimeMillis() < -ac.reloadTime && ac.creepsInRange.size() > 0) {
+        System.out.println("tower has "+ac.creepsInRange.size()+" creeps in range");
+       // for (int i = 0; i < ac.creepsInRange.size(); i++) {
+         // System.out.println("in pos: " + i +" creep: "+ ac.creepsInRange.get(i));
+        //}
         if (ac.attackRadius.contains(ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.x, ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.y)) {
           System.out.println("trying to create attack");
           createAttack(deltaTime,pc.pos.x,
@@ -62,14 +67,16 @@ public class TowerSystem extends IteratingSystem {
                   ac.creepsInRange.get(0).getComponent(VelocityComponent.class).velocity,
                   ac.attackRadius.radius,
                   ac.attackDamage,
-                  ac.attackVelocity);
+                  ac.attackVelocity,
+                  ac.creepsInRange.get(0));
                   ac.lastShot = System.currentTimeMillis();
 
 
+
         }
-          else{
-          System.out.println("popping");
-            ac.creepsInRange.pop();
+        else{
+            System.out.println("tower is removing creep: " + ac.creepsInRange.get(0));
+            ac.creepsInRange.remove(0);
           }
         }
       }
@@ -77,9 +84,9 @@ public class TowerSystem extends IteratingSystem {
     }
 
 
-  public Entity createAttack(float deltaTime, float x, float y, float creepX, float creepY, Vector3 creepVelocity, float radius, int attackDamage, float attackVelocity){
+  public Entity createAttack(float deltaTime, float x, float y, float creepX, float creepY, Vector3 creepVelocity, float radius, int attackDamage, float attackVelocity, Entity target){
     Entity entity = engine.createEntity();
-    AttackComponent at = engine.createComponent(AttackComponent.class);
+    AttackComponent ac = engine.createComponent(AttackComponent.class);
     PositionComponent pm = engine.createComponent(PositionComponent.class);
     TextureComponent tem = engine.createComponent(TextureComponent.class);
     VelocityComponent vc = engine.createComponent(VelocityComponent.class);
@@ -87,8 +94,9 @@ public class TowerSystem extends IteratingSystem {
 
 
     pm.pos = new Vector3(x,y,0);
-    at.attackDamage = attackDamage;
-    at.attackRadius = new Circle(x,y,radius);
+    ac.attackDamage = attackDamage;
+    ac.attackRadius = new Circle(x,y,radius);
+    ac.creepsInRange.add(target);
 
     //TODO create accurate shooting vector
 
@@ -117,8 +125,8 @@ public class TowerSystem extends IteratingSystem {
 
     // Aim the missile towards this location
     Vector3 aimDirection = new Vector3(interceptLocation.x-x,interceptLocation.y-y,0);
-    at.targetDistanceX = abs(aimDirection.x);
-    at.targetDistanceY = abs(aimDirection.y);
+    ac.targetDistanceX = abs(aimDirection.x);
+    ac.targetDistanceY = abs(aimDirection.y);
 
     float aimDirectionLen = aimDirection.len();
     aimDirection = new Vector3(aimDirection.x/aimDirectionLen,aimDirection.y/aimDirectionLen,0);
@@ -130,7 +138,7 @@ public class TowerSystem extends IteratingSystem {
 
 
 
-    entity.add(at);
+    entity.add(ac);
     entity.add(pm);
     entity.add(tem);
     entity.add(vc);

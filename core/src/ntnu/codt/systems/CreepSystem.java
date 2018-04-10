@@ -33,20 +33,20 @@ public class CreepSystem extends IteratingSystem{
   private ComponentMapper<PositionComponent> pm;
   private ComponentMapper<TextureComponent> tm;
   private ComponentMapper<TransformComponent> trm;
-  private ComponentMapper<CreepComponent> cm;
+  private ComponentMapper<HealthComponent> hm;
 
   private TiledMapTileLayer layer;
   private Array<Entity> queue;
   private List<Entity> observers = new ArrayList<Entity>();
 
   public CreepSystem(TiledMapTileLayer layer) {
-    super(Family.all(VelocityComponent.class, PositionComponent.class, TextureComponent.class, TransformComponent.class, CreepComponent.class).get());
+    super(Family.all(VelocityComponent.class, PositionComponent.class, TextureComponent.class, TransformComponent.class, HealthComponent.class).get());
 
     sm = ComponentMapper.getFor(VelocityComponent.class);
     pm = ComponentMapper.getFor(PositionComponent.class);
     tm = ComponentMapper.getFor(TextureComponent.class);
     trm = ComponentMapper.getFor(TransformComponent.class);
-    cm = ComponentMapper.getFor(CreepComponent.class);
+    hm = ComponentMapper.getFor(HealthComponent.class);
 
     observers = new ArrayList<Entity>();
     queue = new Array<Entity>();
@@ -67,6 +67,7 @@ public class CreepSystem extends IteratingSystem{
     for (Entity entity : queue) {
       PositionComponent pc = pm.get(entity);
       VelocityComponent vc = sm.get(entity);
+      HealthComponent hc = hm.get(entity);
       //System.out.println(pc.pos.x + " " + pc.pos.y);
       //System.out.println(layer.getCell((int)Math.floor(pc.pos.x/tileWidth), (int)Math.floor(pc.pos.y/tileHeight)));
 
@@ -77,14 +78,16 @@ public class CreepSystem extends IteratingSystem{
 
           AttackComponent component = observers.get(i).getComponent(AttackComponent.class);
           if(component.attackRadius.contains(pc.pos.x,pc.pos.y)){
-            if (!component.creepsInRange.contains(entity,true)){
+            if (!component.creepsInRange.contains(entity)){
               component.creepsInRange.add(entity);
               System.out.println("entity in range");
               ;
             }
           }
-          else if (!component.attackRadius.contains(pc.pos.x, pc.pos.y)) {
-            component.creepsInRange.removeValue(entity, true);
+          else if (!component.attackRadius.contains(pc.pos.x, pc.pos.y) & component.creepsInRange.contains(entity)) {
+            int temp = component.creepsInRange.indexOf(entity);
+            System.out.println("creep: "+component.creepsInRange.get(temp) +"removed itself");
+            component.creepsInRange.remove(entity);
           }
         }
 
@@ -113,10 +116,12 @@ public class CreepSystem extends IteratingSystem{
         pc.pos.y += vc.velocity.y * deltaTime;
 
       }
-      if (pc.pos.y >= 720) {
+      if (pc.pos.y >= 720 | hc.health <= 0) {
         for (int i = 0; i < observers.size(); i++) {
           AttackComponent component = observers.get(i).getComponent(AttackComponent.class);
-          component.creepsInRange.removeValue(entity, true);
+          component.creepsInRange.remove(entity);
+
+
         }
         entity.removeAll();
       }

@@ -52,7 +52,7 @@ public class GameController extends Controller {
 
   public void update(float deltaTime) {
     if (Gdx.input.isKeyJustPressed(20)){
-      model.entityFactory.createCreep();
+      model.entityFactory.createCreep(40);
     }
     if (Gdx.input.justTouched()) {
       model.touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);

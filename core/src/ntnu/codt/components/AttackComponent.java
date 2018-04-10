@@ -12,7 +12,7 @@ import java.util.List;
 public class AttackComponent implements Component {
     public Circle attackRadius = new Circle();
     public int attackDamage = 0;
-    public Array<Entity> creepsInRange = new Array<Entity>();
+    public ArrayList<Entity> creepsInRange = new ArrayList<Entity>();
     public long lastShot;
     public long reloadTime;
     public float attackVelocity;
