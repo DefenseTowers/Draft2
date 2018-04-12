@@ -38,8 +38,9 @@ public class GameController extends Controller {
     tiles.add(topRight);
     tiles.add(bottomRight);
 
+    //370,369,345,346
     for (int i = 0; i < tiles.size(); i++) {
-      if (tiles.get(i).getId() == 178 | tiles.get(i).getId() == 1) {
+      if (tiles.get(i).getId() == 395 | tiles.get(i).getId() == 1) {
         legal = true;
       } else {
         return false;
@@ -51,7 +52,7 @@ public class GameController extends Controller {
 
   public void update(float deltaTime) {
     if (Gdx.input.isKeyJustPressed(20)){
-      model.entityFactory.createCreep();
+      model.entityFactory.createCreep(40);
     }
     if (Gdx.input.justTouched()) {
       model.touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -59,7 +60,7 @@ public class GameController extends Controller {
       subjectTouch.publish(null);
       System.out.println("just touched");
       if (legalTowerPlacement(new Rectangle(model.touchPoint.x - 15, model.touchPoint.y - 30, 30, 60))) {
-        model.entityFactory.createTower(model.touchPoint.x, model.touchPoint.y);
+        model.entityFactory.createTower(model.touchPoint.x, model.touchPoint.y, 30,60,300,300,20,1000);
       }
     }
   }

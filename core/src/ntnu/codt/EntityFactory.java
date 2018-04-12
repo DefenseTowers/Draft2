@@ -52,27 +52,30 @@ public class EntityFactory {
     return entity;
   }
 
-  public Entity createCreep() {
+  public Entity createCreep(int health) {
     Entity entity = engine.createEntity();
 
     TransformComponent trm = engine.createComponent(TransformComponent.class);
     PositionComponent pm = engine.createComponent(PositionComponent.class);
     TextureComponent tem = engine.createComponent(TextureComponent.class);
     VelocityComponent vm = engine.createComponent(VelocityComponent.class);
-    CreepComponent cc = engine.createComponent(CreepComponent.class);
+    HealthComponent hc = engine.createComponent(HealthComponent.class);
+
 
     tem.region = new TextureRegion(new Texture(Gdx.files.internal("badlogic.jpg")));
     pm.pos = new Vector3(20*30, 0, 0);
     vm.velocity = new Vector3(0, 10, 0);
+    hc.health = health;
 
-    System.out.println("created creep at pos: " + pm.pos.x + " " + pm.pos.y);
+    System.out.println("created creep at pos: " + pm.pos.x + " " + pm.pos.y+ " with health: "+hc.health);
+
 
 
     entity.add(pm);
     entity.add(tem);
     entity.add(vm);
     entity.add(trm);
-    entity.add(cc);
+    entity.add(hc);
     System.out.println(entity);
     engine.addEntity(entity);
 
@@ -99,7 +102,7 @@ public class EntityFactory {
   }
 
 
-  public Entity createTower(float x, float y) {
+  public Entity createTower(float x, float y, float width, float height, float radius, float attackVelocity, int damage, long reloadTime) {
     Entity entity = engine.createEntity();
 
     TransformComponent trm = engine.createComponent(TransformComponent.class);
@@ -109,12 +112,13 @@ public class EntityFactory {
     BoundsComponent bc = engine.createComponent(BoundsComponent.class);
 
     pm.pos = new Vector3(x, y, 0);
-    bc.bounds = new Rectangle(x-15,y-30,30,60);
+    bc.bounds = new Rectangle(x-(width/2),y-(height/2),width,height);
     tem.region = new TextureRegion(new Texture(Gdx.files.internal("tower.png")));
-    at.attackRadius = new Circle(x,y,400);
-    System.out.println("attack radius set to " + at.attackRadius.toString());
-    at.attackDamage = 10;
+    at.attackRadius = new Circle(x,y,radius);
+    at.attackDamage = damage;
     at.lastShot =  System.currentTimeMillis();
+    at.attackVelocity = attackVelocity;
+    at.reloadTime = reloadTime;
 
 
     entity.add(trm);
