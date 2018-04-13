@@ -25,6 +25,6 @@ public class EconomySystem extends IteratingSystem {
 
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
-    int funds = pm.get(entity).funds;
+    pm.get(entity).funds = pm.get(entity).funds + 1;
   }
 }

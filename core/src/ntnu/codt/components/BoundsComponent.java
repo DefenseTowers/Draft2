@@ -1,10 +1,11 @@
 package ntnu.codt.components;
 
 
+import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.math.Rectangle;
 
-public class BoundsComponent {
+public class BoundsComponent implements Component{
 
-  public final Rectangle bounds = new Rectangle();
+  public Rectangle bounds = new Rectangle();
 
 }
