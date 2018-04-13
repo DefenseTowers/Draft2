@@ -18,18 +18,20 @@ public class GameScreen extends BaseScreen {
   private final GameModel gameModel;
   private final GameController gameController;
   private final GameView gameView;
-  private InputMultiplexer multiplexer;
 
-/*  private Skin skin;
-  private int screenWidth, screenHeight;*/
-
-
+  private InputMultiplexer mp;
 
   public GameScreen(CoDT game) {
     super(game);
     this.gameModel = new GameModel(game);
-    this.gameController = new GameController(game, gameModel);
     this.gameView = new GameView(game, gameModel);
+    this.gameController = new GameController(game, gameModel, gameView);
+
+
+    mp = new InputMultiplexer();
+
+    mp.addProcessor(gameView.getUi());
+    mp.addProcessor(gameController);
 
 
 
@@ -40,11 +42,7 @@ public class GameScreen extends BaseScreen {
     screenWidth = Gdx.graphics.getWidth();
 
 
-    final ImageButton playBtn = new ImageButton(skin.getDrawable("1"), skin.getDrawable("2"));
-    playBtn.setPosition(screenWidth * 9 / 10 - playBtn.getWidth() / 2, screenHeight * 70 / 100 - playBtn.getHeight() / 2);
 
-    final Image dragImage = new Image(skin.getDrawable("1"));
-    dragImage.setPosition(screenWidth * 9 / 10 - playBtn.getWidth() / 2, screenHeight * 70 / 100 - playBtn.getHeight() / 2);
 
     dragImage.addListener(new DragListener() {
       public void touchDragged(InputEvent event, float x, float y, int pointer) {
@@ -78,14 +76,14 @@ public class GameScreen extends BaseScreen {
     //stage.addActor(playBtn);
     stage.addActor(dragImage);*/
 
-    gameView.loadStage();
+
 
   }
 
   @Override
   public void show() {
 
-    gameView.show();
+    Gdx.input.setInputProcessor(mp);
   }
 
   @Override
