@@ -1,4 +1,4 @@
-package ntnu.codt;
+package ntnu.codt.entities;
 
 
 import com.badlogic.ashley.core.Entity;
@@ -22,6 +22,9 @@ import ntnu.codt.components.VelocityComponent;
 import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.TransformComponent;
 import ntnu.codt.systems.CreepSystem;
+
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class EntityFactory {
 
@@ -52,7 +55,26 @@ public class EntityFactory {
     return entity;
   }
 
+  public Entity createPlayer(String name, int faction) {
+    Entity player = engine.createEntity();
+
+    PlayerComponent pc = engine.createComponent(PlayerComponent.class);
+    pc.name = name;
+    pc.funds = 10;
+    pc.health = 9001;
+    pc.faction = faction;
+    pc.score = 0;
+
+    player.add(pc);
+    engine.addEntity(player);
+    return player;
+  }
+
+
+  /*public Entity createCreep() {
+=======
   public Entity createCreep(int health) {
+>>>>>>> 6e7832284d551f1585c4872d617de90bb3877f4e:core/src/ntnu/codt/EntityFactory.java
     Entity entity = engine.createEntity();
 
     TransformComponent trm = engine.createComponent(TransformComponent.class);
@@ -80,7 +102,7 @@ public class EntityFactory {
     engine.addEntity(entity);
 
     return entity;
-  }
+  }*/
 
   public Entity createCharacterEntity(int id, int health, int funds){
     Entity entity = engine.createEntity();
@@ -101,38 +123,37 @@ public class EntityFactory {
     return entity;
   }
 
-
-  public Entity createTower(float x, float y, float width, float height, float radius, float attackVelocity, int damage, long reloadTime) {
-    Entity entity = engine.createEntity();
-
-    TransformComponent trm = engine.createComponent(TransformComponent.class);
-    TextureComponent tem = engine.createComponent(TextureComponent.class);
-    PositionComponent pm = engine.createComponent(PositionComponent.class);
-    AttackComponent at = engine.createComponent(AttackComponent.class);
-    BoundsComponent bc = engine.createComponent(BoundsComponent.class);
-
-    pm.pos = new Vector3(x, y, 0);
-    bc.bounds = new Rectangle(x-(width/2),y-(height/2),width,height);
-    tem.region = new TextureRegion(new Texture(Gdx.files.internal("tower.png")));
-    at.attackRadius = new Circle(x,y,radius);
-    at.attackDamage = damage;
-    at.lastShot =  System.currentTimeMillis();
-    at.attackVelocity = attackVelocity;
-    at.reloadTime = reloadTime;
-
-
-    entity.add(trm);
-    entity.add(tem);
-    entity.add(pm);
-    entity.add(at);
-    entity.add(bc);
-
-    engine.getSystem(CreepSystem.class).addObserver(entity);
-    engine.addEntity(entity);
-
-    return entity;
-
-  }
+//  public Entity createTower(float x, float y, float width, float height, float radius, float attackVelocity, int damage, long reloadTime) {
+//    Entity entity = engine.createEntity();
+//
+//    TransformComponent trm = engine.createComponent(TransformComponent.class);
+//    TextureComponent tem = engine.createComponent(TextureComponent.class);
+//    PositionComponent pm = engine.createComponent(PositionComponent.class);
+//    AttackComponent at = engine.createComponent(AttackComponent.class);
+//    BoundsComponent bc = engine.createComponent(BoundsComponent.class);
+//
+//    pm.pos = new Vector3(x, y, 0);
+//    bc.bounds = new Rectangle(x-(width/2),y-(height/2),width,height);
+//    tem.region = new TextureRegion(new Texture(Gdx.files.internal("tower.png")));
+//    at.attackRadius = new Circle(x,y,radius);
+//    at.attackDamage = damage;
+//    at.lastShot =  System.currentTimeMillis();
+//    at.attackVelocity = attackVelocity;
+//    at.reloadTime = reloadTime;
+//
+//
+//    entity.add(trm);
+//    entity.add(tem);
+//    entity.add(pm);
+//    entity.add(at);
+//    entity.add(bc);
+//
+//    engine.getSystem(CreepSystem.class).addObserver(entity);
+//    engine.addEntity(entity);
+//
+//    return entity;
+//
+//  }
 
 
 

@@ -3,19 +3,21 @@ package ntnu.codt.mvc.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ntnu.codt.CoDT;
+import ntnu.codt.entities.Creeps;
+import ntnu.codt.entities.Towers;
 import ntnu.codt.core.observer.Subject;
 import ntnu.codt.mvc.Controller;
 
 public class GameController extends Controller {
   private final GameModel model;
   private Subject<Void> subjectTouch;
+
 
   public GameController(CoDT game, GameModel model) {
     super(game);
@@ -52,7 +54,9 @@ public class GameController extends Controller {
 
   public void update(float deltaTime) {
     if (Gdx.input.isKeyJustPressed(20)){
-      model.entityFactory.createCreep(40);
+//      model.entityFactory.createCreep();
+      Creeps.SMALL_BOI.copy(new Creeps.Pack(model.touchPoint, model.engine));
+
     }
     if (Gdx.input.justTouched()) {
       model.touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -60,7 +64,9 @@ public class GameController extends Controller {
       subjectTouch.publish(null);
       System.out.println("just touched");
       if (legalTowerPlacement(new Rectangle(model.touchPoint.x - 15, model.touchPoint.y - 30, 30, 60))) {
-        model.entityFactory.createTower(model.touchPoint.x, model.touchPoint.y, 30,60,300,300,20,1000);
+        Towers.FIRE.copy(new Towers.Pack(model.touchPoint, model.engine));
+//        model.entityFactory.createTower(model.touchPoint.x, model.touchPoint.y, 30,60,300,300,20,1000);
+        model.ecoBus.publish(-100);
       }
     }
   }
