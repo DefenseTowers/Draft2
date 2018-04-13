@@ -17,10 +17,10 @@ import ntnu.codt.systems.CreepSystem;
 public enum Towers implements Prototype<Entity, Towers.Pack> {
 
   FIRE("fire.png", 30, 60, 500, 300, 1, 10),
-  WATER("water.png", 30, 60, 150, 300, 5, 100),
-  ICE("ice.png", 30, 60, 300 , 300, 5, 200);
+  WATER("fire.png", 30, 60, 150, 300, 5, 100),
+  ICE("fire.png", 30, 60, 300 , 300, 5, 200);
 
-  private final String texture;
+  public final String texture;
   private final float width;
   private final float height;
   private final float radius;

@@ -2,13 +2,16 @@ package ntnu.codt.mvc.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +35,7 @@ public class GameController extends Controller {
     this.model = model;
     subjectTouch = new Subject<Void>();
     this.ui = gameView.getUi();
-
+    this.view = gameView;
     setListeners();
 
   }
@@ -104,38 +107,46 @@ public class GameController extends Controller {
     final int screenWidth = Gdx.graphics.getWidth();
     final Actor dragImage = ui.getActors().get(0);
     final Actor playBtn = ui.getActors().get(1);
-
+    Array<ImageButton> towerBtnList = view.getTowerBtnList();
     //System.out.println(ui.getActors().toString());
 
+    for (ImageButton btn : towerBtnList) {
+      final ImageButton imgbtn = btn;
+      imgbtn.addListener(new DragListener() {
 
-    dragImage.addListener(new DragListener() {
-      public void touchDragged(InputEvent event, float x, float y, int pointer) {
-        float xx = dragImage.getX();
-        float yy = dragImage.getY();
-        dragImage.moveBy(x - dragImage.getWidth() / 2, y - dragImage.getHeight() / 2);
-        //System.out.println("dragged image coords:" + xx + "," + yy);
+        float startx = imgbtn.getX();
+        float starty = imgbtn.getY();
 
-        if ((screenHeight - xx - yy) > 0) {
-          System.out.println("under lgiine" + screenHeight + "x: " + xx + "y: " + yy);
-          //dragImage.setDrawable(skin.getDrawable("2"));
+        public void touchDragged(InputEvent event, float x, float y, int pointer) {
+          float xx = imgbtn.getX();
+          float yy = imgbtn.getY();
+          imgbtn.moveBy(x - imgbtn.getWidth() / 2, y - imgbtn.getHeight() / 2);
+          //System.out.println("dragged image coords:" + xx + "," + yy);
+
+          if ((screenHeight - xx - yy) > 0) {
+            System.out.println("under lgiine" + screenHeight + "x: " + xx + "y: " + yy);
+            //dragImage.setDrawable(skin.getDrawable("2"));
 
 
-        } else {
-          System.out.println("above line");
-          //dragImage.setDrawable(skin.getDrawable("1"));
+          } else {
+            System.out.println("above line");
+            //dragImage.setDrawable(skin.getDrawable("1"));
+          }
         }
-      }
 
-      public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-        dragImage.setX(playBtn.getX());
-        dragImage.setY(playBtn.getY());
-        // Add a tower at this touchpoint if legal position and sufficient funds
-      }
+        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+          imgbtn.setX(startx);
+          imgbtn.setY(starty);
 
-      public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-        return true;
-      }
-    });
+          Vector3 pos = new Vector3(event.getStageX()-15, event.getStageY()-30, 0);
+          Towers.FIRE.copy(new Towers.Pack(pos, model.engine));
 
+        }
+
+        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+          return true;
+        }
+      });
+    }
   }
 }

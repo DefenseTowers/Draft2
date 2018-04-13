@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -14,12 +15,13 @@ public class Assets implements Disposable, AssetErrorListener {
 
   public final AssetManager assetManager;
   public final Fonts fonts;
+  public Skin skin;
 
 
   public Assets(AssetManager assetManager) {
     this.assetManager = assetManager;
     assetManager.setErrorListener(this);
-
+    this.skin = new Skin();
     //TODO load texture assets
 
     assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
@@ -31,7 +33,6 @@ public class Assets implements Disposable, AssetErrorListener {
     assetManager.load("1.png", Texture.class);
     assetManager.load("2.png", Texture.class);
     assetManager.finishLoading();
-
     fonts = new Fonts();
   }
 

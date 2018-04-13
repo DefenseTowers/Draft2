@@ -2,24 +2,24 @@ package ntnu.codt.mvc.game;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import java.net.MulticastSocket;
 
 import ntnu.codt.CoDT;
+import ntnu.codt.components.PlayerComponent;
 import ntnu.codt.core.observer.Observer;
+import ntnu.codt.entities.Towers;
+import ntnu.codt.graphics.Pixmap;
 import ntnu.codt.mvc.View;
 
 public class GameView implements View {
@@ -32,6 +32,8 @@ public class GameView implements View {
   private Stage ui;
   private Skin skin;
   private int screenHeight, screenWidth;
+  private Array<ImageButton> towerBtnList;
+
 
 
   public final Observer<Vector3> touch = new Observer<Vector3>() {
@@ -45,6 +47,7 @@ public class GameView implements View {
     this.game = game;
     this.gameModel = gameModel;
     this.camera = gameModel.camera;
+    this.skin = game.assets.skin;
 
     randomDataVector = new Vector3();
     this.screenHeight = Gdx.graphics.getHeight();
@@ -75,21 +78,60 @@ public class GameView implements View {
   public void loadUi(){
 
     this.ui = new Stage();
-    this.skin = gameModel.skin;
-    ImageButton playBtn = new ImageButton(skin.getDrawable("1"), skin.getDrawable("2"));
-    playBtn.setPosition(screenWidth * 9 / 10 - playBtn.getWidth() / 2, screenHeight * 70 / 100 - playBtn.getHeight() / 2);
 
-    final Image dragImage = new Image(skin.getDrawable("1"));
-    dragImage.setPosition(screenWidth * 8 / 10 - playBtn.getWidth() / 2, screenHeight * 70 / 100 - playBtn.getHeight() / 2);
+    towerBtnList = new Array<ImageButton>();
+    int i = 0;
+    for(Towers tower: Towers.values()){
 
+      Pixmap pixmap = new Pixmap(100, 100, Pixmap.Format.RGB888);
 
-    ui.addActor(playBtn);
-    ui.addActor(dragImage);
+      pixmap.setColor(Color.BLUE);
+      pixmap.fill();
+      pixmap.setColor(Color.BLACK);
+      pixmap.drawRectangle(0, 0, 100, 100, 5);
+
+      Texture texture = new Texture(pixmap);
+
+      skin.add("rect", texture);
+
+      Texture t = new Texture(Gdx.files.internal(tower.texture));
+
+      skin.add("tower"+i, t);
+
+      // Merge tower texture and rectangle to create a button texture
+      t.getTextureData().prepare();
+      pixmap.drawPixmap(t.getTextureData().consumePixmap(), 15,15);
+
+      skin.add("towerTex"+i, new Texture(pixmap));
+      ImageButton imgbtn = new ImageButton(skin.getDrawable("towerTex"+i), skin.getDrawable("tower"+i));
+      ImageButton imgbtn2 = new ImageButton(skin.getDrawable("towerTex"+i));
+      imgbtn.setPosition(screenWidth * 8 / 10 - imgbtn.getWidth() / 2, screenHeight * (5+2*i)/10 - imgbtn.getHeight() / 2);
+      imgbtn2.setPosition(screenWidth * 8 / 10 - imgbtn.getWidth() / 2, screenHeight * (5+2*i)/10 - imgbtn.getHeight() / 2);
+
+      towerBtnList.add(imgbtn);
+      ui.addActor(imgbtn2);
+      ui.addActor(imgbtn);
+      i++;
+    }
+    // Get Player funds here
+
+    TextField.TextFieldStyle textStyle = new TextField.TextFieldStyle();
+    textStyle.font = new BitmapFont();
+    textStyle.fontColor = Color.BLACK;
+
+    int funds = gameModel.player1.getComponent(PlayerComponent.class).funds;
+    TextField cashAmount = new TextField("" + funds, textStyle);
+    cashAmount.setPosition(screenWidth/2, screenHeight * 9/10);
+    ui.addActor(cashAmount);
 
   }
 
   public Stage getUi(){
     return ui;
+  }
+
+  public Array<ImageButton> getTowerBtnList(){
+    return towerBtnList;
   }
 
 }

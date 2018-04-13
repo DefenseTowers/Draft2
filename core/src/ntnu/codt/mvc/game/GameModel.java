@@ -1,7 +1,5 @@
 package ntnu.codt.mvc.game;
 
-
-
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -50,8 +48,7 @@ public class GameModel {
 
     this.skin = new Skin();
 
-    skin.add("1", game.assets.getTexture("1.png"));
-    skin.add("2", game.assets.getTexture("2.png"));
+
 
     engine = new PooledEngine(100, 1000, 100, 1000);
     engine.addSystem(new RenderSystem(game.batch, game.shape, game.assets));
