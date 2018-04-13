@@ -11,7 +11,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import ntnu.codt.CoDT;
 import ntnu.codt.EntityFactory;
@@ -28,6 +31,8 @@ public class GameModel {
   public TiledMap map;
   public TiledMapTileLayer layer;
   public OrthogonalTiledMapRenderer renderer;
+  public Skin skin;
+
 
 
   public GameModel(CoDT game) {
@@ -38,8 +43,12 @@ public class GameModel {
     layer = (TiledMapTileLayer)map.getLayers().get(1);
     renderer = new OrthogonalTiledMapRenderer(map);
 
-    engine = new PooledEngine();
+    this.skin = new Skin();
 
+    skin.add("1", game.assets.getTexture("1.png"));
+    skin.add("2", game.assets.getTexture("2.png"));
+
+    engine = new PooledEngine();
     engine.addSystem(new RenderSystem(game.batch, game.shape, game.assets));
     engine.addSystem(new TowerSystem());
     engine.addSystem(new AnimationSystem());
