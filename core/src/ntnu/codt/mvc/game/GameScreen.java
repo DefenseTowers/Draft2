@@ -2,10 +2,7 @@ package ntnu.codt.mvc.game;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.InputMultiplexer;
 
 import ntnu.codt.CoDT;
 import ntnu.codt.mvc.BaseScreen;
@@ -15,35 +12,32 @@ public class GameScreen extends BaseScreen {
   private final GameController gameController;
   private final GameView gameView;
 
-
+  private InputMultiplexer mp;
 
   public GameScreen(CoDT game) {
     super(game);
+    this.gameModel = new GameModel(game);
+    this.gameView = new GameView(game, gameModel);
+    this.gameController = new GameController(game, gameModel, gameView);
 
-    gameModel = new GameModel(game);
-    gameController = new GameController(game, gameModel);
-    gameView = new GameView(game, gameModel);
-
-    Gdx.input.setInputProcessor(gameController);
-  }
-
-
-
-  @Override
-  public void render(float deltaTime) {
-    gameController.update(deltaTime);
-    gameModel.update(deltaTime);
-    gameView.render(deltaTime);
-
+    mp = new InputMultiplexer();
+    mp.addProcessor(gameView.getUi());
+    mp.addProcessor(gameController);
   }
 
   @Override
-  public void show(){
-
+  public void show() {
+    Gdx.input.setInputProcessor(mp);
   }
 
   @Override
-  public void dispose() {
-    super.dispose();
+  public void render(float delta) {
+    gameController.update(delta);
+    gameModel.update(delta);
+    gameView.render(delta);
   }
+
 }
+
+
+

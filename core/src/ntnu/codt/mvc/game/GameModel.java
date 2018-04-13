@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import ntnu.codt.CoDT;
 import ntnu.codt.entities.EntityFactory;
@@ -31,8 +32,8 @@ public class GameModel {
   public TiledMapTileLayer layer;
   public TiledMapTileLayer layer2;
   public OrthogonalTiledMapRenderer renderer;
+  public Skin skin;
   public Entity player1;
-
   public Subject<Integer> ecoBus = new Subject<Integer>();
 
 
@@ -44,11 +45,15 @@ public class GameModel {
     map = new TmxMapLoader().load("tiledmap2.tmx");
     layer = (TiledMapTileLayer)map.getLayers().get(1);
     layer2 = (TiledMapTileLayer)map.getLayers().get(0);
+
     renderer = new OrthogonalTiledMapRenderer(map);
 
+    this.skin = new Skin();
+
+    skin.add("1", game.assets.getTexture("1.png"));
+    skin.add("2", game.assets.getTexture("2.png"));
 
     engine = new PooledEngine(100, 1000, 100, 1000);
-
     engine.addSystem(new RenderSystem(game.batch, game.shape, game.assets));
     engine.addSystem(new TowerSystem(engine));
     engine.addSystem(new AnimationSystem());
@@ -70,15 +75,12 @@ public class GameModel {
 
     System.out.println("number of entities in engine: " +  engine.getEntities().size());
 
-
   }
 
   public void update(float deltaTime) {
     camera.update();
     engine.update(deltaTime);
     renderer.setView(camera);
-
-
   }
 
   public EntityFactory getEntityFactory(){

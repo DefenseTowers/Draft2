@@ -115,5 +115,3 @@ public class CreepSystem extends IteratingSystem{
   }
 
 }
-
-
