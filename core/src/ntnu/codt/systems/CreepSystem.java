@@ -1,6 +1,7 @@
 package ntnu.codt.systems;
 
 
+import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -34,7 +35,7 @@ public class CreepSystem extends IteratingSystem{
   private ComponentMapper<PositionComponent> pm;
   private ComponentMapper<TextureComponent> tm;
   private ComponentMapper<TransformComponent> trm;
-  private ComponentMapper<CreepComponent> cm;
+  private ComponentMapper<HealthComponent> hm;
 
   private TiledMapTileLayer layer;
   private Array<Entity> queue;
@@ -42,13 +43,13 @@ public class CreepSystem extends IteratingSystem{
   private GameModel model;
 
   public CreepSystem(TiledMapTileLayer layer, GameModel model) {
-    super(Family.all(VelocityComponent.class, PositionComponent.class, TextureComponent.class, TransformComponent.class, CreepComponent.class).get());
+    super(Family.all(VelocityComponent.class, PositionComponent.class, TextureComponent.class, TransformComponent.class, HealthComponent.class).get());
 
     sm = ComponentMapper.getFor(VelocityComponent.class);
     pm = ComponentMapper.getFor(PositionComponent.class);
     tm = ComponentMapper.getFor(TextureComponent.class);
     trm = ComponentMapper.getFor(TransformComponent.class);
-    cm = ComponentMapper.getFor(CreepComponent.class);
+    hm = ComponentMapper.getFor(HealthComponent.class);
 
     observers = new ArrayList<Entity>();
     queue = new Array<Entity>();

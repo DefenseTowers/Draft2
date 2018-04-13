@@ -50,11 +50,12 @@ public enum Creeps implements Prototype<Entity, Creeps.Pack> {
         pm.pos = new Vector3(startx, starty, 0);
         tem.region = new TextureRegion(new Texture(Gdx.files.internal(this.texture)));
         hc.health = this.hp;
+        vs.velocity = new Vector3(0, 10, 0);
 
         entity.add(trm);
         entity.add(tem);
         entity.add(pm);
-        entity.add(hc);
+        entity.add(vs);
         entity.add(hc);
 
         pack.engine.addEntity(entity);
