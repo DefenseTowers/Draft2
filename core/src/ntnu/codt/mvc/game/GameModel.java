@@ -52,8 +52,9 @@ public class GameModel {
     engine.addSystem(new RenderSystem(game.batch, game.shape, game.assets));
     engine.addSystem(new TowerSystem(engine));
     engine.addSystem(new AnimationSystem());
-    engine.addSystem(new AttackSystem());
-    engine.addSystem(new CreepSystem(layer, this));
+    engine.addSystem(new AttackSystem(engine));
+    engine.addSystem(new CreepSystem(layer, engine, this));
+
 
     entityFactory = new EntityFactory(engine,layer);
 

@@ -12,14 +12,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
-import ntnu.codt.components.AttackComponent;
-import ntnu.codt.components.PositionComponent;
-import ntnu.codt.components.TextureComponent;
-import ntnu.codt.components.TransformComponent;
-import ntnu.codt.components.VelocityComponent;
+import ntnu.codt.components.*;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
@@ -28,17 +25,19 @@ import static java.lang.Math.atan2;
 public class TowerSystem extends IteratingSystem {
   private ComponentMapper<AttackComponent> am;
   private ComponentMapper<PositionComponent> pm;
+  private ComponentMapper<BoundsComponent> bm;
   private ComponentMapper<TransformComponent> trm;
   private ComponentMapper<TextureComponent> tem;
   private Array<Entity> queue;
   private PooledEngine engine;
 
   public TowerSystem(PooledEngine engine) {
-    super(Family.all(AttackComponent.class, PositionComponent.class, TransformComponent.class).get());
+    super(Family.all(AttackComponent.class, PositionComponent.class, TransformComponent.class, BoundsComponent.class).get());
 
     trm = ComponentMapper.getFor(TransformComponent.class);
     pm = ComponentMapper.getFor(PositionComponent.class);
     am = ComponentMapper.getFor(AttackComponent.class);
+    bm = ComponentMapper.getFor(BoundsComponent.class);
 
     queue = new Array<Entity>();
     this.engine = engine;
@@ -47,14 +46,11 @@ public class TowerSystem extends IteratingSystem {
 
   public void update(float deltaTime) {
     super.update(deltaTime);
-
     for (Entity entity : queue) {
       PositionComponent pc = pm.get(entity);
       AttackComponent ac = am.get(entity);
-      if (ac.lastShot -  System.currentTimeMillis() < -ac.reloadTime && ac.creepsInRange.size > 0) {
-        System.out.println("tower has something in range");
+      if (ac.lastShot -  System.currentTimeMillis() < -ac.reloadTime && ac.creepsInRange.size() > 0) {
         if (ac.attackRadius.contains(ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.x, ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.y)) {
-          System.out.println("trying to create attack");
           createAttack(deltaTime,pc.pos.x,
                         pc.pos.y,
                   ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.x,
@@ -62,33 +58,32 @@ public class TowerSystem extends IteratingSystem {
                   ac.creepsInRange.get(0).getComponent(VelocityComponent.class).velocity,
                   ac.attackRadius.radius,
                   ac.attackDamage,
-                  ac.attackVelocity);
+                  ac.attackVelocity,
+                  ac.creepsInRange.get(0));
                   ac.lastShot = System.currentTimeMillis();
 
 
-        }
-          else{
-          System.out.println("popping");
-            ac.creepsInRange.pop();
-          }
+
+        } else {
+            ac.creepsInRange.remove(0);
         }
       }
-      queue.clear();
     }
+    queue.clear();
+  }
 
 
-  public Entity createAttack(float deltaTime, float x, float y, float creepX, float creepY, Vector3 creepVelocity, float radius, int attackDamage, float attackVelocity){
+  public Entity createAttack(float deltaTime, float x, float y, float creepX, float creepY, Vector3 creepVelocity, float radius, int attackDamage, float attackVelocity, Entity target){
     Entity entity = engine.createEntity();
-    AttackComponent at = engine.createComponent(AttackComponent.class);
-    PositionComponent pm = engine.createComponent(PositionComponent.class);
+    ProjectileComponent prc = engine.createComponent(ProjectileComponent.class);
+    PositionComponent pom = engine.createComponent(PositionComponent.class);
     TextureComponent tem = engine.createComponent(TextureComponent.class);
     VelocityComponent vc = engine.createComponent(VelocityComponent.class);
     TransformComponent tc = engine.createComponent(TransformComponent.class);
 
-
-    pm.pos = new Vector3(x,y,0);
-    at.attackDamage = attackDamage;
-    at.attackRadius = new Circle(x,y,radius);
+    pom.pos = new Vector3(x,y,0);
+    prc.damage = attackDamage;
+    prc.target = target;
 
     //TODO create accurate shooting vector
 
@@ -117,8 +112,7 @@ public class TowerSystem extends IteratingSystem {
 
     // Aim the missile towards this location
     Vector3 aimDirection = new Vector3(interceptLocation.x-x,interceptLocation.y-y,0);
-    at.targetDistanceX = abs(aimDirection.x);
-    at.targetDistanceY = abs(aimDirection.y);
+    prc.targetDistance = new Vector2(abs(aimDirection.x), abs(aimDirection.y));
 
     float aimDirectionLen = aimDirection.len();
     aimDirection = new Vector3(aimDirection.x/aimDirectionLen,aimDirection.y/aimDirectionLen,0);
@@ -128,10 +122,8 @@ public class TowerSystem extends IteratingSystem {
 
     vc.velocity = new Vector3(aimDirection.x*attackVelocity,aimDirection.y*attackVelocity,0);
 
-
-
-    entity.add(at);
-    entity.add(pm);
+    entity.add(prc);
+    entity.add(pom);
     entity.add(tem);
     entity.add(vc);
     entity.add(tc);

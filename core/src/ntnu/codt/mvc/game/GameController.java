@@ -56,6 +56,7 @@ public class GameController extends Controller {
     if (Gdx.input.isKeyJustPressed(20)){
 //      model.entityFactory.createCreep();
       Creeps.SMALL_BOI.copy(new Creeps.Pack(model.touchPoint, model.engine));
+
     }
     if (Gdx.input.justTouched()) {
       model.touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);

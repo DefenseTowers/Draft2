@@ -72,26 +72,32 @@ public class EntityFactory {
 
 
   /*public Entity createCreep() {
+=======
+  public Entity createCreep(int health) {
+>>>>>>> 6e7832284d551f1585c4872d617de90bb3877f4e:core/src/ntnu/codt/EntityFactory.java
     Entity entity = engine.createEntity();
 
     TransformComponent trm = engine.createComponent(TransformComponent.class);
     PositionComponent pm = engine.createComponent(PositionComponent.class);
     TextureComponent tem = engine.createComponent(TextureComponent.class);
     VelocityComponent vm = engine.createComponent(VelocityComponent.class);
-    CreepComponent cc = engine.createComponent(CreepComponent.class);
+    HealthComponent hc = engine.createComponent(HealthComponent.class);
+
 
     tem.region = new TextureRegion(new Texture(Gdx.files.internal("badlogic.jpg")));
     pm.pos = new Vector3(20*30, 0, 0);
     vm.velocity = new Vector3(0, 10, 0);
+    hc.health = health;
 
-    System.out.println("created creep at pos: " + pm.pos.x + " " + pm.pos.y);
+    System.out.println("created creep at pos: " + pm.pos.x + " " + pm.pos.y+ " with health: "+hc.health);
+
 
 
     entity.add(pm);
     entity.add(tem);
     entity.add(vm);
     entity.add(trm);
-    entity.add(cc);
+    entity.add(hc);
     System.out.println(entity);
     engine.addEntity(entity);
 
