@@ -7,6 +7,8 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
@@ -33,6 +35,8 @@ public class CreepSystem extends IteratingSystem{
   private List<Entity> observers = new ArrayList<Entity>();
   private GameModel model;
   private PooledEngine engine;
+  private Sound die = Gdx.audio.newSound(Gdx.files.internal("sounds/die1.mp3"));
+
 
   private final float tileHeight;
   private final float tileWidth;
@@ -105,6 +109,7 @@ public class CreepSystem extends IteratingSystem{
     }
 
     if (pc.pos.y >= 720 || hc.health <= 0) {
+      die.play();
       for (Entity tower : observers) {
         AttackComponent ac = tower.getComponent(AttackComponent.class);
         ac.creepsInRange.remove(entity);

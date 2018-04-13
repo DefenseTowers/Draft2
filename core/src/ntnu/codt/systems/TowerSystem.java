@@ -7,6 +7,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -19,6 +20,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 
 
+
 public class TowerSystem extends IteratingSystem {
   private ComponentMapper<AttackComponent> am;
   private ComponentMapper<PositionComponent> pm;
@@ -27,6 +29,8 @@ public class TowerSystem extends IteratingSystem {
   private ComponentMapper<TextureComponent> tem;
   private Array<Entity> queue;
   private PooledEngine engine;
+  Sound attackSound = Gdx.audio.newSound(Gdx.files.internal("sounds/flaunch.wav"));
+
 
   public TowerSystem(PooledEngine engine) {
     super(Family.all(AttackComponent.class, PositionComponent.class, TransformComponent.class, BoundsComponent.class).get());
@@ -128,6 +132,7 @@ public class TowerSystem extends IteratingSystem {
     entity.add(tc);
 
     engine.addEntity(entity);
+    attackSound.play();
     return entity;
 
   }
