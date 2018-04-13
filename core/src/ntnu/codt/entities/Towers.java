@@ -16,7 +16,7 @@ import ntnu.codt.systems.CreepSystem;
 
 public enum Towers implements Prototype<Entity, Towers.Pack> {
 
-  FIRE("tower.png", 30, 60, 500, 300, 1, 10),
+  FIRE("fire.png", 30, 60, 500, 300, 1, 10),
   WATER("water.png", 30, 60, 150, 300, 5, 100),
   ICE("ice.png", 30, 60, 300 , 300, 5, 200);
 

@@ -82,7 +82,7 @@ public class TowerSystem extends IteratingSystem {
     prc.damage = attackDamage;
     prc.target = target;
     tc.rotation = 0;
-    tc.scale = new Vector2(0, 0);
+    tc.scale = new Vector2(1, 1);
 
     //TODO create accurate shooting vector
 
