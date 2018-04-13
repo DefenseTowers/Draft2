@@ -51,7 +51,7 @@ public enum Towers implements Prototype<Entity, Towers.Pack> {
 
     pm.pos = pack.pos.cpy();
     bc.bounds = new Rectangle(pm.pos.x-(this.width /2),pm.pos.y-(this.height /2),this.width,this.height);
-    tem.region = new TextureRegion(new Texture(Gdx.files.internal("towers/" + this.texture)));
+    tem.region = new TextureRegion(new Texture(Gdx.files.internal(this.texture)));
     at.attackRadius = new Circle(pm.pos.x,pm.pos.y,this.radius);
     at.attackDamage = this.damage;
     at.lastShot =  System.currentTimeMillis();

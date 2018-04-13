@@ -70,7 +70,8 @@ public class EntityFactory {
     return player;
   }
 
-  public Entity createCreep() {
+
+  /*public Entity createCreep() {
     Entity entity = engine.createEntity();
 
     TransformComponent trm = engine.createComponent(TransformComponent.class);
@@ -95,7 +96,7 @@ public class EntityFactory {
     engine.addEntity(entity);
 
     return entity;
-  }
+  }*/
 
   public Entity createCharacterEntity(int id, int health, int funds){
     Entity entity = engine.createEntity();

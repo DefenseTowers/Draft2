@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ntnu.codt.CoDT;
+import ntnu.codt.entities.Creeps;
 import ntnu.codt.entities.Towers;
 import ntnu.codt.core.observer.Subject;
 import ntnu.codt.mvc.Controller;
@@ -53,7 +54,8 @@ public class GameController extends Controller {
 
   public void update(float deltaTime) {
     if (Gdx.input.isKeyJustPressed(20)){
-      model.entityFactory.createCreep();
+//      model.entityFactory.createCreep();
+      Creeps.SMALL_BOI.copy(new Creeps.Pack(model.touchPoint, model.engine));
     }
     if (Gdx.input.justTouched()) {
       model.touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);
