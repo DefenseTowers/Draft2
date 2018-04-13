@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import ntnu.codt.components.*;
 import ntnu.codt.core.prototype.Prototype;
@@ -51,6 +52,9 @@ public enum Creeps implements Prototype<Entity, Creeps.Pack> {
         tem.region = new TextureRegion(new Texture(Gdx.files.internal(this.texture)));
         hc.health = this.hp;
         vs.velocity = new Vector3(0, 10, 0);
+
+        trm.rotation = 0.0f;
+        trm.scale = new Vector2(1, 1);
 
         entity.add(trm);
         entity.add(tem);

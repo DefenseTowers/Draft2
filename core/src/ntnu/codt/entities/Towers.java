@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import ntnu.codt.components.*;
 import ntnu.codt.core.prototype.Prototype;
@@ -58,6 +59,8 @@ public enum Towers implements Prototype<Entity, Towers.Pack> {
     at.attackVelocity = this.av;
     at.reloadTime = this.reload;
 
+    trm.rotation = 0.0f;
+    trm.scale = new Vector2(1, 1);
 
     entity.add(trm);
     entity.add(tem);

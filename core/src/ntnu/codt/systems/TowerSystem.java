@@ -8,10 +8,7 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -84,6 +81,8 @@ public class TowerSystem extends IteratingSystem {
     pom.pos = new Vector3(x,y,0);
     prc.damage = attackDamage;
     prc.target = target;
+    tc.rotation = 0;
+    tc.scale = new Vector2(0, 0);
 
     //TODO create accurate shooting vector
 

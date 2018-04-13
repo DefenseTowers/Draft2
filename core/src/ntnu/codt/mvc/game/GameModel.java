@@ -47,7 +47,7 @@ public class GameModel {
     renderer = new OrthogonalTiledMapRenderer(map);
 
 
-    engine = new PooledEngine();
+    engine = new PooledEngine(100, 1000, 100, 1000);
 
     engine.addSystem(new RenderSystem(game.batch, game.shape, game.assets));
     engine.addSystem(new TowerSystem(engine));
