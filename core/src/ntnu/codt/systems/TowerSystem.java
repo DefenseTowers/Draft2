@@ -110,14 +110,16 @@ public class TowerSystem extends IteratingSystem {
     Vector3 interceptLocation = new Vector3(creepX+(targetVelocity.x*(interceptTime)),creepY+(targetVelocity.y*interceptTime),0);
 
     // Aim the missile towards this location
-    Vector3 aimDirection = new Vector3(interceptLocation.x-x,interceptLocation.y-y,0);
+    Vector2 aimDirection = new Vector2(interceptLocation.x-x,interceptLocation.y-y);
     prc.targetDistance = new Vector2(abs(aimDirection.x), abs(aimDirection.y));
 
     float aimDirectionLen = aimDirection.len();
-    aimDirection = new Vector3(aimDirection.x/aimDirectionLen,aimDirection.y/aimDirectionLen,0);
-    float rotation = (float)atan2(aimDirection.x,aimDirection.y);
+    aimDirection = new Vector2(aimDirection.x/aimDirectionLen,aimDirection.y/aimDirectionLen);
+//    float rotation = (float)atan2(aimDirection.x,aimDirection.y);
 
-    tem.region = new TextureRegion(new Texture(Gdx.files.internal("projectile.png")));
+    tem.region = new TextureRegion(new Texture(Gdx.files.internal("projectiles/fire.png")));
+    tc.rotation = aimDirection.angleRad();
+    tc.scale.set(0.5f, 0.5f);
 
     vc.velocity = new Vector3(aimDirection.x*attackVelocity,aimDirection.y*attackVelocity,0);
 

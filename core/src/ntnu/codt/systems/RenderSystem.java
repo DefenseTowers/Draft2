@@ -70,9 +70,9 @@ public class RenderSystem extends IteratingSystem {
 
       batch.draw(
           tex,
-          pos.x, pos.y,
+          pos.x - originX, pos.y - originY,
           originX, originY,
-          40, 40,
+          width, height,
           t.scale.x, t.scale.y,
           MathUtils.radiansToDegrees * t.rotation
       );
