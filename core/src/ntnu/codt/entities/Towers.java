@@ -3,24 +3,22 @@ package ntnu.codt.entities;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import ntnu.codt.components.*;
-import ntnu.codt.core.prototype.Prototype;
+import ntnu.codt.core.prototype.Prototype2;
 import ntnu.codt.systems.CreepSystem;
 
-public enum Towers implements Prototype<Entity, Towers.Pack> {
+public enum Towers implements Prototype2<Entity, Vector3, PooledEngine> {
 
-  FIRE("towers/fire.png", 30, 60, 500, 200, 1, 250),
-  WATER("towers/fire.png", 30, 60, 150, 300, 5, 100),
-  ICE("towers/ice.png", 30, 60, 300 , 300, 5, 200);
+  FIRE(30, 60, 500, 200, 1, 250),
+  WATER(30, 60, 150, 300, 5, 100),
+  ICE(30, 60, 300 , 300, 5, 200);
 
-  private final String texture;
+  private TextureRegion textureRegion;
   private final float width;
   private final float height;
   private final float radius;
@@ -29,8 +27,7 @@ public enum Towers implements Prototype<Entity, Towers.Pack> {
   private final long reload;
 
 
-  Towers(String texture, float width, float height, float radius, float av, int damage, long reload) {
-    this.texture = texture;
+  Towers(float width, float height, float radius, float av, int damage, long reload) {
     this.width = width;
     this.height = height;
     this.radius = radius;
@@ -39,20 +36,24 @@ public enum Towers implements Prototype<Entity, Towers.Pack> {
     this.reload = reload;
   }
 
+  public void setTextureRegion(TextureRegion region) {
+    this.textureRegion = region;
+  }
+
   @Override
-  public Entity copy(Pack pack) {
-    Entity entity = pack.engine.createEntity();
+  public Entity copy(Vector3 pos, PooledEngine engine) {
+    Entity entity = engine.createEntity();
 
 
-    TransformComponent trm = pack.engine.createComponent(TransformComponent.class);
-    TextureComponent tem = pack.engine.createComponent(TextureComponent.class);
-    PositionComponent pm = pack.engine.createComponent(PositionComponent.class);
-    AttackComponent at = pack.engine.createComponent(AttackComponent.class);
-    BoundsComponent bc = pack.engine.createComponent(BoundsComponent.class);
+    TransformComponent trm = engine.createComponent(TransformComponent.class);
+    TextureComponent tem = engine.createComponent(TextureComponent.class);
+    PositionComponent pm = engine.createComponent(PositionComponent.class);
+    AttackComponent at = engine.createComponent(AttackComponent.class);
+    BoundsComponent bc = engine.createComponent(BoundsComponent.class);
 
-    pm.pos = pack.pos.cpy();
+    pm.pos = pos.cpy();
     bc.bounds = new Rectangle(pm.pos.x-(this.width /2),pm.pos.y-(this.height /2),this.width,this.height);
-    tem.region = new TextureRegion(new Texture(Gdx.files.internal(this.texture)));
+    tem.region = this.textureRegion;
     at.attackRadius = new Circle(pm.pos.x,pm.pos.y,this.radius);
     at.attackDamage = this.damage;
     at.lastShot =  System.currentTimeMillis();
@@ -68,21 +69,10 @@ public enum Towers implements Prototype<Entity, Towers.Pack> {
     entity.add(at);
     entity.add(bc);
 
-    pack.engine.getSystem(CreepSystem.class).addObserver(entity);
-    pack.engine.addEntity(entity);
+    engine.getSystem(CreepSystem.class).addObserver(entity);
+    engine.addEntity(entity);
 
     return entity;
-  }
-
-  public static class Pack {
-    public final Vector3 pos;
-    public final PooledEngine engine;
-
-    public Pack(Vector3 pos, PooledEngine engine) {
-      this.pos = pos;
-      this.engine = engine;
-    }
-
   }
 
 }

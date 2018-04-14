@@ -1,11 +1,9 @@
 package ntnu.codt.mvc.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
@@ -66,7 +64,7 @@ public class GameController extends Controller {
   public void update(float deltaTime) {
     if (Gdx.input.isKeyJustPressed(20)){
 //      model.entityFactory.createCreep();
-      Creeps.SMALL_BOI.copy(new Creeps.Pack(model.touchPoint, model.engine));
+      Creeps.SMALL_BOI.copy(model.engine);
 
     }
     if (Gdx.input.justTouched()) {
@@ -75,7 +73,7 @@ public class GameController extends Controller {
       subjectTouch.publish(null);
       System.out.println("just touched");
       if (legalTowerPlacement(new Rectangle(model.touchPoint.x - 15, model.touchPoint.y - 30, 30, 60))) {
-        Towers.FIRE.copy(new Towers.Pack(model.touchPoint, model.engine));
+        Towers.FIRE.copy(model.touchPoint, model.engine);
 //        model.entityFactory.createTower(model.touchPoint.x, model.touchPoint.y, 30,60,300,300,20,1000);
         model.ecoBus.publish(-100);
       }

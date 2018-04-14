@@ -9,72 +9,62 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import ntnu.codt.components.*;
-import ntnu.codt.core.prototype.Prototype;
-import ntnu.codt.systems.CreepSystem;
+import ntnu.codt.core.prototype.Prototype1;
 
-public enum Creeps implements Prototype<Entity, Creeps.Pack> {
+public enum Creeps implements Prototype1<Entity, PooledEngine> {
 
-    SMALL_BOI("badlogic.jpg", 20, 20, 250, 20*30, 0),
-    BIG_BOI("bigboi.png", 40, 40, 600, 20*30, 0);
+  SMALL_BOI(20, 20, 250, 20*30, 0),
+  BIG_BOI(40, 40, 600, 20*30, 0);
 
-    private final String texture;
-    private final float width;
-    private final float height;
-    private final int hp;
-    private final int startx;
-    private final int starty;
+  private TextureRegion textureRegion;
+  private final float width;
+  private final float height;
+  private final int hp;
+  private final int startx;
+  private final int starty;
 
-    Creeps(String texture, float width, float height, int hp, int startx, int starty){
-        this.texture = texture;
-        this.width = width;
-        this.height = height;
-        this.hp = hp;
-        this.startx = startx;
-        this.starty = starty;
-    }
+  Creeps(float width, float height, int hp, int startx, int starty){
+    this.width = width;
+    this.height = height;
+    this.hp = hp;
+    this.startx = startx;
+    this.starty = starty;
+  }
 
-    @Override
-    public Entity copy(Pack pack) {
-        Entity entity = pack.engine.createEntity();
+  public void setTextureRegion(TextureRegion textureRegion) {
+    this.textureRegion = textureRegion;
+  }
 
-        TransformComponent trm = pack.engine.createComponent(TransformComponent.class);
-        TextureComponent tem = pack.engine.createComponent(TextureComponent.class);
-        PositionComponent pm = pack.engine.createComponent(PositionComponent.class);
-        VelocityComponent vs = pack.engine.createComponent(VelocityComponent.class);
-        HealthComponent hc = pack.engine.createComponent(HealthComponent.class);
+  @Override
+  public Entity copy(PooledEngine engine) {
+    Entity entity = engine.createEntity();
 
-        pm.pos = new Vector3(startx, starty, 0);
-        tem.region = new TextureRegion(new Texture(Gdx.files.internal(this.texture)));
-        hc.health = this.hp;
-        vs.velocity = new Vector3(0, 10, 0);
+    TransformComponent trm = engine.createComponent(TransformComponent.class);
+    TextureComponent tem = engine.createComponent(TextureComponent.class);
+    PositionComponent pm = engine.createComponent(PositionComponent.class);
+    VelocityComponent vs = engine.createComponent(VelocityComponent.class);
+    HealthComponent hc = engine.createComponent(HealthComponent.class);
 
-        trm.rotation = 0.0f;
-        trm.scale = new Vector2(1, 1);
+    pm.pos = new Vector3(startx, starty, 0);
+    tem.region = this.textureRegion;
+    hc.health = this.hp;
+    vs.velocity = new Vector3(0, 10, 0);
 
-        entity.add(trm);
-        entity.add(tem);
-        entity.add(pm);
-        entity.add(vs);
-        entity.add(hc);
+    trm.rotation = 0.0f;
+    trm.scale = new Vector2(1, 1);
 
-        pack.engine.addEntity(entity);
+    entity.add(trm);
+    entity.add(tem);
+    entity.add(pm);
+    entity.add(vs);
+    entity.add(hc);
 
-        return entity;
-    }
+    engine.addEntity(entity);
 
-    public static class Pack {
-        public final Vector3 pos;
-        public final PooledEngine engine;
+    return entity;
+  }
 
-        public Pack(Vector3 pos, PooledEngine engine) {
-            this.pos = pos;
-            this.engine = engine;
-        }
-
-    }
 }

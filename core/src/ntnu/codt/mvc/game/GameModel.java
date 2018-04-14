@@ -1,7 +1,6 @@
 package ntnu.codt.mvc.game;
 
 
-
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -13,10 +12,12 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import ntnu.codt.CoDT;
+import ntnu.codt.entities.Creeps;
 import ntnu.codt.entities.EntityFactory;
 import ntnu.codt.components.PlayerComponent;
 import ntnu.codt.core.observer.Observer;
 import ntnu.codt.core.observer.Subject;
+import ntnu.codt.entities.Towers;
 import ntnu.codt.systems.AnimationSystem;
 import ntnu.codt.systems.AttackSystem;
 import ntnu.codt.systems.CreepSystem;
@@ -24,6 +25,7 @@ import ntnu.codt.systems.RenderSystem;
 import ntnu.codt.systems.TowerSystem;
 
 public class GameModel {
+  private final CoDT game;
   public final EntityFactory entityFactory;
   public final OrthographicCamera camera;
   public final PooledEngine engine;
@@ -38,6 +40,7 @@ public class GameModel {
 
 
   public GameModel(CoDT game) {
+    this.game = game;
     touchPoint = new Vector3();
     camera = new OrthographicCamera(1280, 720);
     camera.position.set(1280 / 2, 720 / 2, 0);
@@ -60,6 +63,8 @@ public class GameModel {
     engine.addSystem(new AttackSystem(engine));
     engine.addSystem(new CreepSystem(layer, engine, this));
 
+    loadTowers();
+    loadCreeps();
 
     entityFactory = new EntityFactory(engine,layer);
 
@@ -83,8 +88,13 @@ public class GameModel {
     renderer.setView(camera);
   }
 
-  public EntityFactory getEntityFactory(){
-    return entityFactory;
+  private void loadTowers() {
+    Towers.FIRE.setTextureRegion(game.assets.towers.fire);
+    Towers.ICE.setTextureRegion(game.assets.towers.ice);
+  }
+
+  private void loadCreeps() {
+    Creeps.SMALL_BOI.setTextureRegion(game.assets.creeps.little[0]);
   }
 
 }
