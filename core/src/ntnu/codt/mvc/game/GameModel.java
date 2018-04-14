@@ -94,7 +94,7 @@ public class GameModel {
   }
 
   private void loadCreeps() {
-    Creeps.SMALL_BOI.setTextureRegion(game.assets.creeps.little[0]);
+    Creeps.SMALL_BOI.setTextureRegions(game.assets.creeps.little);
   }
 
 }
