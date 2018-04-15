@@ -17,6 +17,7 @@ import ntnu.codt.entities.EntityFactory;
 import ntnu.codt.components.PlayerComponent;
 import ntnu.codt.core.observer.Observer;
 import ntnu.codt.core.observer.Subject;
+import ntnu.codt.entities.Projectiles;
 import ntnu.codt.entities.Towers;
 import ntnu.codt.systems.AnimationSystem;
 import ntnu.codt.systems.AttackSystem;
@@ -57,14 +58,15 @@ public class GameModel {
     skin.add("2", game.assets.getTexture("2.png"));
 
     engine = new PooledEngine(100, 1000, 100, 1000);
+    engine.addSystem(new AnimationSystem());
     engine.addSystem(new RenderSystem(game.batch, game.shape, game.assets));
     engine.addSystem(new TowerSystem(engine));
-    engine.addSystem(new AnimationSystem());
     engine.addSystem(new AttackSystem(engine));
     engine.addSystem(new CreepSystem(layer, engine, this));
 
     loadTowers();
     loadCreeps();
+    loadProjectiles();
 
     entityFactory = new EntityFactory(engine,layer);
 
@@ -95,6 +97,10 @@ public class GameModel {
 
   private void loadCreeps() {
     Creeps.SMALL_BOI.setTextureRegions(game.assets.creeps.little);
+  }
+
+  private void loadProjectiles() {
+    Projectiles.FIRE.setAnimation(game.assets.projectiles.fire);
   }
 
 }

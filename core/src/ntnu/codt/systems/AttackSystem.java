@@ -11,7 +11,6 @@ import ntnu.codt.components.*;
 
 import static java.lang.Math.abs;
 
-
 public class AttackSystem extends IteratingSystem {
   private ComponentMapper<PositionComponent> pom;
   private ComponentMapper<ProjectileComponent> prm;

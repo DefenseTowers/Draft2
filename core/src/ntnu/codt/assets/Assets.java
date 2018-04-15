@@ -6,6 +6,7 @@ import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -20,7 +21,7 @@ public class Assets implements Disposable, AssetErrorListener {
   public final Fonts fonts;
   public final AssetTowers towers;
   public final AssetCreeps creeps;
-
+  public final AssetProjectiles projectiles;
 
   public Assets(AssetManager assetManager) {
     this.assetManager = assetManager;
@@ -51,6 +52,7 @@ public class Assets implements Disposable, AssetErrorListener {
 
     towers = new AssetTowers(atlas);
     creeps = new AssetCreeps(atlas);
+    projectiles = new AssetProjectiles(atlas);
 
     fonts = new Fonts();
   }
@@ -93,6 +95,28 @@ public class Assets implements Disposable, AssetErrorListener {
       TextureRegion[][] temp = atlas.findRegion("creep_little_haunt_spritesheet").split(38, 40);
       little = temp[0];
       bigboy = atlas.findRegion("little_haunt");
+    }
+  }
+
+  public class AssetProjectiles {
+    public final Animation<TextureRegion> fire;
+
+    public AssetProjectiles(TextureAtlas atlas) {
+      TextureRegion tempRegion = atlas.findRegion("fire_spritesheet");
+      TextureRegion[][] fsheet = tempRegion.split(104, 40);
+
+      for (TextureRegion[] r : fsheet) {
+        for (TextureRegion t : r) {
+          t.flip(true, false);
+        }
+      }
+
+      fire = new Animation<TextureRegion>(
+          0.1f,
+          fsheet[0][0], fsheet[0][1], fsheet[0][2],
+          fsheet[1][0], fsheet[1][1], fsheet[1][2]
+      );
+      fire.setPlayMode(Animation.PlayMode.LOOP);
     }
   }
 

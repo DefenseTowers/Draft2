@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import ntnu.codt.components.*;
+import ntnu.codt.entities.Projectiles;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
@@ -25,6 +26,7 @@ public class TowerSystem extends IteratingSystem {
   private ComponentMapper<BoundsComponent> bm;
   private ComponentMapper<TransformComponent> trm;
   private ComponentMapper<TextureComponent> tem;
+  private ComponentMapper<VelocityComponent> vm;
   private Array<Entity> queue;
   private PooledEngine engine;
 
@@ -35,6 +37,7 @@ public class TowerSystem extends IteratingSystem {
     pm = ComponentMapper.getFor(PositionComponent.class);
     am = ComponentMapper.getFor(AttackComponent.class);
     bm = ComponentMapper.getFor(BoundsComponent.class);
+    vm = ComponentMapper.getFor(VelocityComponent.class);
 
     queue = new Array<Entity>();
     this.engine = engine;
@@ -48,21 +51,27 @@ public class TowerSystem extends IteratingSystem {
       AttackComponent ac = am.get(entity);
       if (ac.lastShot -  System.currentTimeMillis() < -ac.reloadTime && ac.creepsInRange.size() > 0) {
         if (ac.attackRadius.contains(ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.x, ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.y)) {
-          createAttack(deltaTime,pc.pos.x,
-                        pc.pos.y,
-                  ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.x,
-                  ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.y,
-                  ac.creepsInRange.get(0).getComponent(VelocityComponent.class).velocity,
-                  ac.attackRadius.radius,
-                  ac.attackDamage,
-                  ac.attackVelocity,
-                  ac.creepsInRange.get(0));
-                  ac.lastShot = System.currentTimeMillis();
+          ac.projectile.copy(
+              engine,
+              pc.pos,
+              pm.get(ac.creepsInRange.get(0)).pos,
+              vm.get(ac.creepsInRange.get(0)).velocity,
+              ac.creepsInRange.get(0)
+          );
+//          createAttack(deltaTime,pc.pos.x,
+//                        pc.pos.y,
+//                  ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.x,
+//                  ac.creepsInRange.get(0).getComponent(PositionComponent.class).pos.y,
+//                  ac.creepsInRange.get(0).getComponent(VelocityComponent.class).velocity,
+//                  ac.attackRadius.radius,
+//                  ac.attackDamage,
+//                  ac.attackVelocity,
+//                  ac.creepsInRange.get(0));
 
-
+          ac.lastShot = System.currentTimeMillis();
 
         } else {
-            ac.creepsInRange.remove(0);
+          ac.creepsInRange.remove(0);
         }
       }
     }
@@ -70,13 +79,14 @@ public class TowerSystem extends IteratingSystem {
   }
 
 
-  public Entity createAttack(float deltaTime, float x, float y, float creepX, float creepY, Vector3 creepVelocity, float radius, int attackDamage, float attackVelocity, Entity target){
+/*  public Entity createAttack(float deltaTime, float x, float y, float creepX, float creepY, Vector3 creepVelocity, float radius, int attackDamage, float attackVelocity, Entity target){
     Entity entity = engine.createEntity();
     ProjectileComponent prc = engine.createComponent(ProjectileComponent.class);
     PositionComponent pom = engine.createComponent(PositionComponent.class);
     TextureComponent tem = engine.createComponent(TextureComponent.class);
     VelocityComponent vc = engine.createComponent(VelocityComponent.class);
     TransformComponent tc = engine.createComponent(TransformComponent.class);
+    AnimationComponent ac = engine.createComponent(AnimationComponent.class);
 
     pom.pos = new Vector3(x,y,0);
     prc.damage = attackDamage;
@@ -132,7 +142,7 @@ public class TowerSystem extends IteratingSystem {
     engine.addEntity(entity);
     return entity;
 
-  }
+  }*/
 
   @Override
   protected void processEntity(Entity entity, float deltaTime) {

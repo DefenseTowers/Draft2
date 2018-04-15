@@ -60,7 +60,6 @@ public class RenderSystem extends IteratingSystem {
 
       TextureRegion tex = tem.get(entity).region;
       Vector3 pos = pm.get(entity).pos;
-
       TransformComponent t = trm.get(entity);
 
       final float width = tex.getRegionWidth();

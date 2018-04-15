@@ -14,9 +14,9 @@ import ntnu.codt.systems.CreepSystem;
 
 public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Integer> {
 
-  FIRE(30, 60, 500, 200, 1, 250),
-  WATER(30, 60, 150, 300, 5, 100),
-  ICE(30, 60, 300 , 300, 5, 200);
+  FIRE(30, 60, 500, 200, 1, 250, Projectiles.FIRE),
+  WATER(30, 60, 150, 300, 5, 100, Projectiles.FIRE),
+  ICE(30, 60, 300 , 300, 5, 200, Projectiles.ICE);
 
   private TextureRegion textureRegion;
   private final float width;
@@ -25,15 +25,16 @@ public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Integer>
   private final float av;
   private final int damage;
   private final long reload;
+  private final Projectiles projectile;
 
-
-  Towers(float width, float height, float radius, float av, int damage, long reload) {
+  Towers(float width, float height, float radius, float av, int damage, long reload, Projectiles projectile) {
     this.width = width;
     this.height = height;
     this.radius = radius;
     this.av = av;
     this.damage = damage;
     this.reload = reload;
+    this.projectile = projectile;
   }
 
   public void setTextureRegion(TextureRegion region) {
@@ -60,6 +61,7 @@ public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Integer>
     at.lastShot =  System.currentTimeMillis();
     at.attackVelocity = this.av;
     at.reloadTime = this.reload;
+    at.projectile = this.projectile;
 
     trm.rotation = 0.0f;
     trm.scale = new Vector2(1, 1);
