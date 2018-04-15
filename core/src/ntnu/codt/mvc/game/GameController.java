@@ -13,6 +13,7 @@ import java.util.List;
 
 
 import ntnu.codt.CoDT;
+import ntnu.codt.components.PlayerComponent;
 import ntnu.codt.entities.Creeps;
 import ntnu.codt.entities.Towers;
 import ntnu.codt.core.observer.Subject;
@@ -64,7 +65,7 @@ public class GameController extends Controller {
   public void update(float deltaTime) {
     if (Gdx.input.isKeyJustPressed(20)){
 //      model.entityFactory.createCreep();
-      Creeps.SMALL_BOI.copy(model.engine);
+      Creeps.SMALL_BOI.copy(model.engine, PlayerComponent.FACTION2);
 
     }
     if (Gdx.input.justTouched()) {
@@ -73,7 +74,7 @@ public class GameController extends Controller {
       subjectTouch.publish(null);
       System.out.println("just touched");
       if (legalTowerPlacement(new Rectangle(model.touchPoint.x - 15, model.touchPoint.y - 30, 30, 60))) {
-        Towers.FIRE.copy(model.touchPoint, model.engine);
+        Towers.FIRE.copy(model.touchPoint, model.engine, PlayerComponent.FACTION1);
 //        model.entityFactory.createTower(model.touchPoint.x, model.touchPoint.y, 30,60,300,300,20,1000);
         model.ecoBus.publish(-100);
       }

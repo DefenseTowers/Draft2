@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import ntnu.codt.components.*;
-import ntnu.codt.core.prototype.Prototype1;
+import ntnu.codt.core.prototype.Prototype2;
 
-public enum Creeps implements Prototype1<Entity, PooledEngine> {
+public enum Creeps implements Prototype2<Entity, PooledEngine, Integer> {
 
   SMALL_BOI(20, 20, 250, 20*30, 0),
   BIG_BOI(40, 40, 600, 20*30, 0);
@@ -34,7 +34,7 @@ public enum Creeps implements Prototype1<Entity, PooledEngine> {
   }
 
   @Override
-  public Entity copy(PooledEngine engine) {
+  public Entity copy(PooledEngine engine, Integer faction) {
     Entity entity = engine.createEntity();
 
     TransformComponent trm = engine.createComponent(TransformComponent.class);
@@ -47,6 +47,7 @@ public enum Creeps implements Prototype1<Entity, PooledEngine> {
 
     sc.set(State.NORTH);
     cc.regions = textureRegions;
+    cc.faction = faction;
     pm.pos = new Vector3(startx, starty, 0);
     tem.region = this.textureRegions[sc.get()];
     hc.health = this.hp;
