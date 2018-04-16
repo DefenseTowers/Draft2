@@ -1,5 +1,6 @@
 package ntnu.codt.assets;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
@@ -21,7 +22,7 @@ public class Assets implements Disposable, AssetErrorListener {
   public Assets(AssetManager assetManager) {
     this.assetManager = assetManager;
     assetManager.setErrorListener(this);
-    this.skin = new Skin();
+    this.skin = new Skin(Gdx.files.internal("default/skin/uiskin.json"));
     //TODO load texture assets
 
     assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));

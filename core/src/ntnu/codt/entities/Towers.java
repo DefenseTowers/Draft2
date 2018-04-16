@@ -21,12 +21,12 @@ public enum Towers implements Prototype<Entity, Towers.Pack> {
   ICE("fire.png", 30, 60, 300 , 300, 5, 200);
 
   public final String texture;
-  private final float width;
-  private final float height;
-  private final float radius;
-  private final float av;
-  private final int damage;
-  private final long reload;
+  public final float width;
+  public final float height;
+  public final float radius;
+  public final float av;
+  public final int damage;
+  public final long reload;
 
 
   Towers(String texture, float width, float height, float radius, float av, int damage, long reload) {

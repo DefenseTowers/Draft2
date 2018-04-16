@@ -21,6 +21,7 @@ import ntnu.codt.core.observer.Observer;
 import ntnu.codt.entities.Towers;
 import ntnu.codt.graphics.Pixmap;
 import ntnu.codt.mvc.View;
+import ntnu.codt.ui.TowerButton;
 
 public class GameView implements View {
   private final int VIEWPORT_WIDTH = 1280;
@@ -32,7 +33,7 @@ public class GameView implements View {
   private Stage ui;
   private Skin skin;
   private int screenHeight, screenWidth;
-  private Array<ImageButton> towerBtnList;
+  private Array<TowerButton> towerBtnList;
 
 
 
@@ -62,7 +63,7 @@ public class GameView implements View {
 
   public void render(float deltaTime) {
 
-
+    game.batch.enableBlending();
     gameModel.renderer.render();
     updateModel(deltaTime);
     game.batch.setProjectionMatrix(camera.combined);
@@ -79,7 +80,7 @@ public class GameView implements View {
 
     this.ui = new Stage();
 
-    towerBtnList = new Array<ImageButton>();
+    towerBtnList = new Array<TowerButton>();
     int i = 0;
     for(Towers tower: Towers.values()){
 
@@ -103,14 +104,14 @@ public class GameView implements View {
       pixmap.drawPixmap(t.getTextureData().consumePixmap(), 15,15);
 
       skin.add("towerTex"+i, new Texture(pixmap));
-      ImageButton imgbtn = new ImageButton(skin.getDrawable("towerTex"+i), skin.getDrawable("tower"+i));
-      ImageButton imgbtn2 = new ImageButton(skin.getDrawable("towerTex"+i));
-      imgbtn.setPosition(screenWidth * 8 / 10 - imgbtn.getWidth() / 2, screenHeight * (5+2*i)/10 - imgbtn.getHeight() / 2);
-      imgbtn2.setPosition(screenWidth * 8 / 10 - imgbtn.getWidth() / 2, screenHeight * (5+2*i)/10 - imgbtn.getHeight() / 2);
+      TowerButton imgBtn = new TowerButton(skin.getDrawable("towerTex"+i), skin.getDrawable("tower"+i), tower);
+      TowerButton imgBtn2 = new TowerButton(skin.getDrawable("towerTex"+i), tower);
+      imgBtn.setPosition(screenWidth * 8 / 10 - imgBtn.getWidth() / 2, screenHeight * (5+2*i)/10 - imgBtn.getHeight() / 2);
+      imgBtn2.setPosition(screenWidth * 8 / 10 - imgBtn2.getWidth() / 2, screenHeight * (5+2*i)/10 - imgBtn2.getHeight() / 2);
 
-      towerBtnList.add(imgbtn);
-      ui.addActor(imgbtn2);
-      ui.addActor(imgbtn);
+      towerBtnList.add(imgBtn);
+      ui.addActor(imgBtn2);
+      ui.addActor(imgBtn);
       i++;
     }
     // Get Player funds here
@@ -130,7 +131,7 @@ public class GameView implements View {
     return ui;
   }
 
-  public Array<ImageButton> getTowerBtnList(){
+  public Array<TowerButton> getTowerBtnList(){
     return towerBtnList;
   }
 
