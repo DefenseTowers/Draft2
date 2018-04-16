@@ -19,11 +19,7 @@ import ntnu.codt.core.observer.Observer;
 import ntnu.codt.core.observer.Subject;
 import ntnu.codt.entities.Projectiles;
 import ntnu.codt.entities.Towers;
-import ntnu.codt.systems.AnimationSystem;
-import ntnu.codt.systems.AttackSystem;
-import ntnu.codt.systems.CreepSystem;
-import ntnu.codt.systems.RenderSystem;
-import ntnu.codt.systems.TowerSystem;
+import ntnu.codt.systems.*;
 
 public class GameModel {
   private final CoDT game;
@@ -63,6 +59,9 @@ public class GameModel {
     engine.addSystem(new TowerSystem(engine));
     engine.addSystem(new AttackSystem(engine));
     engine.addSystem(new CreepSystem(layer, engine, this));
+    engine.addSystem(new EconomySystem());
+
+    CoDT.EVENT_BUS.register(engine.getSystem(EconomySystem.class));
 
     loadTowers();
     loadCreeps();
