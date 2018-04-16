@@ -3,61 +3,65 @@ package ntnu.codt.entities;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import ntnu.codt.components.*;
-import ntnu.codt.core.prototype.Prototype;
+import ntnu.codt.core.prototype.Prototype3;
 import ntnu.codt.systems.CreepSystem;
 
-public enum Towers implements Prototype<Entity, Towers.Pack> {
+public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Integer> {
 
-  FIRE("fire.png", 30, 60, 500, 300, 1, 10),
-  WATER("fire.png", 30, 60, 150, 300, 5, 100),
-  ICE("fire.png", 30, 60, 300 , 300, 5, 200);
+ FIRE(30, 60, 500, 200, 1, 250, Projectiles.FIRE),
+  WATER(30, 60, 150, 300, 5, 100, Projectiles.FIRE),
+  ICE(30, 60, 300 , 300, 5, 200, Projectiles.ICE);
 
-  public final String texture;
+  public TextureRegion textureRegion;
   public final float width;
   public final float height;
   public final float radius;
   public final float av;
   public final int damage;
   public final long reload;
+  public final Projectiles projectile;
 
-
-  Towers(String texture, float width, float height, float radius, float av, int damage, long reload) {
-    this.texture = texture;
+  Towers(float width, float height, float radius, float av, int damage, long reload, Projectiles projectile) {
     this.width = width;
     this.height = height;
     this.radius = radius;
     this.av = av;
     this.damage = damage;
     this.reload = reload;
+    this.projectile = projectile;
+  }
+
+  public void setTextureRegion(TextureRegion region) {
+    this.textureRegion = region;
   }
 
   @Override
-  public Entity copy(Pack pack) {
-    Entity entity = pack.engine.createEntity();
+  public Entity copy(Vector3 pos, PooledEngine engine, Integer faction) {
+    Entity entity = engine.createEntity();
 
+    TransformComponent trm = engine.createComponent(TransformComponent.class);
+    TextureComponent tem = engine.createComponent(TextureComponent.class);
+    PositionComponent pm = engine.createComponent(PositionComponent.class);
+    AttackComponent at = engine.createComponent(AttackComponent.class);
+    BoundsComponent bc = engine.createComponent(BoundsComponent.class);
+    TowerComponent tc = engine.createComponent(TowerComponent.class);
 
-    TransformComponent trm = pack.engine.createComponent(TransformComponent.class);
-    TextureComponent tem = pack.engine.createComponent(TextureComponent.class);
-    PositionComponent pm = pack.engine.createComponent(PositionComponent.class);
-    AttackComponent at = pack.engine.createComponent(AttackComponent.class);
-    BoundsComponent bc = pack.engine.createComponent(BoundsComponent.class);
-
-    pm.pos = pack.pos.cpy();
+    tc.faction = faction;
+    pm.pos = pos.cpy();
     bc.bounds = new Rectangle(pm.pos.x-(this.width /2),pm.pos.y-(this.height /2),this.width,this.height);
-    tem.region = new TextureRegion(new Texture(Gdx.files.internal(this.texture)));
+    tem.region = this.textureRegion;
     at.attackRadius = new Circle(pm.pos.x,pm.pos.y,this.radius);
     at.attackDamage = this.damage;
     at.lastShot =  System.currentTimeMillis();
     at.attackVelocity = this.av;
     at.reloadTime = this.reload;
+    at.projectile = this.projectile;
 
     trm.rotation = 0.0f;
     trm.scale = new Vector2(1, 1);
@@ -67,22 +71,12 @@ public enum Towers implements Prototype<Entity, Towers.Pack> {
     entity.add(pm);
     entity.add(at);
     entity.add(bc);
+    entity.add(tc);
 
-    pack.engine.getSystem(CreepSystem.class).addObserver(entity);
-    pack.engine.addEntity(entity);
+    engine.getSystem(CreepSystem.class).addObserver(entity);
+    engine.addEntity(entity);
 
     return entity;
-  }
-
-  public static class Pack {
-    public final Vector3 pos;
-    public final PooledEngine engine;
-
-    public Pack(Vector3 pos, PooledEngine engine) {
-      this.pos = pos;
-      this.engine = engine;
-    }
-
   }
 
 }

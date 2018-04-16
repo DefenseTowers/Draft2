@@ -1,11 +1,9 @@
 package ntnu.codt.components;
 
 import com.badlogic.ashley.core.Component;
-
-/**
- * Created by JMS on 21/03/2018.
- */
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class CreepComponent implements Component {
-    public int x;
+  public TextureRegion[] regions;
+  public int faction;
 }

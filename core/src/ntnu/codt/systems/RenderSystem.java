@@ -60,7 +60,6 @@ public class RenderSystem extends IteratingSystem {
 
       TextureRegion tex = tem.get(entity).region;
       Vector3 pos = pm.get(entity).pos;
-
       TransformComponent t = trm.get(entity);
 
       final float width = tex.getRegionWidth();
@@ -70,9 +69,9 @@ public class RenderSystem extends IteratingSystem {
 
       batch.draw(
           tex,
-          pos.x, pos.y,
+          pos.x - originX, pos.y - originY,
           originX, originY,
-          40, 40,
+          width, height,
           t.scale.x, t.scale.y,
           MathUtils.radiansToDegrees * t.rotation
       );

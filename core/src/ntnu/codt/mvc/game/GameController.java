@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
@@ -24,6 +25,7 @@ import ntnu.codt.components.AttackComponent;
 import ntnu.codt.components.PositionComponent;
 import ntnu.codt.components.ProjectileComponent;
 import ntnu.codt.components.TextureComponent;
+import ntnu.codt.components.PlayerComponent;
 import ntnu.codt.entities.Creeps;
 import ntnu.codt.entities.Towers;
 import ntnu.codt.core.observer.Subject;
@@ -84,7 +86,10 @@ public class GameController extends Controller implements EntityListener {
 
   public void update(float deltaTime) {
     if (Gdx.input.isKeyJustPressed(20)){
-      Creeps.SMALL_BOI.copy(new Creeps.Pack(model.touchPoint, model.engine));
+
+//      model.entityFactory.createCreep();
+      Creeps.SMALL_BOI.copy(model.engine, PlayerComponent.FACTION2);
+
     }
 /*    if (Gdx.input.justTouched()) {
       model.touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -92,7 +97,7 @@ public class GameController extends Controller implements EntityListener {
       subjectTouch.publish(null);
       System.out.println("just touched");
       if (legalTowerPlacement(new Rectangle(model.touchPoint.x - 15, model.touchPoint.y - 30, 30, 60))) {
-        Towers.FIRE.copy(new Towers.Pack(model.touchPoint, model.engine));
+        Towers.FIRE.copy(model.touchPoint, model.engine, PlayerComponent.FACTION1);
 //        model.entityFactory.createTower(model.touchPoint.x, model.touchPoint.y, 30,60,300,300,20,1000);
         model.ecoBus.publish(-100);
       }
@@ -155,8 +160,6 @@ public class GameController extends Controller implements EntityListener {
           Vector3 pos = new Vector3(event.getStageX()-15, event.getStageY()-30, 0);
           if(legalPlacement) {
 
-
-            Towers.FIRE.copy(new Towers.Pack(pos, model.engine));
             //towerButton.towerType.copy(new Towers.Pack(pos, model.engine));
 
           }

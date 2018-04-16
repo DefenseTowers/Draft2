@@ -25,6 +25,7 @@ public class CoDT extends Game{
 	
 	@Override
 	public void create () {
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
 		batch = new SpriteBatch();
 		shape = new ShapeRenderer();

@@ -95,7 +95,7 @@ public class GameView implements View {
 
       skin.add("rect", texture);
 
-      Texture t = new Texture(Gdx.files.internal(tower.texture));
+      Texture t = new Texture(tower.textureRegion.getTexture().getTextureData());
 
       skin.add("tower"+i, t);
 

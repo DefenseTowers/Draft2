@@ -2,6 +2,7 @@ package ntnu.codt.mvc.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -57,10 +58,10 @@ public class MenuView implements View {
     this.skin = new Skin();
     this.stage = new Stage();
 
-    skin.add("playBtnUp", assets.getTexture("playBtnUp.png"));
-    skin.add("playBtnDown", assets.getTexture("playBtnDown.png"));
-    skin.add("settingsBtnUp", assets.getTexture("settingsBtnUp.png"));
-    skin.add("settingsBtnDown", assets.getTexture("settingsBtnDown.png"));
+    skin.add("playBtnUp", assets.ui.playButtonUp, TextureRegion.class);
+    skin.add("playBtnDown", assets.ui.playButtonDown, TextureRegion.class);
+    skin.add("settingsBtnUp", assets.ui.settingsButtonUp, TextureRegion.class);
+    skin.add("settingsBtnDown", assets.ui.settingsButtonDown, TextureRegion.class);
 
     ImageButton playBtn = new ImageButton(skin.getDrawable("playBtnUp"), skin.getDrawable("playBtnDown"));
     ImageButton settingsBtn = new ImageButton(skin.getDrawable("settingsBtnUp"), skin.getDrawable("settingsBtnDown"));
