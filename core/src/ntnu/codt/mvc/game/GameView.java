@@ -112,7 +112,7 @@ public class GameView implements View {
 
       skin.add("tower"+i, tower.textureRegion, TextureRegion.class);
       skin.add("towerTex"+i, new Texture(pixmap));
-      
+
       TowerButton imgBtn = new TowerButton(skin.getDrawable("towerTex"+i), skin.getDrawable("tower"+i), tower);
       TowerButton imgBtn2 = new TowerButton(skin.getDrawable("towerTex"+i), tower);
       imgBtn.setPosition(screenWidth * 8 / 10 - imgBtn.getWidth() / 2, screenHeight * (5+2*i)/10 - imgBtn.getHeight() / 2);

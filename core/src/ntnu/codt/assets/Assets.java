@@ -107,10 +107,12 @@ public class Assets implements Disposable, AssetErrorListener {
   public class AssetTowers {
     public final AtlasRegion fire;
     public final AtlasRegion ice;
+    public final AtlasRegion lightning;
 
     public AssetTowers(TextureAtlas atlas) {
       fire = atlas.findRegion("fire");
       ice = atlas.findRegion("ice");
+      lightning = atlas.findRegion("lightning");
     }
   }
 
@@ -127,6 +129,7 @@ public class Assets implements Disposable, AssetErrorListener {
 
   public class AssetProjectiles {
     public final Animation<TextureRegion> fire;
+    public final Animation<TextureRegion> ice;
 
     public AssetProjectiles(TextureAtlas atlas) {
       TextureRegion tempRegion = atlas.findRegion("fire_projectile");
@@ -144,6 +147,22 @@ public class Assets implements Disposable, AssetErrorListener {
           fsheet[1][0], fsheet[1][1], fsheet[1][2]
       );
       fire.setPlayMode(Animation.PlayMode.LOOP);
+
+
+      tempRegion = atlas.findRegion("ice_projectile");
+      TextureRegion[][] isheet = tempRegion.split(104, 40);
+      for (TextureRegion[] r : isheet) {
+        for (TextureRegion t : r) {
+          t.flip(true, false);
+        }
+      }
+
+      ice = new Animation<TextureRegion>(
+          0.1f,
+          isheet[0][0], isheet[0][1], isheet[0][2],
+          isheet[1][0], isheet[1][1], isheet[1][2]
+      );
+      ice.setPlayMode(Animation.PlayMode.LOOP);
     }
   }
 
