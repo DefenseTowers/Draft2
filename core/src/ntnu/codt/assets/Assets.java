@@ -54,7 +54,7 @@ public class Assets implements Disposable, AssetErrorListener {
 
     TextureAtlas atlas = assetManager.get(ATLAS_PATH);
     for (Texture t : atlas.getTextures()) {
-      t.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+      t.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
     }
 
     towers = new AssetTowers(atlas);
