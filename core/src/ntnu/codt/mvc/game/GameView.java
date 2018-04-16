@@ -98,23 +98,21 @@ public class GameView implements View {
 
       Texture t = new Texture(tower.textureRegion.getTexture().getTextureData());
       t.getTextureData().prepare();
-//      pixmap.drawPixmap(t.getTextureData().consumePixmap(), 15, 15);
 
       com.badlogic.gdx.graphics.Pixmap tempPix = t.getTextureData().consumePixmap();
       for (int j = 0; j < tower.textureRegion.getRegionWidth(); j++) {
         for (int k = 0; k < tower.textureRegion.getRegionHeight(); k++) {
-          pixmap.drawPixel(j, k, tempPix.getPixel(j + tower.textureRegion.getRegionX(), k + tower.textureRegion.getRegionY()));
+          pixmap.drawPixel(
+              j + ((pixmap.getWidth() - tower.textureRegion.getRegionWidth()) / 2),
+              k + ((pixmap.getHeight() - tower.textureRegion.getRegionHeight()) / 2),
+              tempPix.getPixel(j + tower.textureRegion.getRegionX(), k + tower.textureRegion.getRegionY())
+          );
         }
       }
-//      pixmap.drawPixel();
 
       skin.add("tower"+i, tower.textureRegion, TextureRegion.class);
-
-      // Merge tower texture and rectangle to create a button texture
-//      t.getTextureData().prepare();
-//      pixmap.drawPixmap(t.getTextureData().consumePixmap(), 15,15);
-
       skin.add("towerTex"+i, new Texture(pixmap));
+      
       TowerButton imgBtn = new TowerButton(skin.getDrawable("towerTex"+i), skin.getDrawable("tower"+i), tower);
       TowerButton imgBtn2 = new TowerButton(skin.getDrawable("towerTex"+i), tower);
       imgBtn.setPosition(screenWidth * 8 / 10 - imgBtn.getWidth() / 2, screenHeight * (5+2*i)/10 - imgBtn.getHeight() / 2);
