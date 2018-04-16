@@ -4,6 +4,7 @@ package ntnu.codt.entities;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import ntnu.codt.components.*;
@@ -13,13 +14,13 @@ import static java.lang.Math.abs;
 
 public enum Projectiles implements Prototype5<Entity, PooledEngine, Vector3, Vector3, Vector3, Entity> {
 
-  FIRE(10, 100),
+  FIRE(10, 200),
   ICE(10, 100);
 
   private final int damage;
   private final float velocity;
   //private Vector2 creepVelocity;
-  private Animation animation;
+  private Animation<TextureRegion> animation;
 
   Projectiles(int damage, float velocity) {
     this.damage = damage;
@@ -90,7 +91,6 @@ public enum Projectiles implements Prototype5<Entity, PooledEngine, Vector3, Vec
     tc.scale.set(0.5f, 0.5f);
 
     vc.velocity = new Vector3(aimDirection.x*this.velocity,aimDirection.y*this.velocity,0);
-
 
     entity.add(prc);
     entity.add(pom);

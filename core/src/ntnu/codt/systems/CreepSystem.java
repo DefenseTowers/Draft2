@@ -71,7 +71,6 @@ public class CreepSystem extends IteratingSystem{
     super.update(deltaTime);
   }
 
-
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
 
@@ -125,9 +124,7 @@ public class CreepSystem extends IteratingSystem{
       }
       engine.removeEntity(entity);
     }
-
     tc.region = cc.regions[sc.get()];
-
   }
 
 }

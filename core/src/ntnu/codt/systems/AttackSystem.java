@@ -30,11 +30,6 @@ public class AttackSystem extends IteratingSystem {
     this.engine = engine;
   }
 
-  public void update(float deltaTime){
-      super.update(deltaTime);
-  }
-
-
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
     PositionComponent poc = pom.get(entity);
