@@ -26,13 +26,16 @@ import ntnu.codt.components.PositionComponent;
 import ntnu.codt.components.ProjectileComponent;
 import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.PlayerComponent;
+import ntnu.codt.core.eventhandler.Event;
+import ntnu.codt.core.eventhandler.Subscribe;
 import ntnu.codt.entities.Creeps;
 import ntnu.codt.entities.Towers;
 import ntnu.codt.core.observer.Subject;
+import ntnu.codt.events.TowerPlaced;
 import ntnu.codt.mvc.Controller;
 import ntnu.codt.ui.TowerButton;
 
-public class GameController extends Controller implements EntityListener {
+public class GameController extends Controller{
   private final GameModel model;
   private Subject<Void> subjectTouch;
   private GameView view;
@@ -43,10 +46,7 @@ public class GameController extends Controller implements EntityListener {
     this.model = model;
     subjectTouch = new Subject<Void>();
     this.view = gameView;
-    model.engine.addEntityListener(Family.all(PositionComponent.class, TextureComponent.class, AttackComponent.class)
-        .exclude(ProjectileComponent.class)
-        .get(),
-        this);
+    CoDT.EVENT_BUS.register(this);
     setListeners();
 
   }
@@ -161,6 +161,7 @@ public class GameController extends Controller implements EntityListener {
           if(legalPlacement) {
 
             towerButton.towerType.copy(pos, model.engine, 1);
+            CoDT.EVENT_BUS.post(new TowerPlaced(towerButton.towerType, pos));
 //            towerButton.towerType.copy(new Towers.Pack(pos, model.engine));
 
           }
@@ -173,23 +174,29 @@ public class GameController extends Controller implements EntityListener {
     }
   }
 
-  @Override
-  public void entityAdded(Entity entity) {
+  @Subscribe
+  public void entityAdded(TowerPlaced event) {
 
-    int dmg = entity.getComponent(AttackComponent.class).attackDamage;
-    float range = entity.getComponent(AttackComponent.class).attackRadius.radius;
-    Vector3 pos = entity.getComponent(PositionComponent.class).pos;
-    Texture texture = entity.getComponent(TextureComponent.class).region.getTexture();
+    int dmg = event.tower.damage;
+    float range = event.tower.radius;
+    Vector3 pos = event.pos;
+    float width = event.tower.width;
+    float height = event.tower.height;
 
 
-    final Label description = new Label("Damage: " + dmg + "\n" +
-        "Range: " + range + "\n", game.assets.skin);
-    description.setPosition(pos.x+texture.getWidth(), pos.y+texture.getHeight(), 0);
+    final Label description = new Label(
+        "Type: " + event.tower + "\n" +
+        "Damage: " + dmg + "\n" +
+        "Range: " + range + "\n", game.assets.skin
+    );
+
+
+    description.setPosition(pos.x+width, pos.y+height, 0);
     description.setVisible(false);
 
     Button btn = new Button(game.assets.skin);
-    btn.setSize(texture.getWidth(), texture.getHeight());
-    btn.setPosition(pos.x, pos.y);
+    btn.setSize(width, height);
+    btn.setPosition(pos.x - width/2, pos.y - height/2);
     btn.getColor().a = 0f;
     btn.setVisible(true);
 
@@ -208,19 +215,8 @@ public class GameController extends Controller implements EntityListener {
     stage.addActor(description);
     stage.addActor(btn);
 
-/*
-    TextField description = new TextField("Damage: " + dmg + "\n" +
-        "Range: " + range + "\n", textStyle);
-
-*/
-
-    // gameView.addActor??
 
     System.out.println("entity added");
   }
 
-  @Override
-  public void entityRemoved(Entity entity) {
-
-  }
 }
