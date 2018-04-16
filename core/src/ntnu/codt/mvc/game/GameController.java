@@ -151,17 +151,16 @@ public class GameController extends Controller implements EntityListener {
             towerButton.getColor().a = 1f;
             legalPlacement = true;
           }
-          towerButton.moveBy(x - width / 2, y - height / 2);
+          towerButton.setPosition(event.getStageX() - towerButton.getWidth() / 2, event.getStageY() - towerButton.getHeight() / 2);
         }
 
         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
           towerButton.setX(startX);
           towerButton.setY(startY);
-          Vector3 pos = new Vector3(event.getStageX()-15, event.getStageY()-30, 0);
+          Vector3 pos = new Vector3(event.getStageX(), event.getStageY(), 0);
           if(legalPlacement) {
 
             towerButton.towerType.copy(pos, model.engine, 1);
-//            towerButton.towerType.copy(new Towers.Pack(pos, model.engine));
 
           }
         }
