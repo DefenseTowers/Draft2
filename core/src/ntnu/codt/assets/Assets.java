@@ -107,10 +107,12 @@ public class Assets implements Disposable, AssetErrorListener {
   public class AssetTowers {
     public final AtlasRegion fire;
     public final AtlasRegion ice;
+    public final AtlasRegion lightning;
 
     public AssetTowers(TextureAtlas atlas) {
       fire = atlas.findRegion("fire");
       ice = atlas.findRegion("ice");
+      lightning = atlas.findRegion("lightning");
     }
   }
 

@@ -95,11 +95,12 @@ public class GameModel {
   private void loadTowers() {
     Towers.FIRE.setTextureRegion(game.assets.towers.fire);
     Towers.ICE.setTextureRegion(game.assets.towers.ice);
-    Towers.WATER.setTextureRegion(game.assets.towers.fire);
+    Towers.LIGHTNING.setTextureRegion(game.assets.towers.lightning);
   }
 
   private void loadCreeps() {
     Creeps.SMALL_BOI.setTextureRegions(game.assets.creeps.little);
+    Creeps.BIG_BOI.setTextureRegions(game.assets.creeps.bigboy);
   }
 
   private void loadProjectiles() {
