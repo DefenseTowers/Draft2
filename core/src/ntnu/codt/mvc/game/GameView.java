@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -96,12 +97,22 @@ public class GameView implements View {
       skin.add("rect", texture);
 
       Texture t = new Texture(tower.textureRegion.getTexture().getTextureData());
+      t.getTextureData().prepare();
+//      pixmap.drawPixmap(t.getTextureData().consumePixmap(), 15, 15);
 
-      skin.add("tower"+i, t);
+      com.badlogic.gdx.graphics.Pixmap tempPix = t.getTextureData().consumePixmap();
+      for (int j = 0; j < tower.textureRegion.getRegionWidth(); j++) {
+        for (int k = 0; k < tower.textureRegion.getRegionHeight(); k++) {
+          pixmap.drawPixel(j, k, tempPix.getPixel(j + tower.textureRegion.getRegionX(), k + tower.textureRegion.getRegionY()));
+        }
+      }
+//      pixmap.drawPixel();
+
+      skin.add("tower"+i, tower.textureRegion, TextureRegion.class);
 
       // Merge tower texture and rectangle to create a button texture
-      t.getTextureData().prepare();
-      pixmap.drawPixmap(t.getTextureData().consumePixmap(), 15,15);
+//      t.getTextureData().prepare();
+//      pixmap.drawPixmap(t.getTextureData().consumePixmap(), 15,15);
 
       skin.add("towerTex"+i, new Texture(pixmap));
       TowerButton imgBtn = new TowerButton(skin.getDrawable("towerTex"+i), skin.getDrawable("tower"+i), tower);

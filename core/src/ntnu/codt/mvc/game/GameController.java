@@ -160,7 +160,8 @@ public class GameController extends Controller implements EntityListener {
           Vector3 pos = new Vector3(event.getStageX()-15, event.getStageY()-30, 0);
           if(legalPlacement) {
 
-            //towerButton.towerType.copy(new Towers.Pack(pos, model.engine));
+            towerButton.towerType.copy(pos, model.engine, 1);
+//            towerButton.towerType.copy(new Towers.Pack(pos, model.engine));
 
           }
         }
