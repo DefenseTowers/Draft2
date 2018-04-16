@@ -7,18 +7,15 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.ObjectMap;
 
 import ntnu.codt.assets.Assets;
-import ntnu.codt.mvc.Controller;
-import ntnu.codt.mvc.View;
+import ntnu.codt.core.eventhandler.EventBus;
 import ntnu.codt.mvc.game.GameScreen;
-import ntnu.codt.mvc.menu.MenuController;
 import ntnu.codt.mvc.menu.MenuScreen;
 
 public class CoDT extends Game{
 
-
+  public static EventBus EVENT_BUS;
 	public SpriteBatch batch;
 	public ShapeRenderer shape;
 	public Assets assets;
@@ -27,10 +24,10 @@ public class CoDT extends Game{
 	public void create () {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
+		EVENT_BUS = new EventBus();
 		batch = new SpriteBatch();
 		shape = new ShapeRenderer();
 		assets = new Assets(new AssetManager());
-
 
 
 		setScreen(new MenuScreen(this));
