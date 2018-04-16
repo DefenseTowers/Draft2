@@ -134,6 +134,8 @@ public class GameView implements View {
     cashAmount.setPosition(screenWidth/2, screenHeight * 9/10);
     ui.addActor(cashAmount);
 
+
+
   }
 
   public Stage getUi(){

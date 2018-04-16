@@ -31,6 +31,7 @@ import ntnu.codt.core.eventhandler.Subscribe;
 import ntnu.codt.entities.Creeps;
 import ntnu.codt.entities.Towers;
 import ntnu.codt.core.observer.Subject;
+import ntnu.codt.events.CreepDied;
 import ntnu.codt.events.TowerPlaced;
 import ntnu.codt.mvc.Controller;
 import ntnu.codt.ui.TowerButton;
@@ -108,9 +109,6 @@ public class GameController extends Controller{
 
   @Override
   public boolean touchDown ( int x, int y, int pointer, int button){
-/*    model.touchPoint.set(x, y, 0);
-    model.camera.unproject(model.touchPoint);
-    System.out.println("Just touched " + x + y);*/
     return true;
   }
 
@@ -217,6 +215,11 @@ public class GameController extends Controller{
 
 
     System.out.println("entity added");
+  }
+
+  @Subscribe
+  public void updateFunds(CreepDied event){
+    model.player1.getComponent(PlayerComponent.class).funds += event.bounty;
   }
 
 }
