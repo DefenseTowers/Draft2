@@ -4,6 +4,7 @@ package ntnu.codt.mvc.game;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -54,8 +55,8 @@ public class GameModel {
 
     this.skin = new Skin();
 
-    skin.add("1", game.assets.getTexture("1.png"));
-    skin.add("2", game.assets.getTexture("2.png"));
+    skin.add("1", game.assets.ui.one, TextureRegion.class);
+    skin.add("2", game.assets.ui.two, TextureRegion.class);
 
     engine = new PooledEngine(100, 1000, 100, 1000);
     engine.addSystem(new AnimationSystem());
