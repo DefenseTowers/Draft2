@@ -7,11 +7,6 @@ import com.badlogic.ashley.systems.IteratingSystem;
 
 import ntnu.codt.components.PlayerComponent;
 
-
-/**
- * Created by oddmrog on 05.03.18.
- */
-
 public class EconomySystem extends IteratingSystem {
 
 

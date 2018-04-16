@@ -11,7 +11,6 @@ import ntnu.codt.components.*;
 
 import static java.lang.Math.abs;
 
-
 public class AttackSystem extends IteratingSystem {
   private ComponentMapper<PositionComponent> pom;
   private ComponentMapper<ProjectileComponent> prm;
@@ -30,11 +29,6 @@ public class AttackSystem extends IteratingSystem {
 
     this.engine = engine;
   }
-
-  public void update(float deltaTime){
-      super.update(deltaTime);
-  }
-
 
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
