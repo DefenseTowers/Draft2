@@ -15,7 +15,7 @@ import static java.lang.Math.abs;
 public enum Projectiles implements Prototype5<Entity, PooledEngine, Vector3, Vector3, Vector3, Entity> {
 
   FIRE(10, 200),
-  ICE(10, 100);
+  ICE(10, 400);
 
   private final int damage;
   private final float velocity;
