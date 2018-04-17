@@ -1,6 +1,7 @@
 package ntnu.codt.mvc.game;
 
-
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -20,11 +21,7 @@ import ntnu.codt.core.observer.Observer;
 import ntnu.codt.core.observer.Subject;
 import ntnu.codt.entities.Projectiles;
 import ntnu.codt.entities.Towers;
-import ntnu.codt.systems.AnimationSystem;
-import ntnu.codt.systems.AttackSystem;
-import ntnu.codt.systems.CreepSystem;
-import ntnu.codt.systems.RenderSystem;
-import ntnu.codt.systems.TowerSystem;
+import ntnu.codt.systems.*;
 
 public class GameModel {
   private final CoDT game;
@@ -58,12 +55,16 @@ public class GameModel {
     skin.add("1", game.assets.ui.one, TextureRegion.class);
     skin.add("2", game.assets.ui.two, TextureRegion.class);
 
+
     engine = new PooledEngine(100, 1000, 100, 1000);
     engine.addSystem(new AnimationSystem());
     engine.addSystem(new RenderSystem(game.batch, game.shape, game.assets));
     engine.addSystem(new TowerSystem(engine));
     engine.addSystem(new AttackSystem(engine));
     engine.addSystem(new CreepSystem(layer, engine, this));
+    engine.addSystem(new EconomySystem());
+
+    CoDT.EVENT_BUS.register(engine.getSystem(EconomySystem.class));
 
     loadTowers();
     loadCreeps();
@@ -94,14 +95,17 @@ public class GameModel {
   private void loadTowers() {
     Towers.FIRE.setTextureRegion(game.assets.towers.fire);
     Towers.ICE.setTextureRegion(game.assets.towers.ice);
+    Towers.LIGHTNING.setTextureRegion(game.assets.towers.lightning);
   }
 
   private void loadCreeps() {
     Creeps.SMALL_BOI.setTextureRegions(game.assets.creeps.little);
+    Creeps.BIG_BOI.setTextureRegions(game.assets.creeps.bigboy);
   }
 
   private void loadProjectiles() {
     Projectiles.FIRE.setAnimation(game.assets.projectiles.fire);
+    Projectiles.ICE.setAnimation(game.assets.projectiles.ice);
   }
 
 }

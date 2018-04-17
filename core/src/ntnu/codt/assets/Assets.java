@@ -11,7 +11,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 
 public class Assets implements Disposable, AssetErrorListener {
@@ -19,15 +20,19 @@ public class Assets implements Disposable, AssetErrorListener {
 
   public final AssetManager assetManager;
   public final Fonts fonts;
+
+  public Skin skin;
+
   public final AssetTowers towers;
   public final AssetCreeps creeps;
   public final AssetProjectiles projectiles;
   public final AssetUI ui;
 
+
   public Assets(AssetManager assetManager) {
     this.assetManager = assetManager;
     assetManager.setErrorListener(this);
-
+    this.skin = new Skin(Gdx.files.internal("default/skin/uiskin.json"));
     //TODO load texture assets
 
     //assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
@@ -42,19 +47,21 @@ public class Assets implements Disposable, AssetErrorListener {
 
     assetManager.finishLoading();
 
+
     for (String a : assetManager.getAssetNames()) {
       Gdx.app.debug("ASSETS", a);
     }
 
     TextureAtlas atlas = assetManager.get(ATLAS_PATH);
     for (Texture t : atlas.getTextures()) {
-      t.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+      t.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
     }
 
     towers = new AssetTowers(atlas);
     creeps = new AssetCreeps(atlas);
     projectiles = new AssetProjectiles(atlas);
     ui = new AssetUI(atlas);
+
 
     fonts = new Fonts();
   }
@@ -100,10 +107,12 @@ public class Assets implements Disposable, AssetErrorListener {
   public class AssetTowers {
     public final AtlasRegion fire;
     public final AtlasRegion ice;
+    public final AtlasRegion lightning;
 
     public AssetTowers(TextureAtlas atlas) {
       fire = atlas.findRegion("fire");
       ice = atlas.findRegion("ice");
+      lightning = atlas.findRegion("lightning");
     }
   }
 
@@ -120,6 +129,7 @@ public class Assets implements Disposable, AssetErrorListener {
 
   public class AssetProjectiles {
     public final Animation<TextureRegion> fire;
+    public final Animation<TextureRegion> ice;
 
     public AssetProjectiles(TextureAtlas atlas) {
       TextureRegion tempRegion = atlas.findRegion("fire_projectile");
@@ -137,6 +147,22 @@ public class Assets implements Disposable, AssetErrorListener {
           fsheet[1][0], fsheet[1][1], fsheet[1][2]
       );
       fire.setPlayMode(Animation.PlayMode.LOOP);
+
+
+      tempRegion = atlas.findRegion("ice_projectile");
+      TextureRegion[][] isheet = tempRegion.split(104, 40);
+      for (TextureRegion[] r : isheet) {
+        for (TextureRegion t : r) {
+          t.flip(true, false);
+        }
+      }
+
+      ice = new Animation<TextureRegion>(
+          0.1f,
+          isheet[0][0], isheet[0][1], isheet[0][2],
+          isheet[1][0], isheet[1][1], isheet[1][2]
+      );
+      ice.setPlayMode(Animation.PlayMode.LOOP);
     }
   }
 

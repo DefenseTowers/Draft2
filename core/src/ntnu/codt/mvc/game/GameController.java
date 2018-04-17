@@ -1,74 +1,97 @@
 package ntnu.codt.mvc.game;
 
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntityListener;
+import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 import ntnu.codt.CoDT;
+import ntnu.codt.components.AttackComponent;
+import ntnu.codt.components.PositionComponent;
+import ntnu.codt.components.ProjectileComponent;
+import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.PlayerComponent;
+import ntnu.codt.core.eventhandler.Event;
+import ntnu.codt.core.eventhandler.Subscribe;
 import ntnu.codt.entities.Creeps;
 import ntnu.codt.entities.Towers;
 import ntnu.codt.core.observer.Subject;
+import ntnu.codt.events.TowerPlaced;
 import ntnu.codt.mvc.Controller;
+import ntnu.codt.ui.TowerButton;
 
-public class GameController extends Controller {
+public class GameController extends Controller{
   private final GameModel model;
   private Subject<Void> subjectTouch;
   private GameView view;
-  private Stage ui;
 
   public GameController(CoDT game, GameModel model, GameView gameView) {
 
     super(game);
     this.model = model;
     subjectTouch = new Subject<Void>();
-    this.ui = gameView.getUi();
-
+    this.view = gameView;
+    CoDT.EVENT_BUS.register(this);
     setListeners();
 
   }
 
   private boolean legalTowerPlacement(Rectangle bounds){
-    float tileHeight = model.layer2.getTileHeight(), tileWidth = model.layer.getTileWidth();
-    TiledMapTile bottomLeft = model.layer2.getCell((int) Math.floor(bounds.getX() / tileWidth), (int) Math.floor(bounds.getY() / tileHeight)).getTile();
-    TiledMapTile topLeft = model.layer2.getCell((int) Math.floor(bounds.getX() / tileWidth), (int) Math.floor((bounds.getY()+bounds.getHeight()) / tileHeight)).getTile();
-    TiledMapTile topRight = model.layer2.getCell((int) Math.floor((bounds.getX()+bounds.getWidth()) / tileWidth), (int) Math.floor((bounds.getY()+bounds.getHeight()) / tileHeight)).getTile();;
-    TiledMapTile bottomRight = model.layer2.getCell((int) Math.floor((bounds.getX()+bounds.getWidth()) / tileWidth), (int) Math.floor((bounds.getY()+bounds.getHeight()) / tileHeight)).getTile();
-    boolean legal = true;
 
-    List<TiledMapTile> tiles = new ArrayList<TiledMapTile>();
-    tiles.add(bottomLeft);
-    tiles.add(topLeft);
-    tiles.add(topRight);
-    tiles.add(bottomRight);
+    try {
 
-    //370,369,345,346
-    for (int i = 0; i < tiles.size(); i++) {
-      if (tiles.get(i).getId() == 395 | tiles.get(i).getId() == 1) {
-        legal = true;
-      } else {
-        return false;
+      float tileHeight = model.layer2.getTileHeight(), tileWidth = model.layer.getTileWidth();
+      TiledMapTile bottomLeft = model.layer2.getCell((int) Math.floor(bounds.getX() / tileWidth), (int) Math.floor(bounds.getY() / tileHeight)).getTile();
+      TiledMapTile topLeft = model.layer2.getCell((int) Math.floor(bounds.getX() / tileWidth), (int) Math.floor((bounds.getY()+bounds.getHeight()) / tileHeight)).getTile();
+      TiledMapTile topRight = model.layer2.getCell((int) Math.floor((bounds.getX()+bounds.getWidth()) / tileWidth), (int) Math.floor((bounds.getY()+bounds.getHeight()) / tileHeight)).getTile();;
+      TiledMapTile bottomRight = model.layer2.getCell((int) Math.floor((bounds.getX()+bounds.getWidth()) / tileWidth), (int) Math.floor((bounds.getY()+bounds.getHeight()) / tileHeight)).getTile();
+      boolean legal = true;
+
+      List<TiledMapTile> tiles = new ArrayList<TiledMapTile>();
+      tiles.add(bottomLeft);
+      tiles.add(topLeft);
+      tiles.add(topRight);
+      tiles.add(bottomRight);
+
+      //370,369,345,346
+      for (int i = 0; i < tiles.size(); i++) {
+        if (tiles.get(i).getId() == 395 | tiles.get(i).getId() == 1) {
+          legal = true;
+        } else {
+          return false;
+        }
       }
+      return legal;
+    }catch (NullPointerException e){
+      System.out.println("out of bounds");
+      return false;
     }
-    return legal;
 
   }
 
   public void update(float deltaTime) {
     if (Gdx.input.isKeyJustPressed(20)){
+
 //      model.entityFactory.createCreep();
       Creeps.SMALL_BOI.copy(model.engine, PlayerComponent.FACTION2);
 
     }
-    if (Gdx.input.justTouched()) {
+/*    if (Gdx.input.justTouched()) {
       model.touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);
       model.camera.unproject(model.touchPoint);
       subjectTouch.publish(null);
@@ -79,15 +102,15 @@ public class GameController extends Controller {
         model.ecoBus.publish(-100);
       }
 
-    }
+    }*/
 
   }
 
   @Override
   public boolean touchDown ( int x, int y, int pointer, int button){
-    model.touchPoint.set(x, y, 0);
+/*    model.touchPoint.set(x, y, 0);
     model.camera.unproject(model.touchPoint);
-    System.out.println("Just touched " + x + y);
+    System.out.println("Just touched " + x + y);*/
     return true;
   }
 
@@ -99,42 +122,101 @@ public class GameController extends Controller {
 
   public void setListeners() {
 
-    final int screenHeight = Gdx.graphics.getHeight();
-    final int screenWidth = Gdx.graphics.getWidth();
-    final Actor dragImage = ui.getActors().get(0);
-    final Actor playBtn = ui.getActors().get(1);
 
-    //System.out.println(ui.getActors().toString());
+    final Array<TowerButton> towerBtnList = view.getTowerBtnList();
 
+    for (TowerButton btn : towerBtnList) {
+      final TowerButton towerButton = btn;
 
-    dragImage.addListener(new DragListener() {
-      public void touchDragged(InputEvent event, float x, float y, int pointer) {
-        float xx = dragImage.getX();
-        float yy = dragImage.getY();
-        dragImage.moveBy(x - dragImage.getWidth() / 2, y - dragImage.getHeight() / 2);
-        //System.out.println("dragged image coords:" + xx + "," + yy);
+      towerButton.addListener(new DragListener() {
 
-        if ((screenHeight - xx - yy) > 0) {
-          System.out.println("under lgiine" + screenHeight + "x: " + xx + "y: " + yy);
-          //dragImage.setDrawable(skin.getDrawable("2"));
+        float startX = towerButton.getX();
+        float startY = towerButton.getY();
 
+        boolean legalPlacement;
 
-        } else {
-          System.out.println("above line");
-          //dragImage.setDrawable(skin.getDrawable("1"));
+        public void touchDragged(InputEvent event, float x, float y, int pointer) {
+
+          event.getButton();
+
+          float height = towerButton.towerType.height;
+          float width = towerButton.towerType.width;
+
+          Rectangle boundingBox = new Rectangle(event.getStageX() - width/2, event.getStageY() - height/2, width, height);
+
+          if(!legalTowerPlacement(boundingBox)){
+            towerButton.getColor().a = 0.5f;
+            legalPlacement = false;
+          } else {
+            towerButton.getColor().a = 1f;
+            legalPlacement = true;
+          }
+          towerButton.setPosition(event.getStageX() - towerButton.getWidth() / 2, event.getStageY() - towerButton.getHeight() / 2);
         }
-      }
 
-      public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-        dragImage.setX(playBtn.getX());
-        dragImage.setY(playBtn.getY());
-        // Add a tower at this touchpoint if legal position and sufficient funds
-      }
+        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+          towerButton.setX(startX);
+          towerButton.setY(startY);
+          Vector3 pos = new Vector3(event.getStageX(), event.getStageY(), 0);
+          if(legalPlacement) {
 
-      public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-        return true;
+            towerButton.towerType.copy(pos, model.engine, 1);
+            CoDT.EVENT_BUS.post(new TowerPlaced(towerButton.towerType, pos));
+//            towerButton.towerType.copy(new Towers.Pack(pos, model.engine));
+
+          }
+        }
+
+        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+          return true;
+        }
+      });
+    }
+  }
+
+  @Subscribe
+  public void entityAdded(TowerPlaced event) {
+
+    int dmg = event.tower.damage;
+    float range = event.tower.radius;
+    Vector3 pos = event.pos;
+    float width = event.tower.width;
+    float height = event.tower.height;
+
+
+    final Label description = new Label(
+        "Type: " + event.tower + "\n" +
+        "Damage: " + dmg + "\n" +
+        "Range: " + range + "\n", game.assets.skin
+    );
+
+
+    description.setPosition(pos.x+width, pos.y+height, 0);
+    description.setVisible(false);
+
+    Button btn = new Button(game.assets.skin);
+    btn.setSize(width, height);
+    btn.setPosition(pos.x - width/2, pos.y - height/2);
+    btn.getColor().a = 0f;
+    btn.setVisible(true);
+
+    btn.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        if(description.isVisible()){
+          description.setVisible(false);
+        } else {
+          description.setVisible(true);
+        }
       }
     });
 
+    Stage stage = view.getUi();
+    stage.addActor(description);
+    stage.addActor(btn);
+
+
+    System.out.println("entity added");
   }
+
 }

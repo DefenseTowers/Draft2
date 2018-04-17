@@ -12,8 +12,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import java.util.ArrayList;
 import java.util.List;
 
+import ntnu.codt.CoDT;
 import ntnu.codt.components.*;
 import ntnu.codt.entities.Creeps;
+import ntnu.codt.events.CreepDied;
 import ntnu.codt.mvc.game.GameModel;
 
 public class CreepSystem extends IteratingSystem{
@@ -123,6 +125,7 @@ public class CreepSystem extends IteratingSystem{
         ac.creepsInRange.remove(entity);
       }
       engine.removeEntity(entity);
+      CoDT.EVENT_BUS.post(new CreepDied(10, cc.faction == PlayerComponent.FACTION1 ? PlayerComponent.FACTION2 : PlayerComponent.FACTION1));
     }
     tc.region = cc.regions[sc.get()];
   }

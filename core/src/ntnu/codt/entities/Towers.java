@@ -14,18 +14,18 @@ import ntnu.codt.systems.CreepSystem;
 
 public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Integer> {
 
-  FIRE(30, 60, 500, 200, 1, 250, Projectiles.FIRE),
-  WATER(30, 60, 150, 300, 5, 100, Projectiles.FIRE),
+ FIRE(30, 60, 500, 200, 1, 250, Projectiles.FIRE),
+  LIGHTNING(30, 60, 150, 300, 5, 100, Projectiles.FIRE),
   ICE(30, 60, 300 , 300, 5, 200, Projectiles.ICE);
 
-  private TextureRegion textureRegion;
-  private final float width;
-  private final float height;
-  private final float radius;
-  private final float av;
-  private final int damage;
-  private final long reload;
-  private final Projectiles projectile;
+  public TextureRegion textureRegion;
+  public final float width;
+  public final float height;
+  public final float radius;
+  public final float av;
+  public final int damage;
+  public final long reload;
+  public final Projectiles projectile;
 
   Towers(float width, float height, float radius, float av, int damage, long reload, Projectiles projectile) {
     this.width = width;
