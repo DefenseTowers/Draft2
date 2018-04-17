@@ -6,4 +6,5 @@ import com.badlogic.gdx.math.Vector3;
 
 public class VelocityComponent implements Component {
   public Vector3 velocity = null;
+  public float maxVel;
 }

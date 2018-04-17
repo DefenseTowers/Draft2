@@ -13,7 +13,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.IntMap;
 
 public class Assets implements Disposable, AssetErrorListener {
   private final String ATLAS_PATH = "dtatlas.atlas";
@@ -130,17 +132,16 @@ public class Assets implements Disposable, AssetErrorListener {
   public class AssetProjectiles {
     public final Animation<TextureRegion> fire;
     public final Animation<TextureRegion> ice;
+    public final IntMap<Animation<TextureRegion>> lightning;
 
     public AssetProjectiles(TextureAtlas atlas) {
       TextureRegion tempRegion = atlas.findRegion("fire_projectile");
       TextureRegion[][] fsheet = tempRegion.split(104, 40);
-
       for (TextureRegion[] r : fsheet) {
         for (TextureRegion t : r) {
           t.flip(true, false);
         }
       }
-
       fire = new Animation<TextureRegion>(
           0.1f,
           fsheet[0][0], fsheet[0][1], fsheet[0][2],
@@ -156,13 +157,24 @@ public class Assets implements Disposable, AssetErrorListener {
           t.flip(true, false);
         }
       }
-
       ice = new Animation<TextureRegion>(
           0.1f,
           isheet[0][0], isheet[0][1], isheet[0][2],
           isheet[1][0], isheet[1][1], isheet[1][2]
       );
       ice.setPlayMode(Animation.PlayMode.LOOP);
+
+      tempRegion = atlas.findRegion("lightning_projectile");
+      TextureRegion[] lsheet = tempRegion.split(100, 40)[0];
+      lightning = new IntMap<Animation<TextureRegion>>();
+      for (int i = 0; i < lsheet.length; i += 4) {
+        Animation<TextureRegion> a = new Animation<TextureRegion>(
+            0.2f,
+            lsheet[i], lsheet[i+1], lsheet[i+2], lsheet[i+3]
+        );
+        a.setPlayMode(Animation.PlayMode.LOOP);
+        lightning.put(i / 4, a);
+      }
     }
   }
 
