@@ -106,6 +106,7 @@ public class GameModel {
   private void loadProjectiles() {
     Projectiles.FIRE.setAnimation(game.assets.projectiles.fire);
     Projectiles.ICE.setAnimation(game.assets.projectiles.ice);
+    Projectiles.LIGHTNING.setAnimations(game.assets.projectiles.lightning);
   }
 
 }

@@ -91,25 +91,11 @@ public class GameView implements View {
       pixmap.fill();
       pixmap.setColor(Color.BLACK);
       pixmap.drawRectangle(0, 0, 100, 100, 5);
+      pixmap.drawTextureRegionCenter(tower.textureRegion);
 
       Texture texture = new Texture(pixmap);
 
       skin.add("rect", texture);
-
-      Texture t = new Texture(tower.textureRegion.getTexture().getTextureData());
-      t.getTextureData().prepare();
-
-      com.badlogic.gdx.graphics.Pixmap tempPix = t.getTextureData().consumePixmap();
-      for (int j = 0; j < tower.textureRegion.getRegionWidth(); j++) {
-        for (int k = 0; k < tower.textureRegion.getRegionHeight(); k++) {
-          pixmap.drawPixel(
-              j + ((pixmap.getWidth() - tower.textureRegion.getRegionWidth()) / 2),
-              k + ((pixmap.getHeight() - tower.textureRegion.getRegionHeight()) / 2),
-              tempPix.getPixel(j + tower.textureRegion.getRegionX(), k + tower.textureRegion.getRegionY())
-          );
-        }
-      }
-
       skin.add("tower"+i, tower.textureRegion, TextureRegion.class);
       skin.add("towerTex"+i, new Texture(pixmap));
 
