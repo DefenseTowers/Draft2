@@ -137,11 +137,6 @@ public class Assets implements Disposable, AssetErrorListener {
     public AssetProjectiles(TextureAtlas atlas) {
       TextureRegion tempRegion = atlas.findRegion("fire_projectile");
       TextureRegion[][] fsheet = tempRegion.split(104, 40);
-      for (TextureRegion[] r : fsheet) {
-        for (TextureRegion t : r) {
-          t.flip(true, false);
-        }
-      }
       fire = new Animation<TextureRegion>(
           0.1f,
           fsheet[0][0], fsheet[0][1], fsheet[0][2],
@@ -152,11 +147,6 @@ public class Assets implements Disposable, AssetErrorListener {
 
       tempRegion = atlas.findRegion("ice_projectile");
       TextureRegion[][] isheet = tempRegion.split(104, 40);
-      for (TextureRegion[] r : isheet) {
-        for (TextureRegion t : r) {
-          t.flip(true, false);
-        }
-      }
       ice = new Animation<TextureRegion>(
           0.1f,
           isheet[0][0], isheet[0][1], isheet[0][2],
