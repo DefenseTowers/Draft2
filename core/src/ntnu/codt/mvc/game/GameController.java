@@ -70,7 +70,7 @@ public class GameController extends Controller{
 
       //370,369,345,346
       for (int i = 0; i < tiles.size(); i++) {
-        if (tiles.get(i).getId() == 395 | tiles.get(i).getId() == 1) {
+        if (tiles.get(i).getId() == 1954 | tiles.get(i).getId() == 1) {
           legal = true;
         } else {
           return false;

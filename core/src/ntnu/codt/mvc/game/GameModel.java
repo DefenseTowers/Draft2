@@ -45,8 +45,8 @@ public class GameModel {
     camera.position.set(1280 / 2, 720 / 2, 0);
 
     map = new TmxMapLoader().load("greytilemap.tmx");
-    layer = (TiledMapTileLayer)map.getLayers().get(1);
-    layer2 = (TiledMapTileLayer)map.getLayers().get(0);
+    layer = (TiledMapTileLayer)map.getLayers().get(0);
+    layer2 = (TiledMapTileLayer)map.getLayers().get(1);
 
     renderer = new OrthogonalTiledMapRenderer(map);
 
