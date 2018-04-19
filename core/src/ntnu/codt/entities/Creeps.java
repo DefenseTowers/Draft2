@@ -9,24 +9,22 @@ import com.badlogic.gdx.math.Vector3;
 import ntnu.codt.components.*;
 import ntnu.codt.core.prototype.Prototype2;
 
-public enum Creeps implements Prototype2<Entity, PooledEngine, Integer> {
+public enum Creeps implements Prototype2<Entity, PooledEngine, Player> {
 
-  SMALL_BOI(20, 20, 250, 20*30, 0),
-  BIG_BOI(40, 40, 600, 20*30, 0);
+  SMALL_BOI(20, 20, 250, 40),
+  BIG_BOI(40, 40, 600, 30);
 
   private TextureRegion[] textureRegions;
   private final float width;
   private final float height;
   private final int hp;
-  private final int startx;
-  private final int starty;
+  private final int maxVel;
 
-  Creeps(float width, float height, int hp, int startx, int starty){
+  Creeps(float width, float height, int hp, int maxVel){
     this.width = width;
     this.height = height;
     this.hp = hp;
-    this.startx = startx;
-    this.starty = starty;
+    this.maxVel = maxVel;
   }
 
   public void setTextureRegions(TextureRegion[] textureRegions) {
@@ -34,7 +32,7 @@ public enum Creeps implements Prototype2<Entity, PooledEngine, Integer> {
   }
 
   @Override
-  public Entity copy(PooledEngine engine, Integer faction) {
+  public Entity copy(PooledEngine engine, Player player) {
     Entity entity = engine.createEntity();
 
     TransformComponent trm = engine.createComponent(TransformComponent.class);
@@ -44,14 +42,16 @@ public enum Creeps implements Prototype2<Entity, PooledEngine, Integer> {
     HealthComponent hc = engine.createComponent(HealthComponent.class);
     StateComponent sc = engine.createComponent(StateComponent.class);
     CreepComponent cc = engine.createComponent(CreepComponent.class);
+    AllegianceComponent ac = engine.createComponent(AllegianceComponent.class);
 
+    ac.loyalty = player;
     sc.set(State.NORTH);
     cc.regions = textureRegions;
-    cc.faction = faction;
-    pm.pos = new Vector3(startx, starty, 0);
+    pm.pos = player.getStartPos();
     tem.region = this.textureRegions[sc.get()];
     hc.health = this.hp;
-    vs.velocity = new Vector3(0, 10, 0);
+    vs.velocity = new Vector3(0, 0, 0);
+    vs.maxVel = maxVel;
 
     trm.rotation = 0.0f;
     trm.scale = new Vector2(1, 1);
@@ -63,6 +63,7 @@ public enum Creeps implements Prototype2<Entity, PooledEngine, Integer> {
     entity.add(hc);
     entity.add(sc);
     entity.add(cc);
+    entity.add(ac);
 
     engine.addEntity(entity);
 

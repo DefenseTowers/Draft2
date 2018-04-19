@@ -15,6 +15,7 @@ import java.util.List;
 import ntnu.codt.CoDT;
 import ntnu.codt.components.*;
 import ntnu.codt.entities.Creeps;
+import ntnu.codt.entities.Player;
 import ntnu.codt.events.CreepDied;
 import ntnu.codt.mvc.game.GameModel;
 
@@ -27,6 +28,8 @@ public class CreepSystem extends IteratingSystem{
   private ComponentMapper<HealthComponent> hm;
   private ComponentMapper<StateComponent> sm;
   private ComponentMapper<CreepComponent> cm;
+  private ComponentMapper<AllegianceComponent> am;
+  private ComponentMapper<AttackComponent> atm;
 
   private TiledMapTileLayer layer;
   private List<Entity> observers = new ArrayList<Entity>();
@@ -44,7 +47,8 @@ public class CreepSystem extends IteratingSystem{
         TransformComponent.class,
         HealthComponent.class,
         StateComponent.class,
-        CreepComponent.class
+        CreepComponent.class,
+        AllegianceComponent.class
     ).get());
 
     vm = ComponentMapper.getFor(VelocityComponent.class);
@@ -54,6 +58,8 @@ public class CreepSystem extends IteratingSystem{
     hm = ComponentMapper.getFor(HealthComponent.class);
     sm = ComponentMapper.getFor(StateComponent.class);
     cm = ComponentMapper.getFor(CreepComponent.class);
+    am = ComponentMapper.getFor(AllegianceComponent.class);
+    atm = ComponentMapper.getFor(AttackComponent.class);
 
     observers = new ArrayList<Entity>();
     this.layer = layer;
@@ -82,8 +88,9 @@ public class CreepSystem extends IteratingSystem{
     StateComponent sc = sm.get(entity);
     TextureComponent tc = tm.get(entity);
     CreepComponent cc = cm.get(entity);
+    AllegianceComponent ac = am.get(entity);
 
-    if (pc.pos.y < 720) {
+    if (pc.pos.y < 720 && pc.pos.y >= 0) {
       TiledMapTile tile = layer.getCell(
           (int) Math.floor(pc.pos.x / tileWidth),
           (int) Math.floor(pc.pos.y / tileHeight)
@@ -91,41 +98,44 @@ public class CreepSystem extends IteratingSystem{
 
       for(Entity tower : observers) {
 
-        AttackComponent ac = tower.getComponent(AttackComponent.class);
-        if(ac.attackRadius.contains(pc.pos.x,pc.pos.y)){
-          if (!ac.creepsInRange.contains(entity)){
-            ac.creepsInRange.add(entity);
+        AttackComponent attc = atm.get(tower);
+        AllegianceComponent atc = am.get(tower);
+        if (atc.loyalty != ac.loyalty) {
+          if(attc.attackRadius.contains(pc.pos.x,pc.pos.y)){
+            if (!attc.creepsInRange.contains(entity)){
+              attc.creepsInRange.add(entity);
+            }
           }
-        }
-        else if (!ac.attackRadius.contains(pc.pos.x, pc.pos.y) & ac.creepsInRange.contains(entity)) {
-          ac.creepsInRange.remove(entity);
+          else if (!attc.attackRadius.contains(pc.pos.x, pc.pos.y) & attc.creepsInRange.contains(entity)) {
+            attc.creepsInRange.remove(entity);
+          }
         }
       }
 
       if (tile.getId() == 1959 || tile.getId() == 18) {
-        vc.velocity.set(40, 0, 0);
+        vc.velocity.set(vc.maxVel, 0, 0);
         sc.set(Creeps.State.EAST);
       } else if (tile.getId() == 1958) {
-        vc.velocity.set(0, 40, 0);
+        vc.velocity.set(0, vc.maxVel, 0);
         sc.set(Creeps.State.NORTH);
       } else if (tile.getId() == 1961) {
-        vc.velocity.set(-40, 0, 0);
+        vc.velocity.set(-vc.maxVel, 0, 0);
         sc.set(Creeps.State.WEST);
       } else if (tile.getId() == 1960) {
-        vc.velocity.set(0, -40, 0);
+        vc.velocity.set(0, -vc.maxVel, 0);
         sc.set(Creeps.State.SOUTH);
       }
 
       pc.pos.add(vc.velocity.x * deltaTime, vc.velocity.y * deltaTime, 0);
     }
 
-    if (pc.pos.y >= 720 || hc.health <= 0) {
+    if (pc.pos.y >= 720 || pc.pos.y < 0 || hc.health <= 0) {
       for (Entity tower : observers) {
-        AttackComponent ac = tower.getComponent(AttackComponent.class);
-        ac.creepsInRange.remove(entity);
+        AttackComponent act = tower.getComponent(AttackComponent.class);
+        act.creepsInRange.remove(entity);
       }
       engine.removeEntity(entity);
-      CoDT.EVENT_BUS.post(new CreepDied(10, cc.faction == PlayerComponent.FACTION1 ? PlayerComponent.FACTION2 : PlayerComponent.FACTION1));
+      CoDT.EVENT_BUS.post(new CreepDied(10, ac.loyalty == Player.P1 ? PlayerComponent.FACTION2 : PlayerComponent.FACTION1));
     }
     tc.region = cc.regions[sc.get()];
   }

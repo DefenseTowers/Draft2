@@ -21,15 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ntnu.codt.CoDT;
-import ntnu.codt.components.AttackComponent;
-import ntnu.codt.components.PositionComponent;
-import ntnu.codt.components.ProjectileComponent;
-import ntnu.codt.components.TextureComponent;
-import ntnu.codt.components.PlayerComponent;
-import ntnu.codt.core.eventhandler.Event;
 import ntnu.codt.core.eventhandler.Subscribe;
 import ntnu.codt.entities.Creeps;
-import ntnu.codt.entities.Towers;
+import ntnu.codt.entities.Player;
 import ntnu.codt.core.observer.Subject;
 import ntnu.codt.events.TowerPlaced;
 import ntnu.codt.mvc.Controller;
@@ -51,7 +45,7 @@ public class GameController extends Controller{
 
   }
 
-  private boolean legalTowerPlacement(Rectangle bounds){
+  private boolean legalTowerPlacement(Rectangle bounds, Player player){
 
     try {
 
@@ -70,7 +64,7 @@ public class GameController extends Controller{
 
       //370,369,345,346
       for (int i = 0; i < tiles.size(); i++) {
-        if (tiles.get(i).getId() == 1954 | tiles.get(i).getId() == 1) {
+        if (tiles.get(i).getId() == player.towerTile | tiles.get(i).getId() == 1) {
           legal = true;
         } else {
           return false;
@@ -88,7 +82,7 @@ public class GameController extends Controller{
     if (Gdx.input.isKeyJustPressed(20)){
 
 //      model.entityFactory.createCreep();
-      Creeps.SMALL_BOI.copy(model.engine, PlayerComponent.FACTION2);
+      Creeps.SMALL_BOI.copy(model.engine, Player.P2);
 
     }
 /*    if (Gdx.input.justTouched()) {
@@ -144,7 +138,7 @@ public class GameController extends Controller{
 
           Rectangle boundingBox = new Rectangle(event.getStageX() - width/2, event.getStageY() - height/2, width, height);
 
-          if(!legalTowerPlacement(boundingBox)){
+          if(!legalTowerPlacement(boundingBox, Player.P1)){
             towerButton.getColor().a = 0.5f;
             legalPlacement = false;
           } else {
@@ -159,11 +153,8 @@ public class GameController extends Controller{
           towerButton.setY(startY);
           Vector3 pos = new Vector3(event.getStageX(), event.getStageY(), 0);
           if(legalPlacement) {
-
-            towerButton.towerType.copy(pos, model.engine, 1);
+            towerButton.towerType.copy(pos, model.engine, Player.P1);
             CoDT.EVENT_BUS.post(new TowerPlaced(towerButton.towerType, pos));
-//            towerButton.towerType.copy(new Towers.Pack(pos, model.engine));
-
           }
         }
 
