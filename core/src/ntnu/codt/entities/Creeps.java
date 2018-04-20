@@ -12,7 +12,7 @@ import ntnu.codt.core.prototype.Prototype2;
 
 public enum Creeps implements Prototype2<Entity, PooledEngine, Player> {
 
-  SMALL_BOI(20, 20, 250, 40, 50),
+  SMALL_BOI(20, 20, 250, 70, 50),
   BIG_BOI(40, 40, 600, 30, 50);
 
 
