@@ -86,7 +86,7 @@ public class MenuView implements View {
     settingsBtn.addListener(new ChangeListener() {
       public void changed (ChangeEvent event, Actor actor) {
         System.out.println("SettingsBtn Clicked!");
-        //menuController.goToSettingsScreen();
+        game.goToSettingScreen();
       }
     });
 

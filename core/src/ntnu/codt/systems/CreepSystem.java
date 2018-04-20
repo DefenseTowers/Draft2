@@ -17,6 +17,7 @@ import ntnu.codt.components.*;
 import ntnu.codt.entities.Creeps;
 import ntnu.codt.entities.Player;
 import ntnu.codt.events.CreepDied;
+import ntnu.codt.events.FundsChanged;
 import ntnu.codt.mvc.game.GameModel;
 
 public class CreepSystem extends IteratingSystem{
@@ -135,7 +136,9 @@ public class CreepSystem extends IteratingSystem{
         act.creepsInRange.remove(entity);
       }
       engine.removeEntity(entity);
-      CoDT.EVENT_BUS.post(new CreepDied(10, ac.loyalty == Player.P1 ? PlayerComponent.FACTION2 : PlayerComponent.FACTION1));
+
+      CoDT.EVENT_BUS.post(new CreepDied(cc.bounty, ac.loyalty == Player.P1 ? PlayerComponent.FACTION2 : PlayerComponent.FACTION1));
+
     }
     tc.region = cc.regions[sc.get()];
   }

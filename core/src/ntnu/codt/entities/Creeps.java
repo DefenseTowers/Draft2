@@ -3,6 +3,7 @@ package ntnu.codt.entities;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -11,20 +12,24 @@ import ntnu.codt.core.prototype.Prototype2;
 
 public enum Creeps implements Prototype2<Entity, PooledEngine, Player> {
 
-  SMALL_BOI(20, 20, 250, 40),
-  BIG_BOI(40, 40, 600, 30);
+  SMALL_BOI(20, 20, 250, 40, 50),
+  BIG_BOI(40, 40, 600, 30, 50);
+
 
   private TextureRegion[] textureRegions;
   private final float width;
   private final float height;
   private final int hp;
+  private final int bounty;
+
   private final int maxVel;
 
-  Creeps(float width, float height, int hp, int maxVel){
+  Creeps(float width, float height, int hp, int maxVel, int bounty){
     this.width = width;
     this.height = height;
     this.hp = hp;
     this.maxVel = maxVel;
+    this.bounty = bounty;
   }
 
   public void setTextureRegions(TextureRegion[] textureRegions) {
@@ -44,10 +49,14 @@ public enum Creeps implements Prototype2<Entity, PooledEngine, Player> {
     CreepComponent cc = engine.createComponent(CreepComponent.class);
     AllegianceComponent ac = engine.createComponent(AllegianceComponent.class);
 
+
+    cc.bounty = bounty;
+
     ac.loyalty = player;
     sc.set(State.NORTH);
     cc.regions = textureRegions;
     pm.pos = player.getStartPos();
+
     tem.region = this.textureRegions[sc.get()];
     hc.health = this.hp;
     vs.velocity = new Vector3(0, 0, 0);
@@ -55,6 +64,8 @@ public enum Creeps implements Prototype2<Entity, PooledEngine, Player> {
 
     trm.rotation = 0.0f;
     trm.scale = new Vector2(1, 1);
+
+    pm.pos = player.getStartPos();
 
     entity.add(trm);
     entity.add(tem);
