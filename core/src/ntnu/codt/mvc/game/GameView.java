@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -22,6 +23,7 @@ import ntnu.codt.core.observer.Observer;
 import ntnu.codt.entities.Towers;
 import ntnu.codt.graphics.Pixmap;
 import ntnu.codt.mvc.View;
+import ntnu.codt.ui.MoneyField;
 import ntnu.codt.ui.TowerButton;
 
 public class GameView implements View {
@@ -85,40 +87,70 @@ public class GameView implements View {
     int i = 0;
     for(Towers tower: Towers.values()){
 
+      // Create UI button from tower texture
       Pixmap pixmap = new Pixmap(100, 100, Pixmap.Format.RGB888);
-
       pixmap.setColor(Color.BLUE);
       pixmap.fill();
       pixmap.setColor(Color.BLACK);
       pixmap.drawRectangle(0, 0, 100, 100, 5);
+
       pixmap.drawTextureRegionCenter(tower.textureRegion);
 
-      Texture texture = new Texture(pixmap);
 
+      Texture texture = new Texture(pixmap);
       skin.add("rect", texture);
+
+      Texture t = new Texture(tower.textureRegion.getTexture().getTextureData());
+      t.getTextureData().prepare();
+
+      com.badlogic.gdx.graphics.Pixmap tempPix = t.getTextureData().consumePixmap();
+      for (int j = 0; j < tower.textureRegion.getRegionWidth(); j++) {
+        for (int k = 0; k < tower.textureRegion.getRegionHeight(); k++) {
+          pixmap.drawPixel(
+              j + ((pixmap.getWidth() - tower.textureRegion.getRegionWidth()) / 2),
+              k + ((pixmap.getHeight() - tower.textureRegion.getRegionHeight()) / 2),
+              tempPix.getPixel(j + tower.textureRegion.getRegionX(), k + tower.textureRegion.getRegionY())
+          );
+        }
+      }
+
       skin.add("tower"+i, tower.textureRegion, TextureRegion.class);
       skin.add("towerTex"+i, new Texture(pixmap));
 
-      TowerButton imgBtn = new TowerButton(skin.getDrawable("towerTex"+i), skin.getDrawable("tower"+i), tower);
-      TowerButton imgBtn2 = new TowerButton(skin.getDrawable("towerTex"+i), tower);
+
+      // Create and add range image to towerbutton
+      int diameter = 2*(int)tower.radius;
+      int radius = diameter/2;
+      com.badlogic.gdx.graphics.Pixmap p = new Pixmap(diameter, diameter, Pixmap.Format.RGBA8888);
+      p.setColor(255, 255, 255, 0.2f);
+      p.fillCircle(radius,radius, diameter/2);
+      p.setBlending(com.badlogic.gdx.graphics.Pixmap.Blending.None);
+      Texture tex = new Texture(p);
+      tex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+      Image attackRange = new Image(tex);
+      attackRange.setVisible(false);
+
+      // Create UI buttons
+      TowerButton imgBtn = new TowerButton(skin.getDrawable("towerTex"+i), skin.getDrawable("tower"+i), tower, attackRange);
+      TowerButton imgBtn2 = new TowerButton(skin.getDrawable("towerTex"+i), tower, attackRange);
       imgBtn.setPosition(screenWidth * 8 / 10 - imgBtn.getWidth() / 2, screenHeight * (5+2*i)/10 - imgBtn.getHeight() / 2);
       imgBtn2.setPosition(screenWidth * 8 / 10 - imgBtn2.getWidth() / 2, screenHeight * (5+2*i)/10 - imgBtn2.getHeight() / 2);
 
       towerBtnList.add(imgBtn);
+      ui.addActor(attackRange);
       ui.addActor(imgBtn2);
       ui.addActor(imgBtn);
       i++;
     }
-    // Get Player funds here
 
+    // Create UI element for money
     TextField.TextFieldStyle textStyle = new TextField.TextFieldStyle();
     textStyle.font = new BitmapFont();
     textStyle.fontColor = Color.BLACK;
-
     int funds = gameModel.player1.getComponent(PlayerComponent.class).funds;
-    TextField cashAmount = new TextField("" + funds, textStyle);
-    cashAmount.setPosition(screenWidth/2, screenHeight * 9/10);
-    ui.addActor(cashAmount);
+    MoneyField moneyField = new MoneyField("" + funds, textStyle);
+    moneyField.setPosition(screenWidth/2, screenHeight * 9/10);
+    ui.addActor(moneyField);
 
   }
 
