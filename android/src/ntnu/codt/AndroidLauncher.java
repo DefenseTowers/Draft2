@@ -1,5 +1,6 @@
 package ntnu.codt;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.support.annotation.NonNull;
@@ -35,6 +36,7 @@ public class AndroidLauncher extends AndroidApplication {
       public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
         if (!task.isSuccessful()) {
           task.getException().printStackTrace();
+          startSignInIntent();
         }
         System.out.println("ANDROID LAUNCHER::" + "Signed In: " + isSignedIn());
       }
@@ -50,5 +52,11 @@ public class AndroidLauncher extends AndroidApplication {
 	  return GoogleSignIn.getLastSignedInAccount(this) != null;
   }
 
+  private void startSignInIntent() {
+    GoogleSignInClient signInClient = GoogleSignIn.getClient(this,
+        GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
+    Intent intent = signInClient.getSignInIntent();
+    startActivityForResult(intent, 9000);
+  }
 
 }
