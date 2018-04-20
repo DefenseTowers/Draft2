@@ -5,20 +5,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import ntnu.codt.CoDT;
 import ntnu.codt.entities.Creeps;
 import ntnu.codt.entities.EntityFactory;
-import ntnu.codt.components.PlayerComponent;
-import ntnu.codt.core.observer.Observer;
-import ntnu.codt.core.observer.Subject;
+import ntnu.codt.entities.Player;
 import ntnu.codt.entities.Projectiles;
 import ntnu.codt.entities.Towers;
 import ntnu.codt.systems.*;
@@ -35,7 +31,6 @@ public class GameModel {
   public OrthogonalTiledMapRenderer renderer;
   public Skin skin;
   public Entity player1;
-  public Subject<Integer> ecoBus = new Subject<Integer>();
 
 
   public GameModel(CoDT game) {
@@ -47,6 +42,7 @@ public class GameModel {
     map = new TmxMapLoader().load("greytilemap.tmx");
     layer = (TiledMapTileLayer)map.getLayers().get(0);
     layer2 = (TiledMapTileLayer)map.getLayers().get(1);
+
 
     renderer = new OrthogonalTiledMapRenderer(map);
 
@@ -64,25 +60,14 @@ public class GameModel {
     engine.addSystem(new CreepSystem(layer, engine, this));
     engine.addSystem(new EconomySystem());
 
+    entityFactory = new EntityFactory(engine);
+    player1 = entityFactory.createPlayer(Player.P1, "MYNAME", 100, 250);
+
     CoDT.EVENT_BUS.register(engine.getSystem(EconomySystem.class));
 
     loadTowers();
     loadCreeps();
     loadProjectiles();
-
-    entityFactory = new EntityFactory(engine,layer);
-
-    player1 = entityFactory.createPlayer("bjarne", 1);
-    ecoBus.subscribe(new Observer<Integer>() {
-      @Override
-      public void call(Integer input) {
-        player1.getComponent(PlayerComponent.class).funds = input;
-      }
-    });
-
-    //entityFactory.createTestEntity();
-
-    System.out.println("number of entities in engine: " +  engine.getEntities().size());
 
   }
 

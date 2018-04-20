@@ -8,60 +8,61 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 
 import ntnu.codt.CoDT;
+import ntnu.codt.components.AllegianceComponent;
 import ntnu.codt.components.PlayerComponent;
-import ntnu.codt.components.TowerComponent;
 import ntnu.codt.core.eventhandler.Subscribe;
 import ntnu.codt.events.CreepDied;
 import ntnu.codt.events.FundsChanged;
 
-import java.util.LinkedList;
-
 public class EconomySystem extends IteratingSystem {
   private final String TAG = EconomySystem.class.getName();
   private ComponentMapper<PlayerComponent> pm;
-  private LinkedList<Action> ecoQ = new LinkedList<Action>();
-  public int funds = 0;
+  private ComponentMapper<AllegianceComponent> am;
+
 
   public EconomySystem(){
     super(Family.all(PlayerComponent.class).get());
-
     pm = ComponentMapper.getFor(PlayerComponent.class);
-
+    am = ComponentMapper.getFor(AllegianceComponent.class);
   }
 
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
-    PlayerComponent pc = pm.get(entity);
-//    pc.funds += 1;
 
-    for (Action a : ecoQ) {
-      if (pc.faction == a.faction) {
-        pc.funds += a.value;
-        ecoQ.remove(a);
-      }
-    }
   }
+
 
   @Subscribe
   @SuppressWarnings("unused")
   public void creepDied(CreepDied event) {
-    ecoQ.add(new Action(event.bounty, event.faction));
     Gdx.app.debug(TAG, "Creep died");
-    funds += event.bounty;
-    CoDT.EVENT_BUS.post(new FundsChanged(funds));
+    Entity owner = event.owner;
+    PlayerComponent pc = pm.get(owner);
+    pc.funds += event.bounty;
+    CoDT.EVENT_BUS.post(new FundsChanged(pc.funds));
 
   }
-  
-  private class Action {
-    public final int value;
-    public final int faction;
 
-    public Action(int value, int faction) {
-      this.value = value;
-      this.faction = faction;
+  @Subscribe
+  public void updateFunds(FundsChanged event){
+
+
+  }
+
+  public boolean sufficientFunds(Entity player, int cost){
+
+    PlayerComponent pc = pm.get(player);
+    boolean sufficient = false;
+    if(pc.funds >= cost){
+      sufficient = true;
     }
+    return sufficient;
   }
 
-
+  public void doTransaction(Entity player, int cost){
+    PlayerComponent pc = pm.get(player);
+    pc.funds = pc.funds - cost;
+    CoDT.EVENT_BUS.post(new FundsChanged(pc.funds));
+  }
 
 }

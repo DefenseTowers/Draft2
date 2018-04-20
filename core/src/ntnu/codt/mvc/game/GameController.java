@@ -2,12 +2,16 @@ package ntnu.codt.mvc.game;
 
 
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
@@ -19,38 +23,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.SynchronousQueue;
 
-import ntnu.codt.CoDT;
 
-import ntnu.codt.components.PlayerComponent;
+import ntnu.codt.CoDT;
 
 import ntnu.codt.core.eventhandler.Subscribe;
 import ntnu.codt.core.network.ReceiveEndpoint;
 import ntnu.codt.entities.Creeps;
 
-import ntnu.codt.core.observer.Subject;
-import ntnu.codt.events.FundsChanged;
 
 import ntnu.codt.entities.Player;
-import ntnu.codt.core.observer.Subject;
 import ntnu.codt.entities.Towers;
 
 import ntnu.codt.events.TowerPlaced;
 import ntnu.codt.mvc.Controller;
+import ntnu.codt.systems.EconomySystem;
 import ntnu.codt.systems.TowerSystem;
+import ntnu.codt.ui.CreepButton;
 import ntnu.codt.ui.TowerButton;
 
 public class GameController extends Controller implements ReceiveEndpoint {
   private final GameModel model;
-  private Subject<Void> subjectTouch;
   private GameView view;
   private final SynchronousQueue<UpdateAction> updateQueue;
+  private EconomySystem economySystem;
 
   public GameController(CoDT game, GameModel model, GameView gameView) {
 
     super(game);
     this.model = model;
-    subjectTouch = new Subject<Void>();
     this.view = gameView;
+    this.economySystem = model.engine.getSystem(EconomySystem.class);
     CoDT.EVENT_BUS.register(this);
     setListeners();
 
@@ -97,7 +99,6 @@ public class GameController extends Controller implements ReceiveEndpoint {
 
     if (Gdx.input.isKeyJustPressed(20)) {
       Creeps.BIG_BOI.copy(model.engine, Player.P2);
-      Creeps.SMALL_BOI.copy(model.engine, Player.P1);
     }
     for (UpdateAction action : updateQueue) {
       action.call();
@@ -119,10 +120,10 @@ public class GameController extends Controller implements ReceiveEndpoint {
   public void setListeners() {
 
     final Array<TowerButton> towerBtnList = view.getTowerBtnList();
-    final int funds = model.player1.getComponent(PlayerComponent.class).funds;
-
+    final Array<CreepButton> creepBtnList = view.getCreepBtnList();
 
     for (TowerButton btn : towerBtnList) {
+
       final TowerButton towerButton = btn;
 
       towerButton.addListener(new DragListener() {
@@ -130,13 +131,14 @@ public class GameController extends Controller implements ReceiveEndpoint {
         float startX = towerButton.getX();
         float startY = towerButton.getY();
         boolean legalPlacement, sufficientFunds;
+        int price = towerButton.towerType.price;
+        Entity player = model.player1;
 
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-
-          if(funds < towerButton.towerType.price)
-            sufficientFunds = false;
-          else
+          if(economySystem.sufficientFunds(player, price)) {
             sufficientFunds = true;
+          } else
+            sufficientFunds = false;
           return true;
         }
 
@@ -148,9 +150,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
 
           Rectangle boundingBox = new Rectangle(event.getStageX() - width/2, event.getStageY() - height/2, width, height);
 
-
           if(legalTowerPlacement(boundingBox, Player.P1) && sufficientFunds){
-
             towerButton.getColor().a = 1f;
             legalPlacement = true;
           } else {
@@ -168,11 +168,10 @@ public class GameController extends Controller implements ReceiveEndpoint {
           towerButton.setY(startY);
           Vector3 pos = new Vector3(event.getStageX(), event.getStageY(), 0);
 
-          if(legalPlacement) {
+          if(legalPlacement && sufficientFunds) {
             towerButton.towerType.copy(pos, model.engine, Player.P1);
             CoDT.EVENT_BUS.post(new TowerPlaced(towerButton.towerType, pos));
-            CoDT.EVENT_BUS.post(new FundsChanged(funds - towerButton.towerType.price));
-            System.out.println("Current funds =" + funds);
+            economySystem.doTransaction(player, price);
 
           }
           towerButton.rangeImage.setVisible(false);
@@ -180,11 +179,24 @@ public class GameController extends Controller implements ReceiveEndpoint {
 
       });
     }
+    final EconomySystem economySystem = model.engine.getSystem(EconomySystem.class);
+
+    for (CreepButton cb : creepBtnList){
+      final CreepButton creepBtn = cb;
+      creepBtn.addListener(new ChangeListener() {
+        public void changed (ChangeEvent event, Actor actor) {
+          if(economySystem.sufficientFunds(model.player1, creepBtn.creep.bounty)) {
+            economySystem.doTransaction(model.player1, creepBtn.creep.bounty);
+            creepBtn.creep.copy(model.engine, Player.P1);
+          }
+        }
+      });
+    }
   }
 
   @Subscribe
-  public void entityAdded(TowerPlaced event) {
-    //Flytte denne metoden til View?
+  public void towerAdded(TowerPlaced event) {
+
     int dmg = event.tower.damage;
     float radius = event.tower.radius;
     Vector3 pos = event.pos;
@@ -192,6 +204,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
     float height = event.tower.height;
     Stage stage = view.getUi();
 
+    //TowerButton upgradeTowerBtn = new TowerButton();
 
     final Label description = new Label(
         "Type: " + event.tower + "\n" +
@@ -199,19 +212,6 @@ public class GameController extends Controller implements ReceiveEndpoint {
              "Damage: " + dmg + "\n" +
              "Range: " + (int)radius + "\n", game.assets.skin
     );
-
-    int x = Gdx.graphics.getWidth();
-    int y = Gdx.graphics.getHeight();
-
-/*    com.badlogic.gdx.graphics.Pixmap p = new Pixmap(diameter, diameter, Pixmap.Format.RGBA8888);
-    p.setColor(255, 255, 255, 0.2f);
-    p.fillCircle((int)radius,(int)radius, diameter/2);
-
-    p.setBlending(com.badlogic.gdx.graphics.Pixmap.Blending.None);
-    Texture t = new Texture(p);
-    final Image attackRange = new Image(t);
-    attackRange.setPosition(pos.x - radius, pos.y - radius);
-    attackRange.setVisible(false);*/
 
     description.setPosition(pos.x+width, pos.y+height, 0);
     description.setVisible(false);
@@ -221,7 +221,6 @@ public class GameController extends Controller implements ReceiveEndpoint {
     btn.setPosition(pos.x - width/2, pos.y - height/2);
     btn.getColor().a = 0f;
     btn.setVisible(true);
-
     btn.addListener(new ClickListener() {
       @Override
       public void clicked(InputEvent event, float x, float y) {
@@ -229,15 +228,14 @@ public class GameController extends Controller implements ReceiveEndpoint {
           description.setVisible(false);
         } else {
           description.setVisible(true);
-          //attackRange.setVisible(true);
         }
       }
     });
-    //stage.addActor(attackRange);
     stage.addActor(description);
     stage.addActor(btn);
     System.out.println("entity added");
   }
+
 
   @Override
   public void receiveTowerPlaced(final Vector3 pos, final Towers tower, final Player player) throws InterruptedException {

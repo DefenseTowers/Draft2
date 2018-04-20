@@ -9,20 +9,27 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
 
 import ntnu.codt.CoDT;
+import ntnu.codt.assets.Fonts;
 import ntnu.codt.components.PlayerComponent;
 import ntnu.codt.core.observer.Observer;
+import ntnu.codt.entities.Creeps;
 import ntnu.codt.entities.Towers;
 import ntnu.codt.graphics.Pixmap;
 import ntnu.codt.mvc.View;
+import ntnu.codt.ui.CreepButton;
 import ntnu.codt.ui.MoneyField;
 import ntnu.codt.ui.TowerButton;
 
@@ -37,6 +44,7 @@ public class GameView implements View {
   private Skin skin;
   private int screenHeight, screenWidth;
   private Array<TowerButton> towerBtnList;
+  private Array<CreepButton> creepBtnList;
 
 
 
@@ -82,6 +90,34 @@ public class GameView implements View {
   public void loadUi(){
 
     this.ui = new Stage();
+    loadCreepBtns();
+    loadTowerBtns();
+
+
+    // Create UI element for money
+    TextField.TextFieldStyle textStyle = new TextField.TextFieldStyle();
+    textStyle.font = new BitmapFont();
+    textStyle.fontColor = Color.BLACK;
+    int funds = gameModel.player1.getComponent(PlayerComponent.class).funds;
+    MoneyField moneyField = new MoneyField("" + funds, textStyle);
+    moneyField.setPosition(screenWidth/2, screenHeight * 9/10);
+    ui.addActor(moneyField);
+
+  }
+
+  public Stage getUi(){
+    return ui;
+  }
+
+  public Array<TowerButton> getTowerBtnList(){
+    return towerBtnList;
+  }
+
+  public Array<CreepButton> getCreepBtnList(){
+    return creepBtnList;
+  }
+
+  public Array<TowerButton> loadTowerBtns(){
 
     towerBtnList = new Array<TowerButton>();
     int i = 0;
@@ -93,9 +129,7 @@ public class GameView implements View {
       pixmap.fill();
       pixmap.setColor(Color.BLACK);
       pixmap.drawRectangle(0, 0, 100, 100, 5);
-
       pixmap.drawTextureRegionCenter(tower.textureRegion);
-
 
       Texture texture = new Texture(pixmap);
       skin.add("rect", texture);
@@ -123,8 +157,8 @@ public class GameView implements View {
       int radius = diameter/2;
       com.badlogic.gdx.graphics.Pixmap p = new Pixmap(diameter, diameter, Pixmap.Format.RGBA8888);
       p.setColor(255, 255, 255, 0.2f);
-      p.fillCircle(radius,radius, diameter/2);
       p.setBlending(com.badlogic.gdx.graphics.Pixmap.Blending.None);
+      p.fillCircle(radius,radius, diameter/2);
       Texture tex = new Texture(p);
       tex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
       Image attackRange = new Image(tex);
@@ -133,8 +167,8 @@ public class GameView implements View {
       // Create UI buttons
       TowerButton imgBtn = new TowerButton(skin.getDrawable("towerTex"+i), skin.getDrawable("tower"+i), tower, attackRange);
       TowerButton imgBtn2 = new TowerButton(skin.getDrawable("towerTex"+i), tower, attackRange);
-      imgBtn.setPosition(screenWidth * 8 / 10 - imgBtn.getWidth() / 2, screenHeight * (5+2*i)/10 - imgBtn.getHeight() / 2);
-      imgBtn2.setPosition(screenWidth * 8 / 10 - imgBtn2.getWidth() / 2, screenHeight * (5+2*i)/10 - imgBtn2.getHeight() / 2);
+      imgBtn.setPosition(screenWidth * 9 / 10 - imgBtn.getWidth() / 2, screenHeight * (5+2*i)/10 - imgBtn.getHeight() / 2);
+      imgBtn2.setPosition(screenWidth * 9 / 10 - imgBtn2.getWidth() / 2, screenHeight * (5+2*i)/10 - imgBtn2.getHeight() / 2);
 
       towerBtnList.add(imgBtn);
       ui.addActor(attackRange);
@@ -142,24 +176,57 @@ public class GameView implements View {
       ui.addActor(imgBtn);
       i++;
     }
-
-    // Create UI element for money
-    TextField.TextFieldStyle textStyle = new TextField.TextFieldStyle();
-    textStyle.font = new BitmapFont();
-    textStyle.fontColor = Color.BLACK;
-    int funds = gameModel.player1.getComponent(PlayerComponent.class).funds;
-    MoneyField moneyField = new MoneyField("" + funds, textStyle);
-    moneyField.setPosition(screenWidth/2, screenHeight * 9/10);
-    ui.addActor(moneyField);
-
-  }
-
-  public Stage getUi(){
-    return ui;
-  }
-
-  public Array<TowerButton> getTowerBtnList(){
     return towerBtnList;
   }
 
+  public Array<CreepButton> loadCreepBtns(){
+
+    Array<CreepButton> creepBtnList = new Array<CreepButton>();
+    int i = 0;
+    for (Creeps creep : Creeps.values()) {
+
+      TextureRegion textureRegion = creep.textureRegions[0];
+      Pixmap pixmap = new Pixmap(100, 100, Pixmap.Format.RGB888);
+      pixmap.setColor(Color.RED);
+      pixmap.fill();
+      pixmap.setColor(Color.BLACK);
+      pixmap.drawRectangle(0, 0, 100, 100, 5);
+      pixmap.drawTextureRegionCenter(textureRegion);
+      Texture texture = new Texture(pixmap);
+      skin.add("rect2", texture);
+
+      Texture t = new Texture(textureRegion.getTexture().getTextureData());
+      t.getTextureData().prepare();
+
+      com.badlogic.gdx.graphics.Pixmap tempPix = t.getTextureData().consumePixmap();
+      for (int j = 0; j < textureRegion.getRegionWidth(); j++) {
+        for (int k = 0; k < textureRegion.getRegionHeight(); k++) {
+          pixmap.drawPixel(
+              j + ((pixmap.getWidth() - textureRegion.getRegionWidth()) / 2),
+              k + ((pixmap.getHeight() - textureRegion.getRegionHeight()) / 2),
+              tempPix.getPixel(j + textureRegion.getRegionX(), k + textureRegion.getRegionY())
+          );
+        }
+      }
+
+
+      skin.add("creepTex"+i, new Texture(pixmap));
+
+      CreepButton creepBtn = new CreepButton(skin.getDrawable("creepTex"+i), creep);
+      creepBtn.setPosition(screenWidth * 9 / 10 - creepBtn.getWidth() / 2, screenHeight * (1+2*i)/10 - creepBtn.getHeight() / 2);
+
+      creepBtnList.add(creepBtn);
+      this.creepBtnList = creepBtnList;
+      ui.addActor(creepBtn);
+
+
+      i++;
+    }
+    return null;
+  }
+
+
 }
+
+
+
