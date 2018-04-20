@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Array;
 
 
+import java.awt.Font;
+
 import ntnu.codt.CoDT;
 import ntnu.codt.components.PlayerComponent;
 import ntnu.codt.core.observer.Observer;
@@ -144,13 +146,21 @@ public class GameView implements View {
     }
 
     // Create UI element for money
+    Image moneyDisplay = new Image(game.assets.ui.goldDisplay);
+    moneyDisplay.setPosition(screenWidth/30, screenHeight* 93/100);
+    moneyDisplay.setHeight(40);
+    moneyDisplay.setWidth(screenWidth/15);
+    moneyDisplay.setHeight(screenHeight/18);
+
+    ui.addActor(moneyDisplay);
     TextField.TextFieldStyle textStyle = new TextField.TextFieldStyle();
     textStyle.font = new BitmapFont();
-    textStyle.fontColor = Color.BLACK;
+    textStyle.fontColor = Color.WHITE;
     int funds = gameModel.player1.getComponent(PlayerComponent.class).funds;
     MoneyField moneyField = new MoneyField("" + funds, textStyle);
-    moneyField.setPosition(screenWidth/2, screenHeight * 9/10);
+    moneyField.setPosition(moneyDisplay.getX() + 50, moneyDisplay.getY() + 10);
     ui.addActor(moneyField);
+
 
   }
 

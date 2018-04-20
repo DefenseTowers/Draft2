@@ -95,6 +95,7 @@ public class Assets implements Disposable, AssetErrorListener {
     public final AtlasRegion settingsButtonDown;
     public final AtlasRegion one;
     public final AtlasRegion two;
+    public final AtlasRegion goldDisplay;
 
     public AssetUI(TextureAtlas atlas) {
       playButtonUp = atlas.findRegion("playBtnUp");
@@ -103,6 +104,7 @@ public class Assets implements Disposable, AssetErrorListener {
       settingsButtonDown = atlas.findRegion("settingsBtnDown");
       one = atlas.findRegion("fire2");
       two = atlas.findRegion("fire2");
+      goldDisplay = atlas.findRegion("goldDisplay");
     }
   }
 
