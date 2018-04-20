@@ -1,10 +1,6 @@
 package ntnu.codt.mvc.game;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntityListener;
-import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -19,20 +15,24 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.SynchronousQueue;
 
 import ntnu.codt.CoDT;
 import ntnu.codt.core.eventhandler.Subscribe;
+import ntnu.codt.core.network.ReceiveEndpoint;
 import ntnu.codt.entities.Creeps;
 import ntnu.codt.entities.Player;
 import ntnu.codt.core.observer.Subject;
+import ntnu.codt.entities.Towers;
 import ntnu.codt.events.TowerPlaced;
 import ntnu.codt.mvc.Controller;
 import ntnu.codt.ui.TowerButton;
 
-public class GameController extends Controller{
+public class GameController extends Controller implements ReceiveEndpoint {
   private final GameModel model;
   private Subject<Void> subjectTouch;
   private GameView view;
+  private final SynchronousQueue<UpdateAction> updateQueue;
 
   public GameController(CoDT game, GameModel model, GameView gameView) {
 
@@ -43,6 +43,7 @@ public class GameController extends Controller{
     CoDT.EVENT_BUS.register(this);
     setListeners();
 
+    updateQueue = new SynchronousQueue<UpdateAction>();
   }
 
   private boolean legalTowerPlacement(Rectangle bounds, Player player){
@@ -79,6 +80,9 @@ public class GameController extends Controller{
   }
 
   public void update(float deltaTime) {
+    for (UpdateAction action : updateQueue) {
+      action.call();
+    }
     if (Gdx.input.isKeyJustPressed(20)){
 
 //      model.entityFactory.createCreep();
@@ -208,6 +212,30 @@ public class GameController extends Controller{
 
 
     System.out.println("entity added");
+  }
+
+  @Override
+  public void receiveTowerPlaced(final Vector3 pos, final Towers tower, final Player player) throws InterruptedException {
+    updateQueue.put(new UpdateAction() {
+      @Override
+      public void call() {
+        tower.copy(pos, model.engine, player);
+      }
+    });
+  }
+
+  @Override
+  public void receiveCreepSpawned(final Creeps creep, final Player player) throws InterruptedException {
+    updateQueue.put(new UpdateAction() {
+      @Override
+      public void call() {
+        creep.copy(model.engine, player);
+      }
+    });
+  }
+
+  private interface UpdateAction {
+    void call();
   }
 
 }

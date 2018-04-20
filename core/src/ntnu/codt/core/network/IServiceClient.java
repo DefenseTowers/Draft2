@@ -12,5 +12,6 @@ public interface IServiceClient {
   Player getPlayer();
   boolean towerPlaced(Vector3 pos, Player player);
   boolean creepSent(Creeps creep, Player player);
+  void setReceiveEndpoint(ReceiveEndpoint endpoint);
 
 }
