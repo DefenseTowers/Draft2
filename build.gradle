@@ -34,6 +34,8 @@ allprojects {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        google()
+        jcenter()
     }
 }
 
@@ -47,7 +49,6 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
-        
     }
 }
 
@@ -71,7 +72,8 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
-        
+        implementation "com.google.android.gms:play-services-games:15.0.0"
+        implementation "com.google.android.gms:play-services-auth:15.0.0"
     }
 }
 
@@ -83,7 +85,6 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
-        
     }
 }
 
