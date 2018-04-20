@@ -1,6 +1,7 @@
 package ntnu.codt;
 
 
+import android.content.Context;
 import com.badlogic.gdx.math.Vector3;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import ntnu.codt.core.network.IServiceClient;
@@ -40,4 +41,10 @@ public class AndroidService implements IServiceClient {
   public void setReceiveEndpoint(ReceiveEndpoint endpoint) {
     this.endpoint = endpoint;
   }
+
+  private boolean isSignedIn() {
+//    return GoogleSignIn.getLastSignedInAccount(this) != null;
+    return true;
+  }
+
 }
