@@ -6,4 +6,5 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class CreepComponent implements Component {
   public TextureRegion[] regions;
   public int faction;
+  public int bounty;
 }

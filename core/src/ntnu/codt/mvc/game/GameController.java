@@ -1,10 +1,7 @@
 package ntnu.codt.mvc.game;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntityListener;
-import com.badlogic.ashley.core.Family;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -21,19 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ntnu.codt.CoDT;
-import ntnu.codt.components.AttackComponent;
-import ntnu.codt.components.PositionComponent;
-import ntnu.codt.components.ProjectileComponent;
-import ntnu.codt.components.TextureComponent;
 import ntnu.codt.components.PlayerComponent;
-import ntnu.codt.core.eventhandler.Event;
 import ntnu.codt.core.eventhandler.Subscribe;
 import ntnu.codt.entities.Creeps;
-import ntnu.codt.entities.Towers;
 import ntnu.codt.core.observer.Subject;
-import ntnu.codt.events.CreepDied;
+import ntnu.codt.events.FundsChanged;
 import ntnu.codt.events.TowerPlaced;
 import ntnu.codt.mvc.Controller;
+import ntnu.codt.systems.TowerSystem;
 import ntnu.codt.ui.TowerButton;
 
 public class GameController extends Controller{
@@ -51,6 +43,8 @@ public class GameController extends Controller{
     setListeners();
 
   }
+
+
 
   private boolean legalTowerPlacement(Rectangle bounds){
 
@@ -71,12 +65,15 @@ public class GameController extends Controller{
 
       //370,369,345,346
       for (int i = 0; i < tiles.size(); i++) {
-        if (tiles.get(i).getId() == 395 | tiles.get(i).getId() == 1) {
+        if (tiles.get(i).getId() == 395) {
           legal = true;
         } else {
-          return false;
+          legal = false;
         }
       }
+
+      if(model.engine.getSystem(TowerSystem.class).isTowersOverlapping(bounds))
+        legal = false;
       return legal;
     }catch (NullPointerException e){
       System.out.println("out of bounds");
@@ -86,25 +83,10 @@ public class GameController extends Controller{
   }
 
   public void update(float deltaTime) {
-    if (Gdx.input.isKeyJustPressed(20)){
-
-//      model.entityFactory.createCreep();
-      Creeps.SMALL_BOI.copy(model.engine, PlayerComponent.FACTION2);
-
+    if (Gdx.input.isKeyJustPressed(20)) {
+      Creeps.BIG_BOI.copy(model.engine, PlayerComponent.FACTION2);
+      Creeps.SMALL_BOI.copy(model.engine, PlayerComponent.FACTION1);
     }
-/*    if (Gdx.input.justTouched()) {
-      model.touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-      model.camera.unproject(model.touchPoint);
-      subjectTouch.publish(null);
-      System.out.println("just touched");
-      if (legalTowerPlacement(new Rectangle(model.touchPoint.x - 15, model.touchPoint.y - 30, 30, 60))) {
-        Towers.FIRE.copy(model.touchPoint, model.engine, PlayerComponent.FACTION1);
-//        model.entityFactory.createTower(model.touchPoint.x, model.touchPoint.y, 30,60,300,300,20,1000);
-        model.ecoBus.publish(-100);
-      }
-
-    }*/
-
   }
 
   @Override
@@ -120,8 +102,9 @@ public class GameController extends Controller{
 
   public void setListeners() {
 
-
     final Array<TowerButton> towerBtnList = view.getTowerBtnList();
+    final int funds = model.player1.getComponent(PlayerComponent.class).funds;
+
 
     for (TowerButton btn : towerBtnList) {
       final TowerButton towerButton = btn;
@@ -130,64 +113,86 @@ public class GameController extends Controller{
 
         float startX = towerButton.getX();
         float startY = towerButton.getY();
+        boolean legalPlacement, sufficientFunds;
 
-        boolean legalPlacement;
+        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+
+          if(funds < towerButton.towerType.price)
+            sufficientFunds = false;
+          else
+            sufficientFunds = true;
+          return true;
+        }
 
         public void touchDragged(InputEvent event, float x, float y, int pointer) {
 
           event.getButton();
-
           float height = towerButton.towerType.height;
           float width = towerButton.towerType.width;
 
           Rectangle boundingBox = new Rectangle(event.getStageX() - width/2, event.getStageY() - height/2, width, height);
 
-          if(!legalTowerPlacement(boundingBox)){
-            towerButton.getColor().a = 0.5f;
-            legalPlacement = false;
-          } else {
+          if(legalTowerPlacement(boundingBox) && sufficientFunds){
             towerButton.getColor().a = 1f;
             legalPlacement = true;
+          } else {
+            towerButton.getColor().a = 0.5f;
+            legalPlacement = false;
           }
           towerButton.setPosition(event.getStageX() - towerButton.getWidth() / 2, event.getStageY() - towerButton.getHeight() / 2);
+          towerButton.rangeImage.setPosition(event.getStageX() - towerButton.towerType.radius, event.getStageY() - towerButton.towerType.radius);
+          towerButton.rangeImage.setVisible(true);
         }
 
         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+
           towerButton.setX(startX);
           towerButton.setY(startY);
           Vector3 pos = new Vector3(event.getStageX(), event.getStageY(), 0);
-          if(legalPlacement) {
 
+          if(legalPlacement) {
             towerButton.towerType.copy(pos, model.engine, 1);
             CoDT.EVENT_BUS.post(new TowerPlaced(towerButton.towerType, pos));
-//            towerButton.towerType.copy(new Towers.Pack(pos, model.engine));
-
+            CoDT.EVENT_BUS.post(new FundsChanged(funds - towerButton.towerType.price));
+            System.out.println("Current funds =" + funds);
           }
+          towerButton.rangeImage.setVisible(false);
         }
 
-        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-          return true;
-        }
       });
     }
   }
 
   @Subscribe
   public void entityAdded(TowerPlaced event) {
-
+    //Flytte denne metoden til View?
     int dmg = event.tower.damage;
-    float range = event.tower.radius;
+    float radius = event.tower.radius;
     Vector3 pos = event.pos;
     float width = event.tower.width;
     float height = event.tower.height;
+    Stage stage = view.getUi();
 
 
     final Label description = new Label(
         "Type: " + event.tower + "\n" +
-        "Damage: " + dmg + "\n" +
-        "Range: " + range + "\n", game.assets.skin
+             "Rate of fire: " + event.tower.reload + "\n" +
+             "Damage: " + dmg + "\n" +
+             "Range: " + (int)radius + "\n", game.assets.skin
     );
 
+    int x = Gdx.graphics.getWidth();
+    int y = Gdx.graphics.getHeight();
+
+/*    com.badlogic.gdx.graphics.Pixmap p = new Pixmap(diameter, diameter, Pixmap.Format.RGBA8888);
+    p.setColor(255, 255, 255, 0.2f);
+    p.fillCircle((int)radius,(int)radius, diameter/2);
+
+    p.setBlending(com.badlogic.gdx.graphics.Pixmap.Blending.None);
+    Texture t = new Texture(p);
+    final Image attackRange = new Image(t);
+    attackRange.setPosition(pos.x - radius, pos.y - radius);
+    attackRange.setVisible(false);*/
 
     description.setPosition(pos.x+width, pos.y+height, 0);
     description.setVisible(false);
@@ -205,21 +210,17 @@ public class GameController extends Controller{
           description.setVisible(false);
         } else {
           description.setVisible(true);
+          //attackRange.setVisible(true);
         }
       }
     });
-
-    Stage stage = view.getUi();
+    //stage.addActor(attackRange);
     stage.addActor(description);
     stage.addActor(btn);
-
-
     System.out.println("entity added");
   }
 
-  @Subscribe
-  public void updateFunds(CreepDied event){
-    model.player1.getComponent(PlayerComponent.class).funds += event.bounty;
-  }
+
+
 
 }

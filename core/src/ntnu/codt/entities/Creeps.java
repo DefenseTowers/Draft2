@@ -3,6 +3,7 @@ package ntnu.codt.entities;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -11,22 +12,25 @@ import ntnu.codt.core.prototype.Prototype2;
 
 public enum Creeps implements Prototype2<Entity, PooledEngine, Integer> {
 
-  SMALL_BOI(20, 20, 250, 20*30, 0),
-  BIG_BOI(40, 40, 600, 20*30, 0);
+  SMALL_BOI(20, 20, 250, 20*30, 0, 10),
+  BIG_BOI(40, 40, 600, 20*30, 0, 50);
 
   private TextureRegion[] textureRegions;
   private final float width;
   private final float height;
   private final int hp;
-  private final int startx;
-  private final int starty;
+  private final int startX;
+  private final int startY;
+  private final int bounty;
 
-  Creeps(float width, float height, int hp, int startx, int starty){
+  Creeps(float width, float height, int hp, int startX, int startY, int bounty){
     this.width = width;
     this.height = height;
     this.hp = hp;
-    this.startx = startx;
-    this.starty = starty;
+    this.startX = startX;
+    this.startY = startY;
+    this.bounty = bounty;
+
   }
 
   public void setTextureRegions(TextureRegion[] textureRegions) {
@@ -45,16 +49,27 @@ public enum Creeps implements Prototype2<Entity, PooledEngine, Integer> {
     StateComponent sc = engine.createComponent(StateComponent.class);
     CreepComponent cc = engine.createComponent(CreepComponent.class);
 
-    sc.set(State.NORTH);
+
+    //int mirroredX = Gdx.graphics.getWidth()/2 + (Gdx.graphics.getWidth()/2 - startX);
     cc.regions = textureRegions;
     cc.faction = faction;
-    pm.pos = new Vector3(startx, starty, 0);
+    cc.bounty = bounty;
     tem.region = this.textureRegions[sc.get()];
     hc.health = this.hp;
     vs.velocity = new Vector3(0, 10, 0);
 
     trm.rotation = 0.0f;
     trm.scale = new Vector2(1, 1);
+
+
+    if(cc.faction  == 1) {
+      pm.pos = new Vector3(startX, startY, 0);
+      sc.set(State.NORTH);
+    } else {
+      pm.pos = new Vector3(20*20, Gdx.graphics.getHeight()-20,0);
+      sc.set(State.SOUTH);
+    }
+
 
     entity.add(trm);
     entity.add(tem);

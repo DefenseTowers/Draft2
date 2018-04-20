@@ -12,6 +12,7 @@ import ntnu.codt.assets.Assets;
 import ntnu.codt.core.eventhandler.EventBus;
 import ntnu.codt.mvc.game.GameScreen;
 import ntnu.codt.mvc.menu.MenuScreen;
+import ntnu.codt.mvc.menu.SettingScreen;
 
 public class CoDT extends Game{
 
@@ -45,5 +46,9 @@ public class CoDT extends Game{
 	}
 	// Controls switching between screens
 
+	public void goToSettingScreen(){
+		setScreen(new SettingScreen(this));
+	}
+	// Controls switching between screens
 
 }

@@ -14,9 +14,9 @@ import ntnu.codt.systems.CreepSystem;
 
 public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Integer> {
 
- FIRE(30, 60, 500, 200, 1, 250, Projectiles.FIRE),
-  LIGHTNING(30, 60, 150, 300, 5, 100, Projectiles.FIRE),
-  ICE(30, 60, 300 , 300, 5, 200, Projectiles.ICE);
+ FIRE(30, 60, 500, 200, 1, 250, Projectiles.FIRE, 10),
+  LIGHTNING(30, 60, 150, 300, 5, 100, Projectiles.FIRE, 10),
+  ICE(30, 60, 300 , 300, 25, 200, Projectiles.ICE, 10);
 
   public TextureRegion textureRegion;
   public final float width;
@@ -26,8 +26,9 @@ public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Integer>
   public final int damage;
   public final long reload;
   public final Projectiles projectile;
+  public final int price;
 
-  Towers(float width, float height, float radius, float av, int damage, long reload, Projectiles projectile) {
+  Towers(float width, float height, float radius, float av, int damage, long reload, Projectiles projectile, int price) {
     this.width = width;
     this.height = height;
     this.radius = radius;
@@ -35,6 +36,7 @@ public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Integer>
     this.damage = damage;
     this.reload = reload;
     this.projectile = projectile;
+    this.price = price;
   }
 
   public void setTextureRegion(TextureRegion region) {
@@ -52,6 +54,7 @@ public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Integer>
     BoundsComponent bc = engine.createComponent(BoundsComponent.class);
     TowerComponent tc = engine.createComponent(TowerComponent.class);
 
+    tc.price = price;
     tc.faction = faction;
     pm.pos = pos.cpy();
     bc.bounds = new Rectangle(pm.pos.x-(this.width /2),pm.pos.y-(this.height /2),this.width,this.height);

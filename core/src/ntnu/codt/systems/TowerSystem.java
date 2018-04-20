@@ -6,6 +6,9 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
 import ntnu.codt.components.*;
 
@@ -43,5 +46,24 @@ public class TowerSystem extends IteratingSystem {
         ac.creepsInRange.remove(0);
       }
     }
+
+
+
+  }
+
+
+  public boolean isTowersOverlapping(Rectangle placedTower){
+
+    ImmutableArray<Entity> towerList = getEntities();
+
+    boolean isOverlapping = false;
+
+    for (Entity tower : towerList){
+      if(tower.getComponent(BoundsComponent.class).bounds.overlaps(placedTower))
+        isOverlapping = true;
+    }
+
+    //System.out.println("isOverlapping:" + isOverlapping + "\n" + "number of towers: " + towerList.size());
+    return isOverlapping;
   }
 }
