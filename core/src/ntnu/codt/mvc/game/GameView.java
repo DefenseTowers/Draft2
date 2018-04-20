@@ -123,8 +123,8 @@ public class GameView implements View {
       int radius = diameter/2;
       com.badlogic.gdx.graphics.Pixmap p = new Pixmap(diameter, diameter, Pixmap.Format.RGBA8888);
       p.setColor(255, 255, 255, 0.2f);
-      p.fillCircle(radius,radius, diameter/2);
       p.setBlending(com.badlogic.gdx.graphics.Pixmap.Blending.None);
+      p.fillCircle(radius,radius, diameter/2);
       Texture tex = new Texture(p);
       tex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
       Image attackRange = new Image(tex);
