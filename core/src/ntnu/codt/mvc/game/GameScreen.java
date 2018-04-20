@@ -20,6 +20,7 @@ public class GameScreen extends BaseScreen {
     this.gameView = new GameView(game, gameModel);
     this.gameController = new GameController(game, gameModel, gameView);
 
+    game.client.setReceiveEndpoint(gameController);
     mp = new InputMultiplexer();
     mp.addProcessor(gameView.getUi());
     mp.addProcessor(gameController);

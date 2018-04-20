@@ -12,11 +12,12 @@ import ntnu.codt.components.*;
 import ntnu.codt.core.prototype.Prototype3;
 import ntnu.codt.systems.CreepSystem;
 
-public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Integer> {
 
- FIRE(30, 60, 500, 200, 1, 250, Projectiles.FIRE, 10),
-  LIGHTNING(30, 60, 150, 300, 5, 100, Projectiles.FIRE, 10),
-  ICE(30, 60, 300 , 300, 25, 200, Projectiles.ICE, 10);
+public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Player> {
+  FIRE(30, 60, 500, 200, 1, 250, Projectiles.FIRE, 10),
+  LIGHTNING(30, 60, 150, 300, 5, 150, Projectiles.LIGHTNING, 10),
+  ICE(30, 60, 300 , 300, 5, 200, Projectiles.ICE, 10);
+
 
   public TextureRegion textureRegion;
   public final float width;
@@ -44,7 +45,7 @@ public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Integer>
   }
 
   @Override
-  public Entity copy(Vector3 pos, PooledEngine engine, Integer faction) {
+  public Entity copy(Vector3 pos, PooledEngine engine, Player loyalty) {
     Entity entity = engine.createEntity();
 
     TransformComponent trm = engine.createComponent(TransformComponent.class);
@@ -53,9 +54,12 @@ public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Integer>
     AttackComponent at = engine.createComponent(AttackComponent.class);
     BoundsComponent bc = engine.createComponent(BoundsComponent.class);
     TowerComponent tc = engine.createComponent(TowerComponent.class);
+    AllegianceComponent ac = engine.createComponent(AllegianceComponent.class);
+
 
     tc.price = price;
-    tc.faction = faction;
+
+    ac.loyalty = loyalty;
     pm.pos = pos.cpy();
     bc.bounds = new Rectangle(pm.pos.x-(this.width /2),pm.pos.y-(this.height /2),this.width,this.height);
     tem.region = this.textureRegion;
@@ -75,6 +79,7 @@ public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Integer>
     entity.add(at);
     entity.add(bc);
     entity.add(tc);
+    entity.add(ac);
 
     engine.getSystem(CreepSystem.class).addObserver(entity);
     engine.addEntity(entity);

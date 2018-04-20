@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import ntnu.codt.assets.Assets;
 import ntnu.codt.core.eventhandler.EventBus;
+import ntnu.codt.core.network.IServiceClient;
 import ntnu.codt.mvc.game.GameScreen;
 import ntnu.codt.mvc.menu.MenuScreen;
 import ntnu.codt.mvc.menu.SettingScreen;
@@ -20,10 +21,16 @@ public class CoDT extends Game{
 	public SpriteBatch batch;
 	public ShapeRenderer shape;
 	public Assets assets;
+	public IServiceClient client;
+
+	public CoDT(IServiceClient client) {
+	  this.client = client;
+  }
 	
 	@Override
 	public void create () {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
 
 		EVENT_BUS = new EventBus();
 		batch = new SpriteBatch();

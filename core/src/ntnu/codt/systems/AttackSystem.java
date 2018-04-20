@@ -7,6 +7,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 
+import com.badlogic.gdx.math.Vector3;
 import ntnu.codt.components.*;
 
 import static java.lang.Math.abs;
@@ -46,9 +47,17 @@ public class AttackSystem extends IteratingSystem {
         engine.removeEntity(entity);
       }
     } else if (poc.pos.x < 1280 && poc.pos.x > 0 && poc.pos.y < 720 && poc.pos.y > 0) {
-      poc.pos.x += vc.velocity.x * deltaTime;
-      poc.pos.y += vc.velocity.y * deltaTime;
       prc.targetDistance.sub(abs(vc.velocity.x * deltaTime), abs(vc.velocity.y * deltaTime));
+
+      if (prc.ft && prc.target.getComponent(PositionComponent.class) != null) {
+        Vector3 tPos = prc.target.getComponent(PositionComponent.class).pos;
+        Vector3 vv = new Vector3(poc.pos);
+        vv.sub(tPos).setLength(vc.maxVel);
+        poc.pos.sub(vv.x * deltaTime, vv.y * deltaTime, 0);
+      } else {
+        poc.pos.x += vc.velocity.x * deltaTime;
+        poc.pos.y += vc.velocity.y * deltaTime;
+      }
     } else {
       prc.target = null;
       if (!entity.isScheduledForRemoval()) {

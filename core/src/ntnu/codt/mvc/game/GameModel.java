@@ -44,9 +44,9 @@ public class GameModel {
     camera = new OrthographicCamera(1280, 720);
     camera.position.set(1280 / 2, 720 / 2, 0);
 
-    map = new TmxMapLoader().load("tiledmap2.tmx");
-    layer = (TiledMapTileLayer)map.getLayers().get(1);
-    layer2 = (TiledMapTileLayer)map.getLayers().get(0);
+    map = new TmxMapLoader().load("greytilemap.tmx");
+    layer = (TiledMapTileLayer)map.getLayers().get(0);
+    layer2 = (TiledMapTileLayer)map.getLayers().get(1);
 
     renderer = new OrthogonalTiledMapRenderer(map);
 
@@ -106,6 +106,7 @@ public class GameModel {
   private void loadProjectiles() {
     Projectiles.FIRE.setAnimation(game.assets.projectiles.fire);
     Projectiles.ICE.setAnimation(game.assets.projectiles.ice);
+    Projectiles.LIGHTNING.setAnimations(game.assets.projectiles.lightning);
   }
 
 }

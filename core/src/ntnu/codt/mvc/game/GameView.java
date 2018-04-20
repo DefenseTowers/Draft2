@@ -93,8 +93,13 @@ public class GameView implements View {
       pixmap.fill();
       pixmap.setColor(Color.BLACK);
       pixmap.drawRectangle(0, 0, 100, 100, 5);
+
+      pixmap.drawTextureRegionCenter(tower.textureRegion);
+
+
       Texture texture = new Texture(pixmap);
       skin.add("rect", texture);
+
       Texture t = new Texture(tower.textureRegion.getTexture().getTextureData());
       t.getTextureData().prepare();
 
@@ -121,6 +126,7 @@ public class GameView implements View {
       p.fillCircle(radius,radius, diameter/2);
       p.setBlending(com.badlogic.gdx.graphics.Pixmap.Blending.None);
       Texture tex = new Texture(p);
+      tex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
       Image attackRange = new Image(tex);
       attackRange.setVisible(false);
 

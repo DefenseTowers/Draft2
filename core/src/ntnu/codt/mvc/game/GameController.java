@@ -1,6 +1,7 @@
 package ntnu.codt.mvc.game;
 
 
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -16,22 +17,33 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.SynchronousQueue;
 
 import ntnu.codt.CoDT;
+
 import ntnu.codt.components.PlayerComponent;
+
 import ntnu.codt.core.eventhandler.Subscribe;
+import ntnu.codt.core.network.ReceiveEndpoint;
 import ntnu.codt.entities.Creeps;
+
 import ntnu.codt.core.observer.Subject;
 import ntnu.codt.events.FundsChanged;
+
+import ntnu.codt.entities.Player;
+import ntnu.codt.core.observer.Subject;
+import ntnu.codt.entities.Towers;
+
 import ntnu.codt.events.TowerPlaced;
 import ntnu.codt.mvc.Controller;
 import ntnu.codt.systems.TowerSystem;
 import ntnu.codt.ui.TowerButton;
 
-public class GameController extends Controller{
+public class GameController extends Controller implements ReceiveEndpoint {
   private final GameModel model;
   private Subject<Void> subjectTouch;
   private GameView view;
+  private final SynchronousQueue<UpdateAction> updateQueue;
 
   public GameController(CoDT game, GameModel model, GameView gameView) {
 
@@ -42,11 +54,10 @@ public class GameController extends Controller{
     CoDT.EVENT_BUS.register(this);
     setListeners();
 
+    updateQueue = new SynchronousQueue<UpdateAction>();
   }
 
-
-
-  private boolean legalTowerPlacement(Rectangle bounds){
+  private boolean legalTowerPlacement(Rectangle bounds, Player player){
 
     try {
 
@@ -65,7 +76,7 @@ public class GameController extends Controller{
 
       //370,369,345,346
       for (int i = 0; i < tiles.size(); i++) {
-        if (tiles.get(i).getId() == 395) {
+        if (tiles.get(i).getId() == player.towerTile) {
           legal = true;
         } else {
           legal = false;
@@ -83,10 +94,15 @@ public class GameController extends Controller{
   }
 
   public void update(float deltaTime) {
+
     if (Gdx.input.isKeyJustPressed(20)) {
-      Creeps.BIG_BOI.copy(model.engine, PlayerComponent.FACTION2);
-      Creeps.SMALL_BOI.copy(model.engine, PlayerComponent.FACTION1);
+      Creeps.BIG_BOI.copy(model.engine, Player.P2);
+      Creeps.SMALL_BOI.copy(model.engine, Player.P1);
     }
+    for (UpdateAction action : updateQueue) {
+      action.call();
+    }
+
   }
 
   @Override
@@ -132,7 +148,9 @@ public class GameController extends Controller{
 
           Rectangle boundingBox = new Rectangle(event.getStageX() - width/2, event.getStageY() - height/2, width, height);
 
-          if(legalTowerPlacement(boundingBox) && sufficientFunds){
+
+          if(legalTowerPlacement(boundingBox, Player.P1) && sufficientFunds){
+
             towerButton.getColor().a = 1f;
             legalPlacement = true;
           } else {
@@ -151,10 +169,11 @@ public class GameController extends Controller{
           Vector3 pos = new Vector3(event.getStageX(), event.getStageY(), 0);
 
           if(legalPlacement) {
-            towerButton.towerType.copy(pos, model.engine, 1);
+            towerButton.towerType.copy(pos, model.engine, Player.P1);
             CoDT.EVENT_BUS.post(new TowerPlaced(towerButton.towerType, pos));
             CoDT.EVENT_BUS.post(new FundsChanged(funds - towerButton.towerType.price));
             System.out.println("Current funds =" + funds);
+
           }
           towerButton.rangeImage.setVisible(false);
         }
@@ -220,7 +239,29 @@ public class GameController extends Controller{
     System.out.println("entity added");
   }
 
+  @Override
+  public void receiveTowerPlaced(final Vector3 pos, final Towers tower, final Player player) throws InterruptedException {
+    updateQueue.put(new UpdateAction() {
+      @Override
+      public void call() {
+        tower.copy(pos, model.engine, player);
+      }
+    });
+  }
 
+  @Override
+  public void receiveCreepSpawned(final Creeps creep, final Player player) throws InterruptedException {
+    updateQueue.put(new UpdateAction() {
+      @Override
+      public void call() {
+        creep.copy(model.engine, player);
+      }
+    });
+  }
+
+  private interface UpdateAction {
+    void call();
+  }
 
 
 }
