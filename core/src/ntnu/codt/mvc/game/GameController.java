@@ -80,6 +80,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
           legal = true;
         } else {
           legal = false;
+          break;
         }
       }
 
