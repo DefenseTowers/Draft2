@@ -1,0 +1,111 @@
+
+datlas.png
+size: 2048,256
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+UpgradeButton
+  rotate: false
+  xy: 1238, 156
+  size: 145, 50
+  orig: 145, 50
+  offset: 0, 0
+  index: -1
+big_boi
+  rotate: false
+  xy: 2, 126
+  size: 320, 80
+  orig: 320, 80
+  offset: 0, 0
+  index: -1
+fire
+  rotate: false
+  xy: 1385, 142
+  size: 61, 64
+  orig: 61, 64
+  offset: 0, 0
+  index: -1
+fire2
+  rotate: false
+  xy: 1448, 142
+  size: 52, 64
+  orig: 52, 64
+  offset: 0, 0
+  index: -1
+fire_projectile
+  rotate: false
+  xy: 324, 126
+  size: 312, 80
+  orig: 312, 80
+  offset: 0, 0
+  index: -1
+goldDisplay
+  rotate: false
+  xy: 158, 11
+  size: 57, 31
+  orig: 57, 31
+  offset: 0, 0
+  index: -1
+ice
+  rotate: false
+  xy: 579, 45
+  size: 61, 79
+  orig: 61, 79
+  offset: 0, 0
+  index: -1
+ice_projectile
+  rotate: false
+  xy: 2, 44
+  size: 312, 80
+  orig: 312, 80
+  offset: 0, 0
+  index: -1
+lightning
+  rotate: false
+  xy: 516, 47
+  size: 61, 77
+  orig: 61, 77
+  offset: 0, 0
+  index: -1
+lightning_projectile
+  rotate: false
+  xy: 2, 208
+  size: 2000, 40
+  orig: 2000, 40
+  offset: 0, 0
+  index: -1
+little_haunt
+  rotate: false
+  xy: 2, 2
+  size: 154, 40
+  orig: 154, 40
+  offset: 0, 0
+  index: -1
+playBtnDown
+  rotate: false
+  xy: 316, 74
+  size: 198, 50
+  orig: 198, 50
+  offset: 0, 0
+  index: -1
+playBtnUp
+  rotate: false
+  xy: 1038, 156
+  size: 198, 50
+  orig: 198, 50
+  offset: 0, 0
+  index: -1
+settingsBtnDown
+  rotate: false
+  xy: 838, 156
+  size: 198, 50
+  orig: 198, 50
+  offset: 0, 0
+  index: -1
+settingsBtnUp
+  rotate: false
+  xy: 638, 156
+  size: 198, 50
+  orig: 198, 50
+  offset: 0, 0
+  index: -1
