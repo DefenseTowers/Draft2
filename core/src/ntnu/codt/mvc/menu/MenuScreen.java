@@ -1,12 +1,14 @@
 package ntnu.codt.mvc.menu;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import ntnu.codt.CoDT;
+import ntnu.codt.core.network.StartEndpoint;
 import ntnu.codt.mvc.BaseScreen;
 
 
-public class MenuScreen extends BaseScreen{
+public class MenuScreen extends BaseScreen implements StartEndpoint {
 
   private MenuView menuView;
   private MenuController menuController;
@@ -17,6 +19,9 @@ public class MenuScreen extends BaseScreen{
     menuController = new MenuController(game);
     menuView = new MenuView(game);
 
+    game.client.setStartEndpoint(this);
+
+    game.client.joinGame();
 
     menuView.loadStage(stage);
   }
@@ -34,6 +39,14 @@ public class MenuScreen extends BaseScreen{
   }
 
 
-
+  @Override
+  public void setGameScreen() {
+    Gdx.app.postRunnable(new Runnable() {
+      @Override
+      public void run() {
+        game.goToGameScreen();
+      }
+    });
+  }
 
 }

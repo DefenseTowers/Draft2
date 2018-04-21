@@ -97,8 +97,9 @@ public class GameController extends Controller implements ReceiveEndpoint {
   public void update(float deltaTime) {
 
     if (Gdx.input.isKeyJustPressed(20)) {
-      Creeps.BIG_BOI.copy(model.engine, Player.P2);
-      Creeps.SMALL_BOI.copy(model.engine, Player.P1);
+      Creeps.BIG_BOI.copy(model.engine, model.currentPlayer);
+      Creeps.SMALL_BOI.copy(model.engine, model.currentPlayer);
+      game.client.creepSent(Creeps.SMALL_BOI, model.currentPlayer);
     }
     for (UpdateAction action : updateQueue) {
       action.call();

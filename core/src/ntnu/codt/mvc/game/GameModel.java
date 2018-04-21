@@ -12,13 +12,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 
 import ntnu.codt.CoDT;
-import ntnu.codt.entities.Creeps;
-import ntnu.codt.entities.EntityFactory;
+import ntnu.codt.entities.*;
 import ntnu.codt.components.PlayerComponent;
 import ntnu.codt.core.observer.Observer;
 import ntnu.codt.core.observer.Subject;
-import ntnu.codt.entities.Projectiles;
-import ntnu.codt.entities.Towers;
 import ntnu.codt.systems.*;
 
 public class GameModel {
@@ -33,6 +30,7 @@ public class GameModel {
   public OrthogonalTiledMapRenderer renderer;
   public Skin skin;
   public Entity player1;
+  public Player currentPlayer;
   public Subject<Integer> ecoBus = new Subject<Integer>();
 
 
@@ -69,6 +67,8 @@ public class GameModel {
     loadProjectiles();
 
     entityFactory = new EntityFactory(engine,layer);
+
+    currentPlayer = game.client.getPlayer();
 
     player1 = entityFactory.createPlayer("bjarne", 1);
     ecoBus.subscribe(new Observer<Integer>() {

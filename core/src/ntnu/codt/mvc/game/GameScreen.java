@@ -16,6 +16,7 @@ public class GameScreen extends BaseScreen {
 
   public GameScreen(CoDT game) {
     super(game);
+
     this.gameModel = new GameModel(game);
     this.gameView = new GameView(game, gameModel);
     this.gameController = new GameController(game, gameModel, gameView);
