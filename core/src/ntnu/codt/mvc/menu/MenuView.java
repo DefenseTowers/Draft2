@@ -79,7 +79,8 @@ public class MenuView implements View {
     playBtn.addListener(new ChangeListener() {
       public void changed (ChangeEvent event, Actor actor) {
         System.out.println("PlayBtn Clicked!");
-        game.goToGameScreen();
+        //game.goToGameScreen();
+        game.client.joinGame();
       }
     });
 

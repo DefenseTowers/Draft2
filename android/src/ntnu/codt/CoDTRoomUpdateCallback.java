@@ -23,6 +23,7 @@ public class CoDTRoomUpdateCallback extends RoomUpdateCallback {
   public void onRoomCreated(int code, @Nullable Room room) {
     if (code == GamesCallbackStatusCodes.OK && room != null) {
       Log.d(TAG, "Room " + room.getRoomId() + "created.");
+      activity.showWaitingRoom(room);
     } else {
       Log.w(TAG, "Error creatin room: " + code);
       clearFlags();
@@ -33,6 +34,7 @@ public class CoDTRoomUpdateCallback extends RoomUpdateCallback {
   public void onJoinedRoom(int code, @Nullable Room room) {
     if (code == GamesCallbackStatusCodes.OK && room != null) {
       Log.d(TAG, "Room " + room.getRoomId() + "joined.");
+      activity.showWaitingRoom(room);
     } else {
       Log.w(TAG, "Error joining room: " + code);
       clearFlags();

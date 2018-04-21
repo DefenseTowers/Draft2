@@ -21,7 +21,7 @@ public class MenuScreen extends BaseScreen implements StartEndpoint {
 
     game.client.setStartEndpoint(this);
 
-    game.client.joinGame();
+    //game.client.joinGame();
 
     menuView.loadStage(stage);
   }
@@ -47,6 +47,16 @@ public class MenuScreen extends BaseScreen implements StartEndpoint {
         game.goToGameScreen();
       }
     });
+  }
+
+  @Override
+  public void setMainScreen() {
+
+  }
+
+  @Override
+  public void setWaitingScreen() {
+
   }
 
 }

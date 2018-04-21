@@ -62,12 +62,14 @@ public class CoDTRoomStatusUpdateCallback extends RoomStatusUpdateCallback {
 
   @Override
   public void onConnectedToRoom(@Nullable Room room) {
+
     activity.setRoom(room);
     Games.getPlayersClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
         .getCurrentPlayerId().addOnSuccessListener(new OnSuccessListener<String>() {
       @Override
       public void onSuccess(String playerId) {
         activity.setCurrentParticipantId(activity.getRoom().getParticipantId(playerId));
+        Log.d(TAG, "Setting pid");
       }
     });
   }
@@ -86,7 +88,14 @@ public class CoDTRoomStatusUpdateCallback extends RoomStatusUpdateCallback {
     Log.d(TAG, "peer connected");
     if (activity.shouldStartGame(room)) {
       Log.d(TAG, "sending data");
-      activity.sendToAllReliably(("S:" + 123123).getBytes());
+      Games.getPlayersClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
+          .getCurrentPlayerId().addOnSuccessListener(new OnSuccessListener<String>() {
+        @Override
+        public void onSuccess(String s) {
+          activity.sendToAllReliably(("S:" + String.valueOf(123123L)).getBytes());
+        }
+      });
+
       //activity.startGame();
       //activity.sendToAllReliably(("Your friend: " + activity.getCurrentParticipantId()).getBytes());
     }

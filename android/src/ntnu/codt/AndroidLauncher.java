@@ -22,6 +22,7 @@ import com.google.android.gms.games.RealTimeMultiplayerClient;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.realtime.*;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import ntnu.codt.CoDT;
@@ -37,7 +38,9 @@ import java.util.List;
 
 public class AndroidLauncher extends AndroidApplication implements IServiceClient {
   private final static String TAG = AndroidLauncher.class.getName();
-  private final static int MIN_PLAYERS = 2;
+  private static final int RC_SIGN_IN = 9000;
+  private static final int RC_WAITING_ROOM = 100002;
+  private static final int MIN_PLAYERS = 2;
   private GoogleSignInClient mGoogleSignInClient = null;
   private GoogleSignInAccount signInAccount = null;
   private RoomConfig mJoinedRoomConfig = null;
@@ -49,6 +52,7 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
   private String currentParticipantId = null;
   private StartEndpoint startEndpoint;
   private Player player;
+  private RealTimeMultiplayerClient mRealTimeMultiplaterClient = null;
 
 
 	@Override
@@ -60,6 +64,8 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
 		mRoomUpdateCallback = new CoDTRoomUpdateCallback(this);
 		mMessageReceivedHandler = new CoDTMessageReceivedListener(this);
 
+		mGoogleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
+
     System.out.println("ANDROID LAUNCHER::" + "Signed In: " + isSignedIn());
 
 
@@ -67,14 +73,30 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
   }
 
   public void sendToAllReliably(byte[] message) {
+	  Log.d(TAG, String.valueOf(mRoom.getParticipantIds().size()));
+	  Log.d(TAG, getCurrentParticipantId());
 	  for (String pid : mRoom.getParticipantIds()) {
-	    if (!pid.equals(currentParticipantId)) {
-	      Task<Integer> task = Games.getRealTimeMultiplayerClient(this, GoogleSignIn.getLastSignedInAccount(this))
+	    if (!pid.equals(getCurrentParticipantId())) {
+	      Log.d(TAG, "Sending to: " + pid);
+	      //Task<Integer> task = Games.getRealTimeMultiplayerClient(this, GoogleSignIn.getLastSignedInAccount(this));
+	      mRealTimeMultiplaterClient
             .sendReliableMessage(message, mRoom.getRoomId(), pid, handleMessageSentCallback)
             .addOnCompleteListener(new OnCompleteListener<Integer>() {
               @Override
               public void onComplete(@NonNull Task<Integer> task) {
-                recordMessageToken(task.getResult());
+                //recordMessageToken(task.getResult());
+              }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+              }
+            })
+            .addOnSuccessListener(new OnSuccessListener<Integer>() {
+              @Override
+              public void onSuccess(Integer integer) {
+                Log.d(TAG, "Success: " + integer);
               }
             });
       }
@@ -85,9 +107,13 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
   private RealTimeMultiplayerClient.ReliableMessageSentCallback handleMessageSentCallback = new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
     @Override
     public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientId) {
-      synchronized (this) {
-        pendingMessageSet.remove(tokenId);
-      }
+//      synchronized (this) {
+//        pendingMessageSet.remove(tokenId);
+//      }
+      Log.d(TAG, "RealTime message sent");
+      Log.d(TAG, "  statusCode: " + statusCode);
+      Log.d(TAG, "  tokenId: " + tokenId);
+      Log.d(TAG, "  recipientParticipantId: " + recipientId);
     }
   };
 
@@ -108,40 +134,56 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
 
   private void signInSilently() {
     Log.d(TAG, "POTATATOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-	  if (!isSignedIn()) {
+	  //if (!isSignedIn()) {
 	    Log.d(TAG, "Signing in");
-      GoogleSignInClient signInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
-      signInClient.silentSignIn().addOnCompleteListener(this, new OnCompleteListener<GoogleSignInAccount>() {
+      mGoogleSignInClient.silentSignIn().addOnCompleteListener(this, new OnCompleteListener<GoogleSignInAccount>() {
         @Override
         public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
           if (task.isSuccessful()) {
-            signInAccount = task.getResult();
-            //startQuickGame(0x0);
+            onConnect(task.getResult());
           } else {
             task.getException().printStackTrace();
             startSignInIntent();
           }
         }
       });
-    } else {
-	    signInAccount = GoogleSignIn.getLastSignedInAccount(this);
-    }
   }
 
   private void startSignInIntent() {
     GoogleSignInClient signInClient = GoogleSignIn.getClient(this,
         GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
     Intent intent = signInClient.getSignInIntent();
-    startActivityForResult(intent, 9000);
+    startActivityForResult(intent, RC_SIGN_IN);
+  }
+
+  private void onConnect(GoogleSignInAccount googleSignInAccount) {
+    Log.d(TAG, "onConnect(): connected to Google APIs");
+    if (signInAccount != googleSignInAccount) {
+      signInAccount = googleSignInAccount;
+
+      mRealTimeMultiplaterClient = Games.getRealTimeMultiplayerClient(this, googleSignInAccount);
+
+      PlayersClient playersClient = Games.getPlayersClient(this, googleSignInAccount);
+      playersClient.getCurrentPlayer()
+          .addOnSuccessListener(new OnSuccessListener<com.google.android.gms.games.Player>() {
+            @Override
+            public void onSuccess(com.google.android.gms.games.Player player) {
+              currentParticipantId = player.getPlayerId();
+
+              //startEndpoint.setWaitingScreen();
+            }
+          });
+    }
   }
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	  super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == 9000) {
+    if (requestCode == RC_SIGN_IN) {
       GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
       if (result.isSuccess()) {
-        signInAccount = result.getSignInAccount();
+        //signInAccount = result.getSignInAccount();
+        onConnect(result.getSignInAccount());
         System.out.println("ANDROID LAUNCER::" + signInAccount.getDisplayName());
       } else {
         String message = result.getStatus().getStatusMessage();
@@ -151,6 +193,11 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
         }
         //new AlertDialog.Builder(this).setMessage(message)
         //    .setNeutralButton(android.R.string.ok, null).show();
+      }
+    } else if (requestCode == RC_WAITING_ROOM) {
+      if (resultCode == Activity.RESULT_OK) {
+        //startGame();
+        sendToAllReliably(("S:" + mRoom.getCreationTimestamp()).getBytes());
       }
     }
   }
@@ -167,8 +214,17 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
 
     mJoinedRoomConfig = roomConfig;
 
+    mRealTimeMultiplaterClient.create(roomConfig);
+  }
 
-    Games.getRealTimeMultiplayerClient(this, GoogleSignIn.getLastSignedInAccount(this)).create(roomConfig);
+  public void showWaitingRoom(Room room) {
+    mRealTimeMultiplaterClient.getWaitingRoomIntent(room, 2)
+        .addOnSuccessListener(new OnSuccessListener<Intent>() {
+          @Override
+          public void onSuccess(Intent intent) {
+            startActivityForResult(intent, RC_WAITING_ROOM);
+          }
+        });
   }
 
   public boolean shouldStartGame(Room room) {

@@ -57,7 +57,12 @@ public class CoDTMessageReceivedListener implements OnRealTimeMessageReceivedLis
           }
           break;
         }
+
+      }
+    } else {
+      switch (type) {
         case "S": {
+          Log.d(TAG, "Setting plyer");
           long timeStamp = Long.valueOf(format[1]);
           if (activity.getRoom().getCreationTimestamp() > timeStamp) {
             activity.setPlayer(Player.P1);
