@@ -9,8 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
@@ -78,10 +80,12 @@ public class GameController extends Controller implements ReceiveEndpoint {
 
       //370,369,345,346
       for (int i = 0; i < tiles.size(); i++) {
+        System.out.println("tile ID: " +tiles.get(i).getId());
         if (tiles.get(i).getId() == player.towerTile) {
           legal = true;
         } else {
           legal = false;
+          break;
         }
       }
 
@@ -118,14 +122,13 @@ public class GameController extends Controller implements ReceiveEndpoint {
 
 
   public void setListeners() {
-
+    final ImageButton upgradeTowerBtn = view.getUi().getRoot().findActor("upgradeTowerBtn");
     final Array<TowerButton> towerBtnList = view.getTowerBtnList();
     final Array<CreepButton> creepBtnList = view.getCreepBtnList();
+    final EconomySystem economySystem = model.engine.getSystem(EconomySystem.class);
 
     for (TowerButton btn : towerBtnList) {
-
       final TowerButton towerButton = btn;
-
       towerButton.addListener(new DragListener() {
 
         float startX = towerButton.getX();
@@ -145,10 +148,10 @@ public class GameController extends Controller implements ReceiveEndpoint {
         public void touchDragged(InputEvent event, float x, float y, int pointer) {
 
           event.getButton();
-          float height = towerButton.towerType.height;
-          float width = towerButton.towerType.width;
+          float towerHeight = towerButton.towerType.height;
+          float towerWidth = towerButton.towerType.width;
 
-          Rectangle boundingBox = new Rectangle(event.getStageX() - width/2, event.getStageY() - height/2, width, height);
+          Rectangle boundingBox = new Rectangle(event.getStageX() - towerWidth/2, event.getStageY() - towerHeight/2, towerWidth, towerHeight);
 
           if(legalTowerPlacement(boundingBox, Player.P1) && sufficientFunds){
             towerButton.getColor().a = 1f;
@@ -172,14 +175,12 @@ public class GameController extends Controller implements ReceiveEndpoint {
             towerButton.towerType.copy(pos, model.engine, Player.P1);
             CoDT.EVENT_BUS.post(new TowerPlaced(towerButton.towerType, pos));
             economySystem.doTransaction(player, price);
-
           }
           towerButton.rangeImage.setVisible(false);
         }
 
       });
     }
-    final EconomySystem economySystem = model.engine.getSystem(EconomySystem.class);
 
     for (CreepButton cb : creepBtnList){
       final CreepButton creepBtn = cb;
@@ -192,6 +193,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
         }
       });
     }
+
   }
 
   @Subscribe

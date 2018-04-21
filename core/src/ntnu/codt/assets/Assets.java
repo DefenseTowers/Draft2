@@ -37,16 +37,7 @@ public class Assets implements Disposable, AssetErrorListener {
     this.skin = new Skin(Gdx.files.internal("default/skin/uiskin.json"));
     //TODO load texture assets
 
-    //assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
-    //assetManager.load("tiledmap.tmx", TiledMap.class);
     assetManager.load(ATLAS_PATH, TextureAtlas.class);
-//    assetManager.load("playBtnUp.png", Texture.class);
-//    assetManager.load("playBtnDown.png", Texture.class);
-//    assetManager.load("settingsBtnUp.png", Texture.class);
-//    assetManager.load("settingsBtnDown.png", Texture.class);
-//    assetManager.load("1.png", Texture.class);
-//    assetManager.load("2.png", Texture.class);
-
     assetManager.finishLoading();
 
 
@@ -95,6 +86,7 @@ public class Assets implements Disposable, AssetErrorListener {
     public final AtlasRegion settingsButtonDown;
     public final AtlasRegion one;
     public final AtlasRegion two;
+    public final AtlasRegion goldDisplay;
 
     public AssetUI(TextureAtlas atlas) {
       playButtonUp = atlas.findRegion("playBtnUp");
@@ -103,6 +95,7 @@ public class Assets implements Disposable, AssetErrorListener {
       settingsButtonDown = atlas.findRegion("settingsBtnDown");
       one = atlas.findRegion("fire2");
       two = atlas.findRegion("fire2");
+      goldDisplay = atlas.findRegion("goldDisplay");
     }
   }
 

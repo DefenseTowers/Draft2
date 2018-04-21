@@ -113,16 +113,16 @@ public class CreepSystem extends IteratingSystem{
         }
       }
 
-      if (tile.getId() == 1959 || tile.getId() == 18) {
+      if (tile.getId() == 2343 || tile.getId() == 18) {
         vc.velocity.set(vc.maxVel, 0, 0);
         sc.set(Creeps.State.EAST);
-      } else if (tile.getId() == 1958) {
+      } else if (tile.getId() == 2342) {
         vc.velocity.set(0, vc.maxVel, 0);
         sc.set(Creeps.State.NORTH);
-      } else if (tile.getId() == 1961) {
+      } else if (tile.getId() == 2345) {
         vc.velocity.set(-vc.maxVel, 0, 0);
         sc.set(Creeps.State.WEST);
-      } else if (tile.getId() == 1960) {
+      } else if (tile.getId() == 2344) {
         vc.velocity.set(0, -vc.maxVel, 0);
         sc.set(Creeps.State.SOUTH);
       }

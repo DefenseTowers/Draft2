@@ -54,4 +54,8 @@ public class EntityFactory {
     return player;
   }
 
+  public Entity createCreep(){
+
+  }
+
 }

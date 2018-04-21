@@ -2,6 +2,7 @@ package ntnu.codt.mvc.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -68,12 +69,18 @@ public class MenuView implements View {
     stage.addActor(playBtn);
     stage.addActor(settingsBtn);
 
-
-    //menuView.loadStage(stage);
-
     playBtn.setPosition(screenWidth/2 - playBtn.getWidth()/2, screenHeight*70/100 - playBtn.getHeight()/2);
     settingsBtn.setPosition(screenWidth/2 - settingsBtn.getWidth()/2, screenHeight*60/100 - settingsBtn.getHeight()/2);
 
+
+    Texture quickGameUp = new Texture(Gdx.files.internal("button_quick-game_up.png"));
+    Texture quickGameDown = new Texture(Gdx.files.internal("button_quick-game_down.png"));
+    game.assets.skin.add("quickGameUp", quickGameUp);
+    game.assets.skin.add("quickGameDown", quickGameDown);
+
+    ImageButton quickPlayBtn = new ImageButton(game.assets.skin.getDrawable("quickGameUp"), game.assets.skin.getDrawable("quickGameDown"));
+    quickPlayBtn.setPosition(screenWidth/2 - settingsBtn.getWidth()/2, screenHeight*50/100 - settingsBtn.getHeight()/2);
+    stage.addActor(quickPlayBtn);
 
 
     playBtn.addListener(new ChangeListener() {
@@ -87,6 +94,14 @@ public class MenuView implements View {
       public void changed (ChangeEvent event, Actor actor) {
         System.out.println("SettingsBtn Clicked!");
         game.goToSettingScreen();
+      }
+    });
+
+
+    quickPlayBtn.addListener(new ChangeListener() {
+      public void changed (ChangeEvent event, Actor actor) {
+        System.out.println("QuickPlayBtn Clicked!");
+        game.goToLoadingScreen();
       }
     });
 

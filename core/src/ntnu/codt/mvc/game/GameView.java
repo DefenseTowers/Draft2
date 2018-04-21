@@ -21,6 +21,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
 
+import java.awt.Font;
+
 import ntnu.codt.CoDT;
 import ntnu.codt.assets.Fonts;
 import ntnu.codt.components.PlayerComponent;
@@ -94,13 +96,36 @@ public class GameView implements View {
     loadTowerBtns();
 
 
+    // Creates hidden upgrade button
+    Pixmap p = new Pixmap(100, 100, Pixmap.Format.RGBA8888);
+
+    Texture tex = new Texture(Gdx.files.internal("badlogic.jpg"));
+    skin.add("logo", tex);
+    ImageButton upgradeTowerBtn = new ImageButton(skin.getDrawable("logo"));
+    upgradeTowerBtn.setPosition(screenWidth - tex.getWidth(), 0);
+    upgradeTowerBtn.setVisible(false);
+    upgradeTowerBtn.setName("upgradeTowerBtn");
+    ui.addActor(upgradeTowerBtn);
+
     // Create UI element for money
+    int funds = gameModel.player1.getComponent(PlayerComponent.class).funds;
+
+    Image moneyDisplay = new Image(game.assets.ui.goldDisplay);
+    moneyDisplay.setPosition(screenWidth/30, screenHeight* 93/100);
+    moneyDisplay.setHeight(40);
+    moneyDisplay.setWidth(screenWidth/15);
+    moneyDisplay.setHeight(screenHeight/18);
+
+
     TextField.TextFieldStyle textStyle = new TextField.TextFieldStyle();
     textStyle.font = new BitmapFont();
-    textStyle.fontColor = Color.BLACK;
-    int funds = gameModel.player1.getComponent(PlayerComponent.class).funds;
+    textStyle.fontColor = Color.WHITE;
+
     MoneyField moneyField = new MoneyField("" + funds, textStyle);
-    moneyField.setPosition(screenWidth/2, screenHeight * 9/10);
+    moneyField.setPosition(moneyDisplay.getX() + 50, moneyDisplay.getY() + 10);
+
+    // Create UI element for money
+    ui.addActor(moneyDisplay);
     ui.addActor(moneyField);
 
   }
@@ -178,6 +203,7 @@ public class GameView implements View {
     }
     return towerBtnList;
   }
+
 
   public Array<CreepButton> loadCreepBtns(){
 
