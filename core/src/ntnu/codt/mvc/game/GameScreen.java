@@ -14,9 +14,9 @@ public class GameScreen extends BaseScreen {
 
   private InputMultiplexer mp;
 
-  public GameScreen(CoDT game) {
+  public GameScreen(CoDT game, GameModel model) {
     super(game);
-    this.gameModel = new GameModel(game);
+    this.gameModel = model;
     this.gameView = new GameView(game, gameModel);
     this.gameController = new GameController(game, gameModel, gameView);
 

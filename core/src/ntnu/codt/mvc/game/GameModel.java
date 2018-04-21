@@ -26,8 +26,8 @@ public class GameModel {
   public final PooledEngine engine;
   public final Vector3 touchPoint;
   public TiledMap map;
-  public TiledMapTileLayer layer;
   public TiledMapTileLayer layer2;
+  public TiledMapTileLayer layer;
   public OrthogonalTiledMapRenderer renderer;
   public Skin skin;
   public Entity player1;
@@ -57,7 +57,7 @@ public class GameModel {
     engine.addSystem(new RenderSystem(game.batch, game.shape, game.assets));
     engine.addSystem(new TowerSystem(engine));
     engine.addSystem(new AttackSystem(engine));
-    engine.addSystem(new CreepSystem(layer, engine, this));
+    engine.addSystem(new CreepSystem(layer2, engine, this));
     engine.addSystem(new EconomySystem());
 
     entityFactory = new EntityFactory(engine);

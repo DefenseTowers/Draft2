@@ -16,8 +16,6 @@ public class MenuScreen extends BaseScreen{
     super(game);
     menuController = new MenuController(game);
     menuView = new MenuView(game);
-
-
     menuView.loadStage(stage);
   }
 
@@ -25,7 +23,7 @@ public class MenuScreen extends BaseScreen{
   public void show() {
 
     menuView.show();
-    //Gdx.input.setInputProcessor(stage);
+
   }
 
   @Override

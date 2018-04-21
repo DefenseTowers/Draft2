@@ -80,6 +80,14 @@ public class CreepSystem extends IteratingSystem{
     super.update(deltaTime);
   }
 
+  public void setLayer(TiledMapTileLayer layer) {
+    this.layer = layer;
+  }
+
+  public TiledMapTileLayer getLayer() {
+    return layer;
+  }
+
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
 

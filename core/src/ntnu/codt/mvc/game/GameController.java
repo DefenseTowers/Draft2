@@ -65,7 +65,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
 
     try {
 
-      float tileHeight = model.layer2.getTileHeight(), tileWidth = model.layer.getTileWidth();
+      float tileHeight = model.layer2.getTileHeight(), tileWidth = model.layer2.getTileWidth();
       TiledMapTile bottomLeft = model.layer2.getCell((int) Math.floor(bounds.getX() / tileWidth), (int) Math.floor(bounds.getY() / tileHeight)).getTile();
       TiledMapTile topLeft = model.layer2.getCell((int) Math.floor(bounds.getX() / tileWidth), (int) Math.floor((bounds.getY()+bounds.getHeight()) / tileHeight)).getTile();
       TiledMapTile topRight = model.layer2.getCell((int) Math.floor((bounds.getX()+bounds.getWidth()) / tileWidth), (int) Math.floor((bounds.getY()+bounds.getHeight()) / tileHeight)).getTile();;

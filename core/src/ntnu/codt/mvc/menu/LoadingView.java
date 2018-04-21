@@ -1,13 +1,13 @@
 package ntnu.codt.mvc.menu;
 
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 import ntnu.codt.CoDT;
-import ntnu.codt.entities.EntityFactory;
 import ntnu.codt.mvc.View;
-import ntnu.codt.systems.CreepSystem;
-
 /**
  * Created by oddmrog on 21.04.18.
  */
@@ -20,29 +20,32 @@ public class LoadingView implements View {
 
   public LoadingView(CoDT game) {
 
-    this.stage = new Stage();
     this.game = game;
     loadStage();
 
-    PooledEngine engine = new PooledEngine(100, 1000, 100, 1000);
-    engine.addSystem(new CreepSystem());
   }
 
 
   @Override
   public void render(float deltaTime) {
-
+    stage.draw();
   }
 
   public void loadStage(){
+    this.stage = new Stage();
+    com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle textStyle = new com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle();
+    textStyle.font = new BitmapFont();
+    textStyle.fontColor = Color.WHITE;
 
-
-
-
+    TextField textfield = new TextField("Loading...", textStyle);
+    textfield.setPosition(32*20, 19*20);
+    stage.addActor(textfield);
 
   }
 
   public Stage getStage() {
     return stage;
   }
+
+
 }

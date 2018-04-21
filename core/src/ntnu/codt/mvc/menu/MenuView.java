@@ -47,7 +47,6 @@ public class MenuView implements View {
 
     stage.act();
     stage.getBatch().begin();
-    // Draw different textures from batch
     stage.getBatch().end();
     stage.draw();
   }

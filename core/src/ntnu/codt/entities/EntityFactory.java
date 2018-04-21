@@ -54,7 +54,14 @@ public class EntityFactory {
     return player;
   }
 
-  public Entity createCreep(){
+  public Entity createCreep(int speed){
+    Entity creep = Creeps.BIG_BOI.copy(engine, Player.P2);
+    creep.getComponent(VelocityComponent.class).maxVel = speed;
+    creep.getComponent(PositionComponent.class).pos.x = 10*20;
+    creep.getComponent(PositionComponent.class).pos.y = 21*20;
+    //engine.addEntity(creep);
+    return creep;
+
 
   }
 
