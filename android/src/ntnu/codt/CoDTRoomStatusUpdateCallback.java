@@ -86,7 +86,8 @@ public class CoDTRoomStatusUpdateCallback extends RoomStatusUpdateCallback {
     Log.d(TAG, "peer connected");
     if (activity.shouldStartGame(room)) {
       Log.d(TAG, "sending data");
-      activity.startGame();
+      activity.sendToAllReliably(("S:" + 123123).getBytes());
+      //activity.startGame();
       //activity.sendToAllReliably(("Your friend: " + activity.getCurrentParticipantId()).getBytes());
     }
   }

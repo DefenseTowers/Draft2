@@ -48,6 +48,7 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
   private Room mRoom = null;
   private String currentParticipantId = null;
   private StartEndpoint startEndpoint;
+  private Player player;
 
 
 	@Override
@@ -57,7 +58,7 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
 
 		mRoomStatusCallbackHandler = new CoDTRoomStatusUpdateCallback(this);
 		mRoomUpdateCallback = new CoDTRoomUpdateCallback(this);
-		mMessageReceivedHandler = new CoDTMessageReceivedListener();
+		mMessageReceivedHandler = new CoDTMessageReceivedListener(this);
 
     System.out.println("ANDROID LAUNCHER::" + "Signed In: " + isSignedIn());
 
@@ -228,19 +229,20 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
 
   @Override
   public Player getPlayer() {
-    return mRoom.getCreatorId().equals(currentParticipantId) ? Player.P1 : Player.P2;
+    //return mRoom.getCreatorId().equals(currentParticipantId) ? Player.P1 : Player.P2;
+    return player;
   }
 
   @Override
   public boolean towerPlaced(Vector3 pos, Towers tower, Player player) {
-    String data = player.name() + ":" + "T:" + tower.name() + ":" + pos.x + ":" + pos.y;
+    String data = "T:" + player.name() + ":" + tower.name() + ":" + pos.x + ":" + pos.y;
     sendToAllReliably(data.getBytes());
     return true;
   }
 
   @Override
   public boolean creepSent(Creeps creep, Player player) {
-    String data = player.name() + ":C:" + creep.name();
+    String data = "C:" + player.name() + ":" + creep.name();
     sendToAllReliably(data.getBytes());
     return true;
   }
@@ -255,5 +257,8 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
     startEndpoint = endpoint;
   }
 
+  public void setPlayer(Player player) {
+    this.player = player;
+  }
 
 }

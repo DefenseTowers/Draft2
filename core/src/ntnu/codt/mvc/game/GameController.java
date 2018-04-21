@@ -43,7 +43,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
   private final GameModel model;
   private Subject<Void> subjectTouch;
   private GameView view;
-  private final SynchronousQueue<UpdateAction> updateQueue;
+  private final List<UpdateAction> updateQueue;
 
   public GameController(CoDT game, GameModel model, GameView gameView) {
 
@@ -54,7 +54,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
     CoDT.EVENT_BUS.register(this);
     setListeners();
 
-    updateQueue = new SynchronousQueue<UpdateAction>();
+    updateQueue = new ArrayList<UpdateAction>();
   }
 
   private boolean legalTowerPlacement(Rectangle bounds, Player player){
@@ -104,6 +104,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
     for (UpdateAction action : updateQueue) {
       action.call();
     }
+    updateQueue.clear();
 
   }
 
@@ -243,7 +244,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
 
   @Override
   public void receiveTowerPlaced(final Vector3 pos, final Towers tower, final Player player) throws InterruptedException {
-    updateQueue.put(new UpdateAction() {
+    updateQueue.add(new UpdateAction() {
       @Override
       public void call() {
         tower.copy(pos, model.engine, player);
@@ -252,13 +253,15 @@ public class GameController extends Controller implements ReceiveEndpoint {
   }
 
   @Override
-  public void receiveCreepSpawned(final Creeps creep, final Player player) throws InterruptedException {
-    updateQueue.put(new UpdateAction() {
+  synchronized public void receiveCreepSpawned(final Creeps creep, final Player player) throws InterruptedException {
+    Gdx.app.error("CREEP", player.name() + ":" + creep.name());
+    updateQueue.add(new UpdateAction() {
       @Override
       public void call() {
         creep.copy(model.engine, player);
       }
     });
+
   }
 
   private interface UpdateAction {

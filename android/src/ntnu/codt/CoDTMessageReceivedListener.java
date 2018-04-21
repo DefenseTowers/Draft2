@@ -14,6 +14,11 @@ import ntnu.codt.entities.Towers;
 public class CoDTMessageReceivedListener implements OnRealTimeMessageReceivedListener {
   private final static String TAG = CoDTMessageReceivedListener.class.getName();
   private ReceiveEndpoint endpoint;
+  private AndroidLauncher activity;
+
+  public CoDTMessageReceivedListener(AndroidLauncher activity) {
+    this.activity = activity;
+  }
 
   public void setEndpoint(ReceiveEndpoint endpoint) {
     this.endpoint = endpoint;
@@ -27,12 +32,12 @@ public class CoDTMessageReceivedListener implements OnRealTimeMessageReceivedLis
 
     Log.d(TAG, message);
 
-    final Player player = Player.valueOf(format[0]);
-    final String type = format[1];
+    final String type = format[0];
 
     if (endpoint != null) {
       switch (type) {
         case "T": {
+          Player player = Player.valueOf(format[1]);
           Towers tower = Towers.valueOf(format[2]);
           Vector3 pos = new Vector3(Float.valueOf(format[3]), Float.valueOf(format[4]), 0);
           try {
@@ -43,12 +48,24 @@ public class CoDTMessageReceivedListener implements OnRealTimeMessageReceivedLis
           break;
         }
         case "C": {
+          Player player = Player.valueOf(format[1]);
           Creeps creep = Creeps.valueOf(format[2]);
           try {
             endpoint.receiveCreepSpawned(creep, player);
           } catch (InterruptedException e) {
             //
           }
+          break;
+        }
+        case "S": {
+          long timeStamp = Long.valueOf(format[1]);
+          if (activity.getRoom().getCreationTimestamp() > timeStamp) {
+            activity.setPlayer(Player.P1);
+          } else {
+            activity.setPlayer(Player.P2);
+          }
+          Log.d(TAG, "starting ggame");
+          activity.startGame();
           break;
         }
       }
