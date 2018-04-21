@@ -1,22 +1,18 @@
 package ntnu.codt;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.WindowManager;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.math.Vector3;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.*;
 import com.google.android.gms.games.Games;
-import com.google.android.gms.games.GamesCallbackStatusCodes;
 import com.google.android.gms.games.PlayersClient;
 import com.google.android.gms.games.RealTimeMultiplayerClient;
 import com.google.android.gms.games.multiplayer.Participant;
@@ -25,7 +21,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import ntnu.codt.CoDT;
 import ntnu.codt.core.network.IServiceClient;
 import ntnu.codt.core.network.ReceiveEndpoint;
 import ntnu.codt.core.network.StartEndpoint;
@@ -33,8 +28,6 @@ import ntnu.codt.entities.Creeps;
 import ntnu.codt.entities.Player;
 import ntnu.codt.entities.Towers;
 
-import java.util.HashSet;
-import java.util.List;
 
 public class AndroidLauncher extends AndroidApplication implements IServiceClient {
   private final static String TAG = AndroidLauncher.class.getName();
@@ -53,6 +46,7 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
   private StartEndpoint startEndpoint;
   private Player player;
   private RealTimeMultiplayerClient mRealTimeMultiplaterClient = null;
+  private RealTimeMultiplayerClient.ReliableMessageSentCallback handleMessageSentCallback;
 
 
 	@Override
@@ -63,6 +57,7 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
 		mRoomStatusCallbackHandler = new CoDTRoomStatusUpdateCallback(this);
 		mRoomUpdateCallback = new CoDTRoomUpdateCallback(this);
 		mMessageReceivedHandler = new CoDTMessageReceivedListener(this);
+		handleMessageSentCallback = new CoDTReliableMessageSentCallback();
 
 		mGoogleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
 
@@ -78,7 +73,6 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
 	  for (String pid : mRoom.getParticipantIds()) {
 	    if (!pid.equals(getCurrentParticipantId())) {
 	      Log.d(TAG, "Sending to: " + pid);
-	      //Task<Integer> task = Games.getRealTimeMultiplayerClient(this, GoogleSignIn.getLastSignedInAccount(this));
 	      mRealTimeMultiplaterClient
             .sendReliableMessage(message, mRoom.getRoomId(), pid, handleMessageSentCallback)
             .addOnCompleteListener(new OnCompleteListener<Integer>() {
@@ -102,25 +96,6 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
       }
     }
   }
-
-  private HashSet<Integer> pendingMessageSet = new HashSet<>();
-  private RealTimeMultiplayerClient.ReliableMessageSentCallback handleMessageSentCallback = new RealTimeMultiplayerClient.ReliableMessageSentCallback() {
-    @Override
-    public void onRealTimeMessageSent(int statusCode, int tokenId, String recipientId) {
-//      synchronized (this) {
-//        pendingMessageSet.remove(tokenId);
-//      }
-      Log.d(TAG, "RealTime message sent");
-      Log.d(TAG, "  statusCode: " + statusCode);
-      Log.d(TAG, "  tokenId: " + tokenId);
-      Log.d(TAG, "  recipientParticipantId: " + recipientId);
-    }
-  };
-
-  synchronized void recordMessageToken(int tokenId) {
-    pendingMessageSet.add(tokenId);
-  }
-
 
   @Override
   public void onResume() {
@@ -182,21 +157,14 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
     if (requestCode == RC_SIGN_IN) {
       GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
       if (result.isSuccess()) {
-        //signInAccount = result.getSignInAccount();
         onConnect(result.getSignInAccount());
         System.out.println("ANDROID LAUNCER::" + signInAccount.getDisplayName());
       } else {
         String message = result.getStatus().getStatusMessage();
         System.out.println("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW::" + result.getStatus().getStatusCode());
-        if (message == null || message.isEmpty()) {
-          //message = getString(R.string.signin_other_error);
-        }
-        //new AlertDialog.Builder(this).setMessage(message)
-        //    .setNeutralButton(android.R.string.ok, null).show();
       }
     } else if (requestCode == RC_WAITING_ROOM) {
       if (resultCode == Activity.RESULT_OK) {
-        //startGame();
         sendToAllReliably(("S:" + mRoom.getCreationTimestamp()).getBytes());
       }
     }
@@ -209,8 +177,6 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
         .setRoomStatusUpdateCallback(mRoomStatusCallbackHandler)
         .setAutoMatchCriteria(autoMatchCriteria)
         .build();
-
-    //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
     mJoinedRoomConfig = roomConfig;
 
@@ -285,7 +251,6 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
 
   @Override
   public Player getPlayer() {
-    //return mRoom.getCreatorId().equals(currentParticipantId) ? Player.P1 : Player.P2;
     return player;
   }
 
