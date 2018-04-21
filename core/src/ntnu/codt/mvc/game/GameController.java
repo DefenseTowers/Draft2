@@ -172,7 +172,8 @@ public class GameController extends Controller implements ReceiveEndpoint {
           Vector3 pos = new Vector3(event.getStageX(), event.getStageY(), 0);
 
           if(legalPlacement) {
-            towerButton.towerType.copy(pos, model.engine, Player.P1);
+            towerButton.towerType.copy(pos, model.engine, model.currentPlayer);
+            game.client.towerPlaced(pos, towerButton.towerType, model.currentPlayer);
             CoDT.EVENT_BUS.post(new TowerPlaced(towerButton.towerType, pos));
             CoDT.EVENT_BUS.post(new FundsChanged(funds - towerButton.towerType.price));
             System.out.println("Current funds =" + funds);
