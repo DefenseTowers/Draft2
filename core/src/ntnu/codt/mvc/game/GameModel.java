@@ -1,5 +1,6 @@
 package ntnu.codt.mvc.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.ashley.core.Entity;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import ntnu.codt.CoDT;
 import ntnu.codt.entities.*;
 import ntnu.codt.components.PlayerComponent;
@@ -22,6 +24,7 @@ public class GameModel {
   private final CoDT game;
   public final EntityFactory entityFactory;
   public final OrthographicCamera camera;
+  public final StretchViewport viewport;
   public final PooledEngine engine;
   public final Vector3 touchPoint;
   public TiledMap map;
@@ -39,6 +42,8 @@ public class GameModel {
     touchPoint = new Vector3();
     camera = new OrthographicCamera(1280, 720);
     camera.position.set(1280 / 2, 720 / 2, 0);
+    viewport = new StretchViewport(1280, 720, camera);
+    viewport.apply();
 
     map = new TmxMapLoader().load("greytilemap.tmx");
     layer = (TiledMapTileLayer)map.getLayers().get(0);

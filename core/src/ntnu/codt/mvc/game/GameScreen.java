@@ -39,6 +39,13 @@ public class GameScreen extends BaseScreen {
     gameView.render(delta);
   }
 
+  @Override
+  public void resize(int x, int y) {
+    gameModel.viewport.update(x, y, true);
+    gameView.getUi().getViewport().update(x, y, true);
+    //gameModel.camera.position.set(gameModel.camera.viewportWidth/2, gameModel.camera.viewportHeight/2,0);
+  }
+
 }
 
 
