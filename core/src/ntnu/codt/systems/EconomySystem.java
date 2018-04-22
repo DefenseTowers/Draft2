@@ -43,12 +43,6 @@ public class EconomySystem extends IteratingSystem {
 
   }
 
-  @Subscribe
-  public void updateFunds(FundsChanged event){
-
-
-  }
-
   public boolean sufficientFunds(Entity player, int cost){
 
     PlayerComponent pc = pm.get(player);

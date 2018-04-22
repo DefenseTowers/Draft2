@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -43,6 +44,7 @@ public class LoadingScreen extends BaseScreen {
     model.engine.getSystem(CreepSystem.class).setLayer(model.loadingLayer);
     loadingCreep = model.entityFactory.createCreep(100);
 
+    Gdx.input.setCatchBackKey(true);
   }
 
   @Override
@@ -55,6 +57,9 @@ public class LoadingScreen extends BaseScreen {
 
   @Override
   public void render(float deltaTime) {
+    if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
+      game.goToMenuScreen();
+    }
     loadingView.render(deltaTime);
     model.engine.update(deltaTime);
   }

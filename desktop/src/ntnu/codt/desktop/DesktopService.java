@@ -15,6 +15,11 @@ public class DesktopService implements IServiceClient {
 
 
   @Override
+  public boolean disconnect() {
+    return false;
+  }
+
+  @Override
   public boolean joinGame() {
     startEndpoint.setGameScreen();
     Thread t1 = new Thread(new Runnable() {

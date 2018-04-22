@@ -7,6 +7,8 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector3;
 import ntnu.codt.components.*;
 
@@ -27,6 +29,7 @@ public class AttackSystem extends IteratingSystem {
     pom = ComponentMapper.getFor(PositionComponent.class);
     prm = ComponentMapper.getFor(ProjectileComponent.class);
     vm = ComponentMapper.getFor(VelocityComponent.class);
+
 
     this.engine = engine;
   }

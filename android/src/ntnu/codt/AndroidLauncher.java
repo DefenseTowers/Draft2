@@ -42,6 +42,7 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
   private CoDTMessageReceivedListener mMessageReceivedHandler;
   private boolean mPlaying = false;
   private Room mRoom = null;
+  public String mRoomId = null;
   private String currentParticipantId = null;
   private StartEndpoint startEndpoint;
   private Player player;
@@ -241,6 +242,26 @@ public class AndroidLauncher extends AndroidApplication implements IServiceClien
 
   public void startGame() {
     startEndpoint.setGameScreen();
+  }
+
+  @Override
+  public boolean disconnect() {
+	  if (mRealTimeMultiplaterClient != null && mRoom != null && mRoomId != null) {
+	    Log.d(TAG, "" + (mJoinedRoomConfig != null));
+	    Log.d(TAG, "" + (mRoomId != null));
+      mRealTimeMultiplaterClient
+          .leave(mJoinedRoomConfig, mRoomId)
+          .addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+              mJoinedRoomConfig = null;
+              mRoom = null;
+              mRoomId = null;
+            }
+        });
+    }
+	  //mRealTimeMultiplaterClient = null;
+    return true;
   }
 
   @Override

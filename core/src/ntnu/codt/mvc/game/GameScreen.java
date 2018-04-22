@@ -19,6 +19,7 @@ public class GameScreen extends BaseScreen {
     super(game);
 
     this.gameModel = model;
+    this.gameModel.currentPlayer = game.client.getPlayer();
 
 
     this.gameView = new GameView(game, gameModel);

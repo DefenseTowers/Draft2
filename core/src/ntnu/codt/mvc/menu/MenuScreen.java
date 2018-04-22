@@ -42,6 +42,9 @@ public class MenuScreen extends BaseScreen implements StartEndpoint {
   @Override
   public void dispose() {
     super.dispose();
+    menuController = null;
+    stage = null;
+    menuView = null;
   }
 
   @Override
@@ -66,7 +69,12 @@ public class MenuScreen extends BaseScreen implements StartEndpoint {
 
   @Override
   public void setWaitingScreen() {
-
+    Gdx.app.postRunnable(new Runnable() {
+      @Override
+      public void run() {
+        game.goToLoadingScreen();
+      }
+    });
   }
 
 

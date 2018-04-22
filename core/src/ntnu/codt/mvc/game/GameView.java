@@ -37,7 +37,6 @@ public class GameView implements View {
   private final int VIEWPORT_HEIGHT = 720;
   private final CoDT game;
   private final GameModel gameModel;
-  private Vector3 randomDataVector;
   public final OrthographicCamera camera;
   private Stage ui;
   private Skin skin;
@@ -45,22 +44,12 @@ public class GameView implements View {
   private Array<TowerButton> towerBtnList;
   private Array<CreepButton> creepBtnList;
 
-
-
-  public final Observer<Vector3> touch = new Observer<Vector3>() {
-    @Override
-    public void call(Vector3 input) {
-      randomDataVector.set(input);
-    }
-  };
-
   public GameView(CoDT game, GameModel gameModel) {
     this.game = game;
     this.gameModel = gameModel;
     this.camera = gameModel.camera;
     this.skin = game.assets.skin;
 
-    randomDataVector = new Vector3();
     this.screenHeight = Gdx.graphics.getHeight();
     this.screenWidth = Gdx.graphics.getWidth();
     loadUi();
@@ -241,7 +230,7 @@ public class GameView implements View {
       skin.add("creepTex"+i, new Texture(pixmap));
 
       CreepButton creepBtn = new CreepButton(skin.getDrawable("creepTex"+i), creep);
-      creepBtn.setPosition(screenWidth * 9 / 10 - creepBtn.getWidth() / 2, screenHeight * (1+2*i)/10 - creepBtn.getHeight() / 2);
+      creepBtn.setPosition(VIEWPORT_WIDTH * 9 / 10 - creepBtn.getWidth() / 2, VIEWPORT_HEIGHT * (1+2*i)/10 - creepBtn.getHeight() / 2);
 
       creepBtnList.add(creepBtn);
       this.creepBtnList = creepBtnList;

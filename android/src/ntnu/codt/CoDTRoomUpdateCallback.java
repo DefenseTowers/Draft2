@@ -24,6 +24,7 @@ public class CoDTRoomUpdateCallback extends RoomUpdateCallback {
     if (code == GamesCallbackStatusCodes.OK && room != null) {
       Log.d(TAG, "Room " + room.getRoomId() + "created.");
       activity.showWaitingRoom(room);
+      activity.mRoomId = room.getRoomId();
     } else {
       Log.w(TAG, "Error creatin room: " + code);
       clearFlags();
@@ -50,6 +51,7 @@ public class CoDTRoomUpdateCallback extends RoomUpdateCallback {
   public void onRoomConnected(int code, @Nullable Room room) {
     if (code == GamesCallbackStatusCodes.OK && room != null) {
       Log.d(TAG, "Room " + room.getRoomId() + " connected");
+      activity.mRoomId = room.getRoomId();
     } else {
       Log.w(TAG, "Error connection to room: " + code);
       clearFlags();

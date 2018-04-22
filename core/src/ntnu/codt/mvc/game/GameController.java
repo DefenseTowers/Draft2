@@ -4,7 +4,10 @@ package ntnu.codt.mvc.game;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
+
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -27,6 +30,7 @@ import java.util.concurrent.SynchronousQueue;
 
 import ntnu.codt.CoDT;
 
+import ntnu.codt.components.AllegianceComponent;
 import ntnu.codt.core.eventhandler.Subscribe;
 import ntnu.codt.core.network.ReceiveEndpoint;
 import ntnu.codt.entities.Creeps;
@@ -45,6 +49,7 @@ import ntnu.codt.ui.TowerButton;
 public class GameController extends Controller implements ReceiveEndpoint {
   private final GameModel model;
   private GameView view;
+  private Sound placeSFX;
 
 
   private EconomySystem economySystem;
@@ -60,6 +65,8 @@ public class GameController extends Controller implements ReceiveEndpoint {
     this.economySystem = model.engine.getSystem(EconomySystem.class);
     CoDT.EVENT_BUS.register(this);
     setListeners();
+
+    placeSFX = Gdx.audio.newSound(Gdx.files.internal("sounds/Click_Heavy_00.wav"));
 
     updateQueue = new ArrayList<UpdateAction>();
   }
@@ -104,6 +111,10 @@ public class GameController extends Controller implements ReceiveEndpoint {
   }
 
   public void update(float deltaTime) {
+
+    if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
+      game.goToMenuScreen();
+    }
 
     if (Gdx.input.isKeyJustPressed(20)) {
 
@@ -189,6 +200,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
           Vector3 pos = new Vector3(event.getStageX(), event.getStageY(), 0);
 
 
+
           if(legalPlacement && sufficientFunds) {
             towerButton.towerType.copy(model.touchPoint, model.engine, model.currentPlayer);
             game.client.towerPlaced(model.touchPoint, towerButton.towerType, model.currentPlayer);
@@ -209,7 +221,8 @@ public class GameController extends Controller implements ReceiveEndpoint {
         public void changed (ChangeEvent event, Actor actor) {
           if(economySystem.sufficientFunds(model.player1, creepBtn.creep.bounty)) {
             economySystem.doTransaction(model.player1, creepBtn.creep.bounty);
-            creepBtn.creep.copy(model.engine, Player.P1);
+            creepBtn.creep.copy(model.engine, model.currentPlayer);
+            game.client.creepSent(creepBtn.creep, model.currentPlayer);
           }
         }
       });

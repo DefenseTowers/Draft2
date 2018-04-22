@@ -2,7 +2,7 @@ android {
     signingConfigs {
         config {
             keyAlias 'androiddebugkey'
-            storeFile file('C:/Users/veste/.android/debug.keystore')
+            storeFile file('/Users/vestein/Dropbox/debug.keystore')
             storePassword 'android'
         }
     }

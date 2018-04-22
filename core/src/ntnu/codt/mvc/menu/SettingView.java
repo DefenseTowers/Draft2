@@ -1,6 +1,7 @@
 package ntnu.codt.mvc.menu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -12,9 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import ntnu.codt.CoDT;
 import ntnu.codt.mvc.View;
+
+import static ntnu.codt.CoDT.soundON;
 
 /**
  * Created by oddmrog on 17.04.18.
@@ -28,6 +32,7 @@ public class SettingView implements View{
   public SettingView(CoDT game) {
     this.stage = new Stage();
     this.game = game;
+
     loadStage();
 
   }
@@ -42,15 +47,25 @@ public class SettingView implements View{
 
     int screenHeight = Gdx.graphics.getHeight();
     int screenWidth = Gdx.graphics.getWidth();
+    final Sound pressed = Gdx.audio.newSound(Gdx.files.internal("sounds/Click_Standard_02.wav"));
 
-    CheckBox soundCheckBtn = new CheckBox("Sound", game.assets.skin);
+    final CheckBox soundCheckBtn = new CheckBox("Sound", game.assets.skin);
+    soundCheckBtn.setChecked(true);
     soundCheckBtn.setSize(screenWidth/10, screenHeight/10);
     soundCheckBtn.setPosition(screenWidth/2 - soundCheckBtn.getWidth()/2, screenHeight*60/100 - soundCheckBtn.getHeight()/2);
     soundCheckBtn.addListener(new ClickListener(){
       @Override
       public void clicked(InputEvent event, float x, float y) {
         super.clicked(event, x, y);
-        //toggle music here
+        if(soundCheckBtn.isChecked()){
+          CoDT.soundON =(true);
+          CoDT.music.resume();
+        }
+        else{
+          CoDT.soundON=(false);
+          CoDT.music.pause();
+        }
+        if(soundON){pressed.play();}
         System.out.println("Soundbutton clicked");
       }
     });
@@ -67,6 +82,7 @@ public class SettingView implements View{
       @Override
       public void clicked(InputEvent event, float x, float y) {
         super.clicked(event, x, y);
+        if(soundON){pressed.play();}
         System.out.println("Back button clicked");
         returnToMenu();
       }
