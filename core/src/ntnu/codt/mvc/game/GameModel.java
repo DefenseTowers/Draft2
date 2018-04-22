@@ -26,8 +26,10 @@ public class GameModel {
   public final PooledEngine engine;
   public final Vector3 touchPoint;
   public TiledMap map;
-  public TiledMapTileLayer layer2;
-  public TiledMapTileLayer layer;
+  public TiledMapTileLayer towerTiles;
+  public TiledMapTileLayer pathTiles;
+  public TiledMapTileLayer loadingLayer;
+
   public OrthogonalTiledMapRenderer renderer;
   public Skin skin;
   public Entity player1;
@@ -40,8 +42,10 @@ public class GameModel {
     camera.position.set(1280 / 2, 720 / 2, 0);
 
     map = new TmxMapLoader().load("greytilemap.tmx");
-    layer = (TiledMapTileLayer)map.getLayers().get(0);
-    layer2 = (TiledMapTileLayer)map.getLayers().get(1);
+
+    loadingLayer = (TiledMapTileLayer)map.getLayers().get(0);
+    pathTiles = (TiledMapTileLayer)map.getLayers().get(1);
+    towerTiles = (TiledMapTileLayer)map.getLayers().get(2);
 
 
     renderer = new OrthogonalTiledMapRenderer(map);
@@ -57,7 +61,7 @@ public class GameModel {
     engine.addSystem(new RenderSystem(game.batch, game.shape, game.assets));
     engine.addSystem(new TowerSystem(engine));
     engine.addSystem(new AttackSystem(engine));
-    engine.addSystem(new CreepSystem(layer2, engine, this));
+    engine.addSystem(new CreepSystem(pathTiles, engine, this));
     engine.addSystem(new EconomySystem());
 
     entityFactory = new EntityFactory(engine);

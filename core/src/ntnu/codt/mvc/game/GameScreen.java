@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputMultiplexer;
 
 import ntnu.codt.CoDT;
 import ntnu.codt.mvc.BaseScreen;
+import ntnu.codt.systems.CreepSystem;
 
 public class GameScreen extends BaseScreen {
   private final GameModel gameModel;
@@ -19,6 +20,9 @@ public class GameScreen extends BaseScreen {
     this.gameModel = model;
     this.gameView = new GameView(game, gameModel);
     this.gameController = new GameController(game, gameModel, gameView);
+
+    model.engine.getSystem(CreepSystem.class).setLayer(model.pathTiles);
+
 
     game.client.setReceiveEndpoint(gameController);
     mp = new InputMultiplexer();

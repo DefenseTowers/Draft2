@@ -1,5 +1,6 @@
 package ntnu.codt.mvc.menu;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import ntnu.codt.CoDT;
@@ -32,6 +33,16 @@ public class MenuScreen extends BaseScreen{
   }
 
 
+  @Override
+  public void dispose() {
+    super.dispose();
+  }
 
-
+  @Override
+  public void hide() {
+    super.hide();
+    Gdx.input.setInputProcessor(null);
+  }
 }
+
+
