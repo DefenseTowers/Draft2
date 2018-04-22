@@ -16,6 +16,7 @@ public class GameScreen extends BaseScreen {
 
   public GameScreen(CoDT game) {
     super(game);
+
     this.gameModel = new GameModel(game);
     this.gameView = new GameView(game, gameModel);
     this.gameController = new GameController(game, gameModel, gameView);
@@ -36,6 +37,13 @@ public class GameScreen extends BaseScreen {
     gameController.update(delta);
     gameModel.update(delta);
     gameView.render(delta);
+  }
+
+  @Override
+  public void resize(int x, int y) {
+    gameModel.viewport.update(x, y, true);
+    gameView.getUi().getViewport().update(x, y, true);
+    //gameModel.camera.position.set(gameModel.camera.viewportWidth/2, gameModel.camera.viewportHeight/2,0);
   }
 
 }

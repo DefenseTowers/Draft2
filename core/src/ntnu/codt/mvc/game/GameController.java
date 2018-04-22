@@ -43,7 +43,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
   private final GameModel model;
   private Subject<Void> subjectTouch;
   private GameView view;
-  private final SynchronousQueue<UpdateAction> updateQueue;
+  private final List<UpdateAction> updateQueue;
 
   public GameController(CoDT game, GameModel model, GameView gameView) {
 
@@ -54,7 +54,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
     CoDT.EVENT_BUS.register(this);
     setListeners();
 
-    updateQueue = new SynchronousQueue<UpdateAction>();
+    updateQueue = new ArrayList<UpdateAction>();
   }
 
   private boolean legalTowerPlacement(Rectangle bounds, Player player){
@@ -97,12 +97,14 @@ public class GameController extends Controller implements ReceiveEndpoint {
   public void update(float deltaTime) {
 
     if (Gdx.input.isKeyJustPressed(20)) {
-      Creeps.BIG_BOI.copy(model.engine, Player.P2);
-      Creeps.SMALL_BOI.copy(model.engine, Player.P1);
+      Creeps.BIG_BOI.copy(model.engine, model.currentPlayer);
+      Creeps.SMALL_BOI.copy(model.engine, model.currentPlayer);
+      game.client.creepSent(Creeps.SMALL_BOI, model.currentPlayer);
     }
     for (UpdateAction action : updateQueue) {
       action.call();
     }
+    updateQueue.clear();
 
   }
 
@@ -142,15 +144,19 @@ public class GameController extends Controller implements ReceiveEndpoint {
         }
 
         public void touchDragged(InputEvent event, float x, float y, int pointer) {
+          model.touchPoint.set(event.getStageX(), event.getStageY(), 0);
+          //model.viewport.project(model.touchPoint);
 
           event.getButton();
           float height = towerButton.towerType.height;
           float width = towerButton.towerType.width;
 
-          Rectangle boundingBox = new Rectangle(event.getStageX() - width/2, event.getStageY() - height/2, width, height);
+          Vector3 v = model.touchPoint.cpy();
+          //model.viewport.unproject(v);
+          Rectangle boundingBox = new Rectangle(v.x - width/2, v.y - height/2, width, height);
 
 
-          if(legalTowerPlacement(boundingBox, Player.P1) && sufficientFunds){
+          if(legalTowerPlacement(boundingBox, model.currentPlayer) && sufficientFunds){
 
             towerButton.getColor().a = 1f;
             legalPlacement = true;
@@ -158,19 +164,23 @@ public class GameController extends Controller implements ReceiveEndpoint {
             towerButton.getColor().a = 0.5f;
             legalPlacement = false;
           }
-          towerButton.setPosition(event.getStageX() - towerButton.getWidth() / 2, event.getStageY() - towerButton.getHeight() / 2);
-          towerButton.rangeImage.setPosition(event.getStageX() - towerButton.towerType.radius, event.getStageY() - towerButton.towerType.radius);
+          towerButton.setPosition(model.touchPoint.x - towerButton.getWidth() / 2, model.touchPoint.y - towerButton.getHeight() / 2);
+          towerButton.rangeImage.setPosition(model.touchPoint.x - towerButton.towerType.radius, model.touchPoint.y - towerButton.towerType.radius);
           towerButton.rangeImage.setVisible(true);
         }
 
         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+
+          model.touchPoint.set(event.getStageX(), event.getStageY(), 0);
+          //model.camera.unproject(model.touchPoint);
 
           towerButton.setX(startX);
           towerButton.setY(startY);
           Vector3 pos = new Vector3(event.getStageX(), event.getStageY(), 0);
 
           if(legalPlacement) {
-            towerButton.towerType.copy(pos, model.engine, Player.P1);
+            towerButton.towerType.copy(model.touchPoint, model.engine, model.currentPlayer);
+            game.client.towerPlaced(model.touchPoint, towerButton.towerType, model.currentPlayer);
             CoDT.EVENT_BUS.post(new TowerPlaced(towerButton.towerType, pos));
             CoDT.EVENT_BUS.post(new FundsChanged(funds - towerButton.towerType.price));
             System.out.println("Current funds =" + funds);
@@ -242,7 +252,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
 
   @Override
   public void receiveTowerPlaced(final Vector3 pos, final Towers tower, final Player player) throws InterruptedException {
-    updateQueue.put(new UpdateAction() {
+    updateQueue.add(new UpdateAction() {
       @Override
       public void call() {
         tower.copy(pos, model.engine, player);
@@ -251,13 +261,15 @@ public class GameController extends Controller implements ReceiveEndpoint {
   }
 
   @Override
-  public void receiveCreepSpawned(final Creeps creep, final Player player) throws InterruptedException {
-    updateQueue.put(new UpdateAction() {
+  synchronized public void receiveCreepSpawned(final Creeps creep, final Player player) throws InterruptedException {
+    Gdx.app.error("CREEP", player.name() + ":" + creep.name());
+    updateQueue.add(new UpdateAction() {
       @Override
       public void call() {
         creep.copy(model.engine, player);
       }
     });
+
   }
 
   private interface UpdateAction {
