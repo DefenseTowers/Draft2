@@ -24,13 +24,15 @@ public class MenuController extends Controller {
 
 
   }
+}
+  /*
 
   public void goToGameScreen(){
-    game.setScreen(new GameScreen(game));
+    game.setScreen(new GameScreen(game, ));
   }
 
   public void goToSettingScreen(){
     game.setScreen(new SettingScreen(game));
   }
 
-}
+}*/

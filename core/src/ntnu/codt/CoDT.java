@@ -12,7 +12,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import ntnu.codt.assets.Assets;
 import ntnu.codt.core.eventhandler.EventBus;
 import ntnu.codt.core.network.IServiceClient;
+import ntnu.codt.mvc.game.GameModel;
 import ntnu.codt.mvc.game.GameScreen;
+import ntnu.codt.mvc.menu.LoadingScreen;
 import ntnu.codt.mvc.menu.MenuScreen;
 import ntnu.codt.mvc.menu.SettingScreen;
 
@@ -25,6 +27,7 @@ public class CoDT extends Game{
 	public IServiceClient client;
 	public static Sound music;
 	public static boolean soundON;
+	private GameModel gameModel;
 
 	public CoDT(IServiceClient client) {
 	  this.client = client;
@@ -34,7 +37,6 @@ public class CoDT extends Game{
 	public void create () {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
-
 		EVENT_BUS = new EventBus();
 		batch = new SpriteBatch();
 		shape = new ShapeRenderer();
@@ -42,20 +44,12 @@ public class CoDT extends Game{
 		music = Gdx.audio.newSound(Gdx.files.internal("sounds/music.mp3"));
 		music.loop(0.7f);
 		soundON = true;
+		gameModel = new GameModel(this);
 
 		setScreen(new MenuScreen(this));
 	}
 
-	public void setSoundON(boolean soundON) {
-		this.soundON = soundON;
-		System.out.println(soundON);
-		if(soundON){
-			music.pause();
-		}
-		else if(soundON){
-			music.resume();
-		}
-	}
+
 
 	@Override
 	public void render() {
@@ -65,13 +59,23 @@ public class CoDT extends Game{
 	}
 
 	public void goToGameScreen(){
-		setScreen(new GameScreen(this));
+	  getScreen().dispose();
+		setScreen(new GameScreen(this, new GameModel(this)));
 	}
-	// Controls switching between screens
 
 	public void goToSettingScreen(){
 		setScreen(new SettingScreen(this));
 	}
-	// Controls switching between screens
+
+	public void goToLoadingScreen(){
+		setScreen(new LoadingScreen(this, gameModel));
+	}
+
+	public void goToMenuScreen() {
+	  getScreen().dispose();
+	  Gdx.input.setCatchBackKey(false);
+	  setScreen(new MenuScreen(this));
+	  client.disconnect();
+  }
 
 }

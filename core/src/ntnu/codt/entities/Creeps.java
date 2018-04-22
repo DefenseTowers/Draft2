@@ -12,26 +12,32 @@ import ntnu.codt.core.prototype.Prototype2;
 
 public enum Creeps implements Prototype2<Entity, PooledEngine, Player> {
 
-  SMALL_BOI(20, 20, 250, 70, 50, 1),
-  BIG_BOI(40, 40, 600, 30, 50, 2);
 
 
-  private TextureRegion[] textureRegions;
-  private final float width;
-  private final float height;
-  private final int hp;
-  private final int bounty;
+  SMALL_BOI(20, 20, 250, 40, 10, 10,1),
+  BIG_BOI(40, 40, 600, 30, 50, 50,2);
+
+
+
+  public TextureRegion[] textureRegions;
+  public final float width;
+  public final float height;
+  public final int hp;
+  public final int bounty;
+  public final int cost;
 
   private final int maxVel;
   private final int sound;
 
-  Creeps(float width, float height, int hp, int maxVel, int bounty, int sound){
+
+  Creeps(float width, float height, int hp, int maxVel, int bounty, int cost, int sound){
     this.width = width;
     this.height = height;
     this.hp = hp;
     this.maxVel = maxVel;
     this.bounty = bounty;
     this.sound = sound;
+    this.cost = cost;
   }
 
   public void setTextureRegions(TextureRegion[] textureRegions) {
@@ -54,6 +60,7 @@ public enum Creeps implements Prototype2<Entity, PooledEngine, Player> {
 
     cc.bounty = bounty;
     cc.sound = sound;
+    cc.cost = cost;
 
     ac.loyalty = player;
     sc.set(State.NORTH);

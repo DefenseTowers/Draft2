@@ -102,6 +102,14 @@ public class CreepSystem extends IteratingSystem{
     super.update(deltaTime);
   }
 
+  public void setLayer(TiledMapTileLayer layer) {
+    this.layer = layer;
+  }
+
+  public TiledMapTileLayer getLayer() {
+    return layer;
+  }
+
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
 
@@ -157,11 +165,17 @@ public class CreepSystem extends IteratingSystem{
         AttackComponent act = tower.getComponent(AttackComponent.class);
         act.creepsInRange.remove(entity);
       }
+
       if(hc.health <= 0 && soundON){ playSound(cc.sound);}
       engine.removeEntity(entity);
 
-      CoDT.EVENT_BUS.post(new CreepDied(cc.bounty, ac.loyalty == Player.P1 ? PlayerComponent.FACTION2 : PlayerComponent.FACTION1));
 
+      System.out.println(ac.loyalty.toString());
+      System.out.println(model.player1.toString());
+
+      if(ac.loyalty != model.player1.getComponent(AllegianceComponent.class).loyalty)
+        CoDT.EVENT_BUS.post(new CreepDied(cc.bounty, model.player1));
+      engine.removeEntity(entity);
     }
     tc.region = cc.regions[sc.get()];
   }
