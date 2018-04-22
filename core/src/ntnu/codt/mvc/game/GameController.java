@@ -32,7 +32,6 @@ import ntnu.codt.core.observer.Subject;
 import ntnu.codt.events.FundsChanged;
 
 import ntnu.codt.entities.Player;
-import ntnu.codt.core.observer.Subject;
 import ntnu.codt.entities.Towers;
 
 import ntnu.codt.events.TowerPlaced;
@@ -45,7 +44,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
   private Subject<Void> subjectTouch;
   private GameView view;
   private final SynchronousQueue<UpdateAction> updateQueue;
-  private Sound coin;
+  private Sound placeSFX;
 
   public GameController(CoDT game, GameModel model, GameView gameView) {
 
@@ -57,7 +56,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
     setListeners();
 
     updateQueue = new SynchronousQueue<UpdateAction>();
-    coin = Gdx.audio.newSound(Gdx.files.internal("sounds/fire.wav"));
+    placeSFX = Gdx.audio.newSound(Gdx.files.internal("sounds/Click_Heavy_00.wav"));
 
   }
 
@@ -178,7 +177,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
             CoDT.EVENT_BUS.post(new TowerPlaced(towerButton.towerType, pos));
             CoDT.EVENT_BUS.post(new FundsChanged(funds - towerButton.towerType.price));
             System.out.println("Current funds =" + funds);
-            coin.play();
+            if(game.soundON){placeSFX.play();}
 
           }
           towerButton.rangeImage.setVisible(false);

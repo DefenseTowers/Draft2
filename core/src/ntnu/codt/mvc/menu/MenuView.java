@@ -8,11 +8,15 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.audio.Sound;
+
 
 import ntnu.codt.CoDT;
 import ntnu.codt.assets.Assets;
 import ntnu.codt.mvc.Controller;
 import ntnu.codt.mvc.View;
+
+import static ntnu.codt.CoDT.soundON;
 
 
 public class MenuView implements View {
@@ -25,12 +29,12 @@ public class MenuView implements View {
   private CoDT game;
 
 
-
   public MenuView(CoDT game){
     this.game = game;
     this.assets = game.assets;
     this.menuController = menuController;
     this.stage = new Stage();
+
   }
 
   @Override
@@ -58,6 +62,9 @@ public class MenuView implements View {
     this.skin = new Skin();
     this.stage = new Stage();
 
+    final Sound pressed = Gdx.audio.newSound(Gdx.files.internal("sounds/Click_Standard_02.wav"));
+
+
     skin.add("playBtnUp", assets.ui.playButtonUp, TextureRegion.class);
     skin.add("playBtnDown", assets.ui.playButtonDown, TextureRegion.class);
     skin.add("settingsBtnUp", assets.ui.settingsButtonUp, TextureRegion.class);
@@ -79,6 +86,7 @@ public class MenuView implements View {
     playBtn.addListener(new ChangeListener() {
       public void changed (ChangeEvent event, Actor actor) {
         System.out.println("PlayBtn Clicked!");
+        if(soundON){pressed.play();}
         game.goToGameScreen();
       }
     });
@@ -86,6 +94,7 @@ public class MenuView implements View {
     settingsBtn.addListener(new ChangeListener() {
       public void changed (ChangeEvent event, Actor actor) {
         System.out.println("SettingsBtn Clicked!");
+        if(soundON){pressed.play();}
         game.goToSettingScreen();
       }
     });

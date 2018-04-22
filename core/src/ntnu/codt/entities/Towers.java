@@ -15,7 +15,7 @@ import ntnu.codt.systems.CreepSystem;
 
 public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Player> {
   FIRE(30, 60, 300, 200, 1, 800, Projectiles.FIRE, 10, 1),
-  LIGHTNING(30, 100, 150, 300, 5, 400, Projectiles.LIGHTNING, 10, 2),
+  LIGHTNING(30, 100, 150, 300, 5, 180, Projectiles.LIGHTNING, 10, 2),
   ICE(30, 60, 200 , 300, 5, 500, Projectiles.ICE, 10, 3);
 
 

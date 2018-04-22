@@ -23,7 +23,8 @@ public class CoDT extends Game{
 	public ShapeRenderer shape;
 	public Assets assets;
 	public IServiceClient client;
-	public Sound music;
+	public static Sound music;
+	public static boolean soundON;
 
 	public CoDT(IServiceClient client) {
 	  this.client = client;
@@ -40,8 +41,20 @@ public class CoDT extends Game{
 		assets = new Assets(new AssetManager());
 		music = Gdx.audio.newSound(Gdx.files.internal("sounds/music.mp3"));
 		music.loop(0.7f);
+		soundON = true;
 
 		setScreen(new MenuScreen(this));
+	}
+
+	public void setSoundON(boolean soundON) {
+		this.soundON = soundON;
+		System.out.println(soundON);
+		if(soundON){
+			music.pause();
+		}
+		else if(soundON){
+			music.resume();
+		}
 	}
 
 	@Override

@@ -7,12 +7,16 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+import ntnu.codt.CoDT;
 import ntnu.codt.components.*;
+
+import static ntnu.codt.CoDT.soundON;
 
 public class TowerSystem extends IteratingSystem {
   private ComponentMapper<AttackComponent> am;
@@ -22,7 +26,7 @@ public class TowerSystem extends IteratingSystem {
   private PooledEngine engine;
   public Sound fire = Gdx.audio.newSound(Gdx.files.internal("sounds/flaunch.wav"));
   public Sound ice = Gdx.audio.newSound(Gdx.files.internal("sounds/iceball.wav"));
-  public Sound electric = Gdx.audio.newSound(Gdx.files.internal("sounds/slimeball.wav"));
+  public Sound electric = Gdx.audio.newSound(Gdx.files.internal("sounds/elDamage2.wav"));
 
 
 
@@ -39,7 +43,7 @@ public class TowerSystem extends IteratingSystem {
     default: sound = fire;
       break;
   }
-    sound.play(0.7f);
+    sound.play(0.5f);
   }
 
 
@@ -72,7 +76,7 @@ public class TowerSystem extends IteratingSystem {
             vm.get(ac.creepsInRange.get(0)).velocity,
             ac.creepsInRange.get(0)
         );
-        playSound(tc.sound);
+        if(soundON){playSound(tc.sound);}
         ac.lastShot = System.currentTimeMillis();
       } else {
         ac.creepsInRange.remove(0);

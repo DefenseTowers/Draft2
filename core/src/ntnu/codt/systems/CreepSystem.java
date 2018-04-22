@@ -22,6 +22,8 @@ import ntnu.codt.events.CreepDied;
 import ntnu.codt.events.FundsChanged;
 import ntnu.codt.mvc.game.GameModel;
 
+import static ntnu.codt.CoDT.soundON;
+
 public class CreepSystem extends IteratingSystem{
 
   private ComponentMapper<VelocityComponent> vm;
@@ -155,7 +157,7 @@ public class CreepSystem extends IteratingSystem{
         AttackComponent act = tower.getComponent(AttackComponent.class);
         act.creepsInRange.remove(entity);
       }
-      if(hc.health <= 0){ playSound(cc.sound);}
+      if(hc.health <= 0 && soundON){ playSound(cc.sound);}
       engine.removeEntity(entity);
 
       CoDT.EVENT_BUS.post(new CreepDied(cc.bounty, ac.loyalty == Player.P1 ? PlayerComponent.FACTION2 : PlayerComponent.FACTION1));
