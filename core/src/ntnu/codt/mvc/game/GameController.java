@@ -4,6 +4,7 @@ package ntnu.codt.mvc.game;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -170,9 +171,13 @@ public class GameController extends Controller implements ReceiveEndpoint {
 
           if(legalTowerPlacement(boundingBox, model.currentPlayer) && sufficientFunds){
             towerButton.getColor().a = 1f;
+            towerButton.rangeImage.setColor(Color.GREEN);
+            towerButton.rangeImage.getColor().a = 0.7f;
             legalPlacement = true;
           } else {
             towerButton.getColor().a = 0.5f;
+            towerButton.rangeImage.setColor(Color.RED);
+            towerButton.rangeImage.getColor().a = 0.7f;
             legalPlacement = false;
           }
           towerButton.setPosition(model.touchPoint.x - towerButton.getWidth() / 2, model.touchPoint.y - towerButton.getHeight() / 2);

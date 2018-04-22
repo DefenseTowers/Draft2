@@ -198,6 +198,7 @@ public class GameView implements View {
 
 
       towerBtnList.add(imgBtn);
+      ui.addActor(newCostField(tower.price, imgBtn.getX(), imgBtn.getY() - 20 ));
       ui.addActor(attackRange);
       ui.addActor(imgBtn2);
       ui.addActor(imgBtn);
@@ -246,6 +247,8 @@ public class GameView implements View {
 
       creepBtnList.add(creepBtn);
       this.creepBtnList = creepBtnList;
+
+      ui.addActor(newCostField(creep.cost, creepBtn.getX(), creepBtn.getY() - 20 ));
       ui.addActor(creepBtn);
 
 
@@ -254,7 +257,16 @@ public class GameView implements View {
     return null;
   }
 
+  public TextField newCostField(int cost, float x, float y){
 
+    TextField.TextFieldStyle textStyle = new TextField.TextFieldStyle();
+    textStyle.font = new BitmapFont();
+    textStyle.fontColor = Color.WHITE;
+
+    TextField t = new TextField("Cost: "+ cost, textStyle);
+    t.setPosition(x, y);
+    return t;
+  }
 }
 
 
