@@ -14,10 +14,17 @@ import com.badlogic.gdx.math.Vector3;
 
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import ntnu.codt.CoDT;
-import ntnu.codt.entities.*;
+
+import ntnu.codt.entities.Creeps;
+import ntnu.codt.entities.EntityFactory;
+import ntnu.codt.entities.Player;
+import ntnu.codt.entities.Projectiles;
+import ntnu.codt.entities.Towers;
+
 import ntnu.codt.components.PlayerComponent;
 import ntnu.codt.core.observer.Observer;
 import ntnu.codt.core.observer.Subject;
+
 import ntnu.codt.systems.*;
 
 public class GameModel {
@@ -28,13 +35,16 @@ public class GameModel {
   public final PooledEngine engine;
   public final Vector3 touchPoint;
   public TiledMap map;
-  public TiledMapTileLayer layer;
-  public TiledMapTileLayer layer2;
+  public TiledMapTileLayer towerTiles;
+  public TiledMapTileLayer pathTiles;
+  public TiledMapTileLayer loadingLayer;
+
   public OrthogonalTiledMapRenderer renderer;
   public Skin skin;
   public Entity player1;
+
   public Player currentPlayer;
-  public Subject<Integer> ecoBus = new Subject<Integer>();
+
 
 
   public GameModel(CoDT game) {
@@ -46,8 +56,11 @@ public class GameModel {
     viewport.apply();
 
     map = new TmxMapLoader().load("greytilemap.tmx");
-    layer = (TiledMapTileLayer)map.getLayers().get(0);
-    layer2 = (TiledMapTileLayer)map.getLayers().get(1);
+
+    loadingLayer = (TiledMapTileLayer)map.getLayers().get(0);
+    pathTiles = (TiledMapTileLayer)map.getLayers().get(1);
+    towerTiles = (TiledMapTileLayer)map.getLayers().get(2);
+
 
     renderer = new OrthogonalTiledMapRenderer(map);
 
@@ -62,8 +75,11 @@ public class GameModel {
     engine.addSystem(new RenderSystem(game.batch, game.shape, game.assets));
     engine.addSystem(new TowerSystem(engine));
     engine.addSystem(new AttackSystem(engine));
-    engine.addSystem(new CreepSystem(layer, engine, this));
+    engine.addSystem(new CreepSystem(pathTiles, engine, this));
     engine.addSystem(new EconomySystem());
+    currentPlayer = game.client.getPlayer();
+    entityFactory = new EntityFactory(engine);
+    player1 = entityFactory.createPlayer(currentPlayer, "MYNAME", 100, 250);
 
     CoDT.EVENT_BUS.register(engine.getSystem(EconomySystem.class));
 
@@ -71,21 +87,6 @@ public class GameModel {
     loadCreeps();
     loadProjectiles();
 
-    entityFactory = new EntityFactory(engine,layer);
-
-    currentPlayer = game.client.getPlayer();
-
-    player1 = entityFactory.createPlayer("bjarne", 1);
-    ecoBus.subscribe(new Observer<Integer>() {
-      @Override
-      public void call(Integer input) {
-        player1.getComponent(PlayerComponent.class).funds = input;
-      }
-    });
-
-    //entityFactory.createTestEntity();
-
-    System.out.println("number of entities in engine: " +  engine.getEntities().size());
 
   }
 

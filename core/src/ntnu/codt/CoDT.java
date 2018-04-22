@@ -11,7 +11,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import ntnu.codt.assets.Assets;
 import ntnu.codt.core.eventhandler.EventBus;
 import ntnu.codt.core.network.IServiceClient;
+import ntnu.codt.mvc.game.GameModel;
 import ntnu.codt.mvc.game.GameScreen;
+import ntnu.codt.mvc.menu.LoadingScreen;
 import ntnu.codt.mvc.menu.MenuScreen;
 import ntnu.codt.mvc.menu.SettingScreen;
 
@@ -22,6 +24,7 @@ public class CoDT extends Game{
 	public ShapeRenderer shape;
 	public Assets assets;
 	public IServiceClient client;
+	private GameModel gameModel;
 
 	public CoDT(IServiceClient client) {
 	  this.client = client;
@@ -36,7 +39,7 @@ public class CoDT extends Game{
 		batch = new SpriteBatch();
 		shape = new ShapeRenderer();
 		assets = new Assets(new AssetManager());
-
+		gameModel = new GameModel(this);
 
 		setScreen(new MenuScreen(this));
 	}
@@ -49,13 +52,13 @@ public class CoDT extends Game{
 	}
 
 	public void goToGameScreen(){
-		setScreen(new GameScreen(this));
+		setScreen(new GameScreen(this, gameModel));
 	}
-	// Controls switching between screens
 
 	public void goToSettingScreen(){
 		setScreen(new SettingScreen(this));
 	}
-	// Controls switching between screens
-
+	public void goToLoadingScreen(){
+		setScreen(new LoadingScreen(this, gameModel));
+	}
 }

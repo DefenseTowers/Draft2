@@ -19,9 +19,9 @@ public class MenuScreen extends BaseScreen implements StartEndpoint {
     menuController = new MenuController(game);
     menuView = new MenuView(game);
 
+
     game.client.setStartEndpoint(this);
 
-    //game.client.joinGame();
 
     menuView.loadStage(stage);
   }
@@ -30,7 +30,7 @@ public class MenuScreen extends BaseScreen implements StartEndpoint {
   public void show() {
 
     menuView.show();
-    //Gdx.input.setInputProcessor(stage);
+
   }
 
   @Override
@@ -40,6 +40,16 @@ public class MenuScreen extends BaseScreen implements StartEndpoint {
 
 
   @Override
+  public void dispose() {
+    super.dispose();
+  }
+
+  @Override
+  public void hide() {
+    super.hide();
+    Gdx.input.setInputProcessor(null);
+  }
+
   public void setGameScreen() {
     Gdx.app.postRunnable(new Runnable() {
       @Override
@@ -59,4 +69,7 @@ public class MenuScreen extends BaseScreen implements StartEndpoint {
 
   }
 
+
 }
+
+

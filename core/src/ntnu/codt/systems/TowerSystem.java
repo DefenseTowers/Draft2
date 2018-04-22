@@ -62,8 +62,6 @@ public class TowerSystem extends IteratingSystem {
       if(tower.getComponent(BoundsComponent.class).bounds.overlaps(placedTower))
         isOverlapping = true;
     }
-
-    //System.out.println("isOverlapping:" + isOverlapping + "\n" + "number of towers: " + towerList.size());
     return isOverlapping;
   }
 }
