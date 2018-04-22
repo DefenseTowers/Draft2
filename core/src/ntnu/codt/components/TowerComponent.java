@@ -7,5 +7,6 @@ public class TowerComponent implements Component {
 
   public int faction;
   public int price;
+  public int sound;
 
 }

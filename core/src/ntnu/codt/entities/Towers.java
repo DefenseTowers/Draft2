@@ -14,9 +14,9 @@ import ntnu.codt.systems.CreepSystem;
 
 
 public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Player> {
-  FIRE(30, 60, 500, 200, 1, 250, Projectiles.FIRE, 10),
-  LIGHTNING(30, 60, 150, 300, 5, 150, Projectiles.LIGHTNING, 10),
-  ICE(30, 60, 300 , 300, 5, 200, Projectiles.ICE, 10);
+  FIRE(30, 60, 300, 200, 1, 800, Projectiles.FIRE, 10, 1),
+  LIGHTNING(30, 100, 150, 300, 5, 400, Projectiles.LIGHTNING, 10, 2),
+  ICE(30, 60, 200 , 300, 5, 500, Projectiles.ICE, 10, 3);
 
 
   public TextureRegion textureRegion;
@@ -28,8 +28,9 @@ public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Player> 
   public final long reload;
   public final Projectiles projectile;
   public final int price;
+  public final int sound;
 
-  Towers(float width, float height, float radius, float av, int damage, long reload, Projectiles projectile, int price) {
+  Towers(float width, float height, float radius, float av, int damage, long reload, Projectiles projectile, int price, int sound) {
     this.width = width;
     this.height = height;
     this.radius = radius;
@@ -38,6 +39,7 @@ public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Player> 
     this.reload = reload;
     this.projectile = projectile;
     this.price = price;
+    this.sound = sound;
   }
 
   public void setTextureRegion(TextureRegion region) {
@@ -69,6 +71,7 @@ public enum Towers implements Prototype3<Entity, Vector3, PooledEngine, Player> 
     at.attackVelocity = this.av;
     at.reloadTime = this.reload;
     at.projectile = this.projectile;
+    tc.sound = this.sound;
 
     trm.rotation = 0.0f;
     trm.scale = new Vector2(1, 1);

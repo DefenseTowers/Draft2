@@ -8,5 +8,6 @@ public class CreepComponent implements Component {
 
   public int faction;
   public int bounty;
+  public int sound;
 
 }

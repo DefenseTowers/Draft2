@@ -3,6 +3,7 @@ package ntnu.codt.mvc.game;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -44,6 +45,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
   private Subject<Void> subjectTouch;
   private GameView view;
   private final SynchronousQueue<UpdateAction> updateQueue;
+  private Sound coin;
 
   public GameController(CoDT game, GameModel model, GameView gameView) {
 
@@ -55,6 +57,8 @@ public class GameController extends Controller implements ReceiveEndpoint {
     setListeners();
 
     updateQueue = new SynchronousQueue<UpdateAction>();
+    coin = Gdx.audio.newSound(Gdx.files.internal("sounds/fire.wav"));
+
   }
 
   private boolean legalTowerPlacement(Rectangle bounds, Player player){
@@ -174,6 +178,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
             CoDT.EVENT_BUS.post(new TowerPlaced(towerButton.towerType, pos));
             CoDT.EVENT_BUS.post(new FundsChanged(funds - towerButton.towerType.price));
             System.out.println("Current funds =" + funds);
+            coin.play();
 
           }
           towerButton.rangeImage.setVisible(false);
