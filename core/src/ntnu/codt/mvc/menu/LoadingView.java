@@ -30,8 +30,6 @@ public class LoadingView implements View {
 
   @Override
   public void render(float deltaTime) {
-
-
     stage.draw();
   }
 

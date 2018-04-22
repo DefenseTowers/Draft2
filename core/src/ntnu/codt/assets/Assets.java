@@ -29,6 +29,7 @@ public class Assets implements Disposable, AssetErrorListener {
   public final AssetCreeps creeps;
   public final AssetProjectiles projectiles;
   public final AssetUI ui;
+  public final Texture menuScreen;
 
 
   public Assets(AssetManager assetManager) {
@@ -36,7 +37,7 @@ public class Assets implements Disposable, AssetErrorListener {
     assetManager.setErrorListener(this);
     this.skin = new Skin(Gdx.files.internal("default/skin/uiskin.json"));
     //TODO load texture assets
-
+    menuScreen = new Texture("menuScreen.png");
     assetManager.load(ATLAS_PATH, TextureAtlas.class);
     assetManager.finishLoading();
 

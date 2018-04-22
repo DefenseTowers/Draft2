@@ -26,34 +26,28 @@ public class MenuView implements View {
   private Assets assets;
   private Skin skin;
   private int screenHeight, screenWidth;
-  private MenuController menuController;
   private CoDT game;
+
 
 
   public MenuView(CoDT game){
     this.game = game;
     this.assets = game.assets;
-    this.menuController = menuController;
     this.stage = new Stage();
 
   }
 
   @Override
   public void render(float deltaTime) {
-
-    drawUI();
-
-  }
-
-  public void drawUI() {
-
-    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
     stage.act();
     stage.getBatch().begin();
+    stage.getBatch().draw(game.assets.menuScreen, 0, 0, screenWidth, screenHeight);
     stage.getBatch().end();
     stage.draw();
+
+
   }
+
 
   public void loadStage(Stage stage){
     this.screenHeight = Gdx.graphics.getHeight();
@@ -84,9 +78,6 @@ public class MenuView implements View {
     game.assets.skin.add("quickGameUp", quickGameUp);
     game.assets.skin.add("quickGameDown", quickGameDown);
 
-    ImageButton quickPlayBtn = new ImageButton(game.assets.skin.getDrawable("quickGameUp"), game.assets.skin.getDrawable("quickGameDown"));
-    quickPlayBtn.setPosition(screenWidth/2 - settingsBtn.getWidth()/2, screenHeight*50/100 - settingsBtn.getHeight()/2);
-    stage.addActor(quickPlayBtn);
 
 
     playBtn.addListener(new ChangeListener() {
@@ -107,19 +98,9 @@ public class MenuView implements View {
       }
     });
 
-
-    quickPlayBtn.addListener(new ChangeListener() {
-      public void changed (ChangeEvent event, Actor actor) {
-        System.out.println("QuickPlayBtn Clicked!");
-        game.goToLoadingScreen();
-      }
-    });
-
-
     this.stage = stage;
 
   }
-
   public void show(){
     Gdx.input.setInputProcessor(stage);
   }

@@ -28,11 +28,14 @@ public class SettingView implements View{
 
   private Stage stage;
   private CoDT game;
+  int screenHeight;
+  int screenWidth;
 
   public SettingView(CoDT game) {
     this.stage = new Stage();
     this.game = game;
-
+    this.screenHeight = Gdx.graphics.getHeight();
+    this.screenWidth = Gdx.graphics.getWidth();
     loadStage();
 
   }
@@ -40,13 +43,16 @@ public class SettingView implements View{
 
   @Override
   public void render(float deltaTime) {
+
+    stage.getBatch().begin();
+    stage.getBatch().draw(game.assets.menuScreen, 0, 0, screenWidth, screenHeight);
+    stage.getBatch().end();
     stage.draw();
   }
 
   public void loadStage(){
 
-    int screenHeight = Gdx.graphics.getHeight();
-    int screenWidth = Gdx.graphics.getWidth();
+
     final Sound pressed = Gdx.audio.newSound(Gdx.files.internal("sounds/Click_Standard_02.wav"));
 
     final CheckBox soundCheckBtn = new CheckBox("Sound", game.assets.skin);
