@@ -67,10 +67,10 @@ public class GameView implements View {
     updateModel(deltaTime);
     game.batch.setProjectionMatrix(camera.combined);
     game.batch.begin();
-    game.batch.setShader(game.assets.fonts.shader);
-    game.assets.fonts.fontMedium.draw(game.batch, Float.toString(gameModel.touchPoint.x), VIEWPORT_WIDTH / 2, VIEWPORT_HEIGHT / 2);
-    game.assets.fonts.fontMedium.draw(game.batch, Float.toString(gameModel.touchPoint.y), VIEWPORT_WIDTH / 2, VIEWPORT_HEIGHT / 2 - 50.0f);
-    game.batch.setShader(null);
+    //game.batch.setShader(game.assets.fonts.shader);
+    //game.assets.fonts.fontMedium.draw(game.batch, Float.toString(gameModel.touchPoint.x), VIEWPORT_WIDTH / 2, VIEWPORT_HEIGHT / 2);
+    //game.assets.fonts.fontMedium.draw(game.batch, Float.toString(gameModel.touchPoint.y), VIEWPORT_WIDTH / 2, VIEWPORT_HEIGHT / 2 - 50.0f);
+    //game.batch.setShader(null);
     game.batch.end();
     ui.draw();
   }
