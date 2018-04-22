@@ -26,6 +26,7 @@ import java.util.concurrent.SynchronousQueue;
 
 import ntnu.codt.CoDT;
 
+import ntnu.codt.components.AllegianceComponent;
 import ntnu.codt.core.eventhandler.Subscribe;
 import ntnu.codt.core.network.ReceiveEndpoint;
 import ntnu.codt.entities.Creeps;
@@ -210,7 +211,8 @@ public class GameController extends Controller implements ReceiveEndpoint {
         public void changed (ChangeEvent event, Actor actor) {
           if(economySystem.sufficientFunds(model.player1, creepBtn.creep.bounty)) {
             economySystem.doTransaction(model.player1, creepBtn.creep.bounty);
-            creepBtn.creep.copy(model.engine, Player.P1);
+            creepBtn.creep.copy(model.engine, model.currentPlayer);
+            game.client.creepSent(creepBtn.creep, model.currentPlayer);
           }
         }
       });

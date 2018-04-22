@@ -77,7 +77,7 @@ public class GameModel {
     engine.addSystem(new AttackSystem(engine));
     engine.addSystem(new CreepSystem(pathTiles, engine, this));
     engine.addSystem(new EconomySystem());
-    currentPlayer = game.client.getPlayer();
+
     entityFactory = new EntityFactory(engine);
     player1 = entityFactory.createPlayer(currentPlayer, "MYNAME", 100, 250);
 
@@ -86,8 +86,6 @@ public class GameModel {
     loadTowers();
     loadCreeps();
     loadProjectiles();
-
-
   }
 
   public void update(float deltaTime) {

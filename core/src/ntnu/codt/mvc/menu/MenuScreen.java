@@ -66,7 +66,12 @@ public class MenuScreen extends BaseScreen implements StartEndpoint {
 
   @Override
   public void setWaitingScreen() {
-
+    Gdx.app.postRunnable(new Runnable() {
+      @Override
+      public void run() {
+        game.goToLoadingScreen();
+      }
+    });
   }
 
 
