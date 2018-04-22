@@ -34,7 +34,6 @@ public class CoDT extends Game{
 	public void create () {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
-
 		EVENT_BUS = new EventBus();
 		batch = new SpriteBatch();
 		shape = new ShapeRenderer();
@@ -52,13 +51,23 @@ public class CoDT extends Game{
 	}
 
 	public void goToGameScreen(){
-		setScreen(new GameScreen(this, gameModel));
+	  getScreen().dispose();
+		setScreen(new GameScreen(this, new GameModel(this)));
 	}
 
 	public void goToSettingScreen(){
 		setScreen(new SettingScreen(this));
 	}
+
 	public void goToLoadingScreen(){
 		setScreen(new LoadingScreen(this, gameModel));
 	}
+
+	public void goToMenuScreen() {
+	  getScreen().dispose();
+	  Gdx.input.setCatchBackKey(false);
+	  setScreen(new MenuScreen(this));
+	  client.disconnect();
+  }
+
 }

@@ -42,6 +42,9 @@ public class MenuScreen extends BaseScreen implements StartEndpoint {
   @Override
   public void dispose() {
     super.dispose();
+    menuController = null;
+    stage = null;
+    menuView = null;
   }
 
   @Override

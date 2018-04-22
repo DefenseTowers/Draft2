@@ -56,6 +56,7 @@ public class CoDTRoomStatusUpdateCallback extends RoomStatusUpdateCallback {
     if (!activity.isPlaying() && activity.shouldCancelGame(room)) {
       Games.getRealTimeMultiplayerClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
           .leave(activity.getmJoinedRoomConfig(), room.getRoomId());
+      Log.d(TAG, "Leaving room");
       activity.clearFlagKeepScreen();
     }
   }
@@ -78,6 +79,7 @@ public class CoDTRoomStatusUpdateCallback extends RoomStatusUpdateCallback {
   public void onDisconnectedFromRoom(@Nullable Room room) {
     Games.getRealTimeMultiplayerClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
         .leave(activity.getmJoinedRoomConfig(), room.getRoomId());
+//    activity.disconnect();
     activity.clearFlagKeepScreen();
     activity.setRoom(null);
     activity.setmJoinedRoomConfig(null);
@@ -105,6 +107,7 @@ public class CoDTRoomStatusUpdateCallback extends RoomStatusUpdateCallback {
   public void onPeersDisconnected(@Nullable Room room, @NonNull List<String> list) {
     if (activity.isPlaying()) {
       //TODO end game
+      activity.disconnect();
     } else if (activity.shouldCancelGame(room)) {
       Games.getRealTimeMultiplayerClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
           .leave(activity.getmJoinedRoomConfig(), room.getRoomId());

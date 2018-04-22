@@ -4,6 +4,7 @@ package ntnu.codt.mvc.game;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -104,6 +105,10 @@ public class GameController extends Controller implements ReceiveEndpoint {
   }
 
   public void update(float deltaTime) {
+
+    if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
+      game.goToMenuScreen();
+    }
 
     if (Gdx.input.isKeyJustPressed(20)) {
 

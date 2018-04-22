@@ -8,6 +8,7 @@ import ntnu.codt.entities.Towers;
 
 public interface IServiceClient {
 
+  boolean disconnect();
   boolean joinGame();
   Player getPlayer();
   boolean towerPlaced(Vector3 pos, Towers towers, Player player);
