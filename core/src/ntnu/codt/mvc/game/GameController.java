@@ -140,7 +140,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
 
         float startX = towerButton.getX();
         float startY = towerButton.getY();
-        boolean legalPlacement, sufficientFunds;
+        boolean legalPlacement, sufficientFunds, wasDragged;
         int price = towerButton.towerType.price;
         Entity player = model.player1;
 
@@ -154,20 +154,14 @@ public class GameController extends Controller implements ReceiveEndpoint {
 
         public void touchDragged(InputEvent event, float x, float y, int pointer) {
           model.touchPoint.set(event.getStageX(), event.getStageY(), 0);
-          //model.viewport.project(model.touchPoint);
 
           event.getButton();
 
           float towerHeight = towerButton.towerType.height;
           float towerWidth = towerButton.towerType.width;
 
-
           Vector3 v = model.touchPoint.cpy();
-
-
-
           Rectangle boundingBox = new Rectangle(v.x - towerWidth/2, v.y - towerHeight/2, towerWidth, towerHeight);
-
 
           if(legalTowerPlacement(boundingBox, model.currentPlayer) && sufficientFunds){
             towerButton.getColor().a = 1f;
@@ -183,12 +177,12 @@ public class GameController extends Controller implements ReceiveEndpoint {
           towerButton.setPosition(model.touchPoint.x - towerButton.getWidth() / 2, model.touchPoint.y - towerButton.getHeight() / 2);
           towerButton.rangeImage.setPosition(model.touchPoint.x - towerButton.towerType.radius, model.touchPoint.y - towerButton.towerType.radius);
           towerButton.rangeImage.setVisible(true);
+
         }
 
         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 
           model.touchPoint.set(event.getStageX(), event.getStageY(), 0);
-          //model.camera.unproject(model.touchPoint);
 
           towerButton.setX(startX);
           towerButton.setY(startY);

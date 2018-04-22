@@ -207,8 +207,6 @@ public class GameView implements View {
     return towerBtnList;
   }
 
-
-
   public Array<CreepButton> loadCreepBtns(){
 
     Array<CreepButton> creepBtnList = new Array<CreepButton>();

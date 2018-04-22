@@ -22,7 +22,6 @@ public class MenuView implements View {
   private Assets assets;
   private Skin skin;
   private int screenHeight, screenWidth;
-  private MenuController menuController;
   private CoDT game;
 
 
@@ -30,26 +29,22 @@ public class MenuView implements View {
   public MenuView(CoDT game){
     this.game = game;
     this.assets = game.assets;
-    this.menuController = menuController;
     this.stage = new Stage();
   }
 
   @Override
   public void render(float deltaTime) {
 
-    drawUI();
-
-  }
-
-  public void drawUI() {
-
-    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-    stage.act();
     stage.getBatch().begin();
+    stage.getBatch().setShader(game.assets.fonts.shader);
+    game.assets.fonts.fontMedium.draw(stage.getBatch(),"Cash of Defense Towers", Gdx.graphics.getWidth()/ 5, Gdx.graphics.getHeight()*9/10 );
+    stage.getBatch().setShader(null);
     stage.getBatch().end();
     stage.draw();
+
+
   }
+
 
   public void loadStage(Stage stage){
     this.screenHeight = Gdx.graphics.getHeight();
