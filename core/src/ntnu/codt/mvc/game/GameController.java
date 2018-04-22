@@ -4,6 +4,7 @@ package ntnu.codt.mvc.game;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -46,6 +47,7 @@ import ntnu.codt.ui.TowerButton;
 public class GameController extends Controller implements ReceiveEndpoint {
   private final GameModel model;
   private GameView view;
+  private Sound placeSFX;
 
 
   private EconomySystem economySystem;
@@ -61,6 +63,8 @@ public class GameController extends Controller implements ReceiveEndpoint {
     this.economySystem = model.engine.getSystem(EconomySystem.class);
     CoDT.EVENT_BUS.register(this);
     setListeners();
+
+    placeSFX = Gdx.audio.newSound(Gdx.files.internal("sounds/Click_Heavy_00.wav"));
 
     updateQueue = new ArrayList<UpdateAction>();
   }
@@ -194,6 +198,7 @@ public class GameController extends Controller implements ReceiveEndpoint {
           towerButton.setX(startX);
           towerButton.setY(startY);
           Vector3 pos = new Vector3(event.getStageX(), event.getStageY(), 0);
+
 
 
           if(legalPlacement && sufficientFunds) {

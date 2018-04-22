@@ -6,5 +6,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class CreepComponent implements Component {
   public TextureRegion[] regions;
   public int bounty;
+  public int sound;
   public int cost;
 }

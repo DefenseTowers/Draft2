@@ -6,6 +6,8 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
@@ -19,6 +21,8 @@ import ntnu.codt.entities.Player;
 import ntnu.codt.events.CreepDied;
 import ntnu.codt.events.FundsChanged;
 import ntnu.codt.mvc.game.GameModel;
+
+import static ntnu.codt.CoDT.soundON;
 
 public class CreepSystem extends IteratingSystem{
 
@@ -39,6 +43,24 @@ public class CreepSystem extends IteratingSystem{
 
   private final float tileHeight;
   private final float tileWidth;
+  public Sound big = Gdx.audio.newSound(Gdx.files.internal("sounds/bigboy.wav"));
+  public Sound small = Gdx.audio.newSound(Gdx.files.internal("sounds/small.wav"));
+
+
+
+
+  private void playSound(int soundNumber){
+    Sound sound;
+    switch (soundNumber) {
+      case 1:  sound = small;
+        break;
+      case 2:  sound = big;
+        break;
+      default: sound = small;
+        break;
+    }
+    sound.play();
+  }
 
   public CreepSystem(TiledMapTileLayer layer, PooledEngine engine, GameModel model) {
     super(Family.all(
@@ -143,6 +165,11 @@ public class CreepSystem extends IteratingSystem{
         AttackComponent act = tower.getComponent(AttackComponent.class);
         act.creepsInRange.remove(entity);
       }
+
+      if(hc.health <= 0 && soundON){ playSound(cc.sound);}
+      engine.removeEntity(entity);
+
+
       System.out.println(ac.loyalty.toString());
       System.out.println(model.player1.toString());
 

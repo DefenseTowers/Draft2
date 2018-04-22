@@ -10,4 +10,5 @@ public class ProjectileComponent implements Component {
   public Vector2 targetDistance;
   public int damage;
   public boolean ft;
+
 }

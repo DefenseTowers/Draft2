@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector3;
 
 
 
+
 public enum Player{
 
   P1(2338, 20 * 30, 0),

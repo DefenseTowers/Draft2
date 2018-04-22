@@ -32,6 +32,7 @@ public enum Projectiles implements Prototype5<Entity, PooledEngine, Vector3, Vec
     this.velocity = velocity;
     this.ms = ms;
     this.ft = ft;
+
   }
 
   public void setAnimation(Animation animation) {
