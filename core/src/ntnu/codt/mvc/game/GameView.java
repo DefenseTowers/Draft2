@@ -20,9 +20,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
-
-import java.awt.Font;
-
 import ntnu.codt.CoDT;
 import ntnu.codt.assets.Fonts;
 import ntnu.codt.components.PlayerComponent;
@@ -41,7 +38,7 @@ public class GameView implements View {
   private final CoDT game;
   private final GameModel gameModel;
   private Vector3 randomDataVector;
-  private final OrthographicCamera camera;
+  public final OrthographicCamera camera;
   private Stage ui;
   private Skin skin;
   private int screenHeight, screenWidth;
@@ -82,8 +79,8 @@ public class GameView implements View {
     game.batch.setProjectionMatrix(camera.combined);
     game.batch.begin();
     game.batch.setShader(game.assets.fonts.shader);
-    game.assets.fonts.fontMedium.draw(game.batch, Float.toString(randomDataVector.x), VIEWPORT_WIDTH / 2, VIEWPORT_HEIGHT / 2);
-    game.assets.fonts.fontMedium.draw(game.batch, Float.toString(randomDataVector.y), VIEWPORT_WIDTH / 2, VIEWPORT_HEIGHT / 2 - 50.0f);
+    game.assets.fonts.fontMedium.draw(game.batch, Float.toString(gameModel.touchPoint.x), VIEWPORT_WIDTH / 2, VIEWPORT_HEIGHT / 2);
+    game.assets.fonts.fontMedium.draw(game.batch, Float.toString(gameModel.touchPoint.y), VIEWPORT_WIDTH / 2, VIEWPORT_HEIGHT / 2 - 50.0f);
     game.batch.setShader(null);
     game.batch.end();
     ui.draw();
@@ -91,7 +88,9 @@ public class GameView implements View {
 
   public void loadUi(){
 
-    this.ui = new Stage();
+
+    this.ui = new Stage(gameModel.viewport);
+
     loadCreepBtns();
     loadTowerBtns();
 
@@ -144,6 +143,7 @@ public class GameView implements View {
 
   public Array<TowerButton> loadTowerBtns(){
 
+
     towerBtnList = new Array<TowerButton>();
     int i = 0;
     for(Towers tower: Towers.values()){
@@ -192,8 +192,10 @@ public class GameView implements View {
       // Create UI buttons
       TowerButton imgBtn = new TowerButton(skin.getDrawable("towerTex"+i), skin.getDrawable("tower"+i), tower, attackRange);
       TowerButton imgBtn2 = new TowerButton(skin.getDrawable("towerTex"+i), tower, attackRange);
-      imgBtn.setPosition(screenWidth * 9 / 10 - imgBtn.getWidth() / 2, screenHeight * (5+2*i)/10 - imgBtn.getHeight() / 2);
-      imgBtn2.setPosition(screenWidth * 9 / 10 - imgBtn2.getWidth() / 2, screenHeight * (5+2*i)/10 - imgBtn2.getHeight() / 2);
+
+      imgBtn.setPosition(VIEWPORT_WIDTH * 9 / 10 - imgBtn.getWidth() / 2, VIEWPORT_HEIGHT * (5+2*i)/10 - imgBtn.getHeight() / 2);
+      imgBtn2.setPosition(VIEWPORT_WIDTH * 9 / 10 - imgBtn2.getWidth() / 2, VIEWPORT_HEIGHT * (5+2*i)/10 - imgBtn2.getHeight() / 2);
+
 
       towerBtnList.add(imgBtn);
       ui.addActor(attackRange);
@@ -203,6 +205,7 @@ public class GameView implements View {
     }
     return towerBtnList;
   }
+
 
 
   public Array<CreepButton> loadCreepBtns(){
